@@ -1,0 +1,1919 @@
+[
+    {
+        "model": "master.jobcategory",
+        "pk": 1,
+        "fields": {
+            "name": "Web Development"
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 1,
+        "fields": {
+            "title": "Chief Technology Officer",
+            "category": 1
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 2,
+        "fields": {
+            "title": "CTO",
+            "category": 1
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 3,
+        "fields": {
+            "title": "R&D",
+            "category": 1
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 4,
+        "fields": {
+            "title": "Architect",
+            "category": 1
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 5,
+        "fields": {
+            "title": "Database Administrator",
+            "category": 1
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 6,
+        "fields": {
+            "title": "Information Technology",
+            "category": 1
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 7,
+        "fields": {
+            "title": "IT Manager",
+            "category": 1
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 8,
+        "fields": {
+            "title": "IT Specialist",
+            "category": 1
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 9,
+        "fields": {
+            "title": "IT Administrator",
+            "category": 1
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 10,
+        "fields": {
+            "title": "Software Engineer",
+            "category": 1
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 11,
+        "fields": {
+            "title": "Programmer",
+            "category": 1
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 12,
+        "fields": {
+            "title": "Developer",
+            "category": 1
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 13,
+        "fields": {
+            "title": "Coder",
+            "category": 1
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 14,
+        "fields": {
+            "title": "Backend",
+            "category": 1
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 15,
+        "fields": {
+            "title": "Frontend",
+            "category": 1
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 16,
+        "fields": {
+            "title": "Back end",
+            "category": 1
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 17,
+        "fields": {
+            "title": "Front end",
+            "category": 1
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 18,
+        "fields": {
+            "title": "Web Developer",
+            "category": 1
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 19,
+        "fields": {
+            "title": "Web Engineer",
+            "category": 1
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 20,
+        "fields": {
+            "title": "SEO",
+            "category": 1
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 21,
+        "fields": {
+            "title": "Python",
+            "category": 1
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 22,
+        "fields": {
+            "title": "Django",
+            "category": 1
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 23,
+        "fields": {
+            "title": "Ruby",
+            "category": 1
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 24,
+        "fields": {
+            "title": "Rails",
+            "category": 1
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 25,
+        "fields": {
+            "title": "PHP",
+            "category": 1
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 26,
+        "fields": {
+            "title": "JavaScript",
+            "category": 1
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 27,
+        "fields": {
+            "title": "React",
+            "category": 1
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 28,
+        "fields": {
+            "title": "ReactJS",
+            "category": 1
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 29,
+        "fields": {
+            "title": "Angular",
+            "category": 1
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 30,
+        "fields": {
+            "title": "AngularJS",
+            "category": 1
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 31,
+        "fields": {
+            "title": "JS",
+            "category": 1
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 32,
+        "fields": {
+            "title": "Java",
+            "category": 1
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 33,
+        "fields": {
+            "title": "HTML",
+            "category": 1
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 34,
+        "fields": {
+            "title": "CSS",
+            "category": 1
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 35,
+        "fields": {
+            "title": "C#",
+            "category": 1
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 36,
+        "fields": {
+            "title": "C++",
+            "category": 1
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 37,
+        "fields": {
+            "title": "SQL",
+            "category": 1
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 38,
+        "fields": {
+            "title": "MySQL",
+            "category": 1
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 39,
+        "fields": {
+            "title": "Quality Assurance",
+            "category": 1
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 40,
+        "fields": {
+            "title": "QA",
+            "category": 1
+        }
+    },
+    {
+        "model": "master.jobcategory",
+        "pk": 2,
+        "fields": {
+            "name": "Mobile Development"
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 41,
+        "fields": {
+            "title": "Chief Technology Officer",
+            "category": 2
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 42,
+        "fields": {
+            "title": "CTO",
+            "category": 2
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 43,
+        "fields": {
+            "title": "R&D",
+            "category": 2
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 44,
+        "fields": {
+            "title": "Architect",
+            "category": 2
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 45,
+        "fields": {
+            "title": "Mobile Engineer",
+            "category": 2
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 46,
+        "fields": {
+            "title": "Software Engineer",
+            "category": 2
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 47,
+        "fields": {
+            "title": "Information Technology",
+            "category": 2
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 48,
+        "fields": {
+            "title": "IT Manager",
+            "category": 2
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 49,
+        "fields": {
+            "title": "IT Specialist",
+            "category": 2
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 50,
+        "fields": {
+            "title": "IT Administrator",
+            "category": 2
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 51,
+        "fields": {
+            "title": "Programmer",
+            "category": 2
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 52,
+        "fields": {
+            "title": "Developer",
+            "category": 2
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 53,
+        "fields": {
+            "title": "Coder",
+            "category": 2
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 54,
+        "fields": {
+            "title": "Objective C",
+            "category": 2
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 55,
+        "fields": {
+            "title": "Swift",
+            "category": 2
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 56,
+        "fields": {
+            "title": "Java",
+            "category": 2
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 57,
+        "fields": {
+            "title": "iOS",
+            "category": 2
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 58,
+        "fields": {
+            "title": "Android",
+            "category": 2
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 59,
+        "fields": {
+            "title": "Cordova",
+            "category": 2
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 60,
+        "fields": {
+            "title": "Phonegap",
+            "category": 2
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 61,
+        "fields": {
+            "title": "React Native",
+            "category": 2
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 62,
+        "fields": {
+            "title": "Ionic",
+            "category": 2
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 63,
+        "fields": {
+            "title": "Xcode",
+            "category": 2
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 64,
+        "fields": {
+            "title": "Quality Assurance",
+            "category": 2
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 65,
+        "fields": {
+            "title": "QA",
+            "category": 2
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 66,
+        "fields": {
+            "title": "Webmaster",
+            "category": 2
+        }
+    },
+    {
+        "model": "master.jobcategory",
+        "pk": 3,
+        "fields": {
+            "name": "Data Science"
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 67,
+        "fields": {
+            "title": "Chief Technology Officer",
+            "category": 3
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 68,
+        "fields": {
+            "title": "CTO",
+            "category": 3
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 69,
+        "fields": {
+            "title": "Data Science",
+            "category": 3
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 70,
+        "fields": {
+            "title": "Data Scientist",
+            "category": 3
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 71,
+        "fields": {
+            "title": "Machine Learning",
+            "category": 3
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 72,
+        "fields": {
+            "title": "Deep Learning",
+            "category": 3
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 73,
+        "fields": {
+            "title": "Analytics",
+            "category": 3
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 74,
+        "fields": {
+            "title": "Analyst",
+            "category": 3
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 75,
+        "fields": {
+            "title": "Algebra",
+            "category": 3
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 76,
+        "fields": {
+            "title": "Probability theory",
+            "category": 3
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 77,
+        "fields": {
+            "title": "Statistics",
+            "category": 3
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 78,
+        "fields": {
+            "title": "Math",
+            "category": 3
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 79,
+        "fields": {
+            "title": "Mathematician",
+            "category": 3
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 80,
+        "fields": {
+            "title": "Kaggle",
+            "category": 3
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 81,
+        "fields": {
+            "title": "Spark",
+            "category": 3
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 82,
+        "fields": {
+            "title": "Singa",
+            "category": 3
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 83,
+        "fields": {
+            "title": "Hadoop",
+            "category": 3
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 84,
+        "fields": {
+            "title": "Tensorflow",
+            "category": 3
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 85,
+        "fields": {
+            "title": "Theano",
+            "category": 3
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 86,
+        "fields": {
+            "title": "Torch",
+            "category": 3
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 87,
+        "fields": {
+            "title": "Caffe",
+            "category": 3
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 88,
+        "fields": {
+            "title": "CNTK",
+            "category": 3
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 89,
+        "fields": {
+            "title": "MLlib",
+            "category": 3
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 90,
+        "fields": {
+            "title": "Keras",
+            "category": 3
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 91,
+        "fields": {
+            "title": "MXNet",
+            "category": 3
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 92,
+        "fields": {
+            "title": "scikit",
+            "category": 3
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 93,
+        "fields": {
+            "title": "Azure ML",
+            "category": 3
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 94,
+        "fields": {
+            "title": "ML Studio",
+            "category": 3
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 95,
+        "fields": {
+            "title": "R&D",
+            "category": 3
+        }
+    },
+    {
+        "model": "master.jobcategory",
+        "pk": 4,
+        "fields": {
+            "name": "Design"
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 96,
+        "fields": {
+            "title": "Design",
+            "category": 4
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 97,
+        "fields": {
+            "title": "Designer",
+            "category": 4
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 98,
+        "fields": {
+            "title": "Creative Director",
+            "category": 4
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 99,
+        "fields": {
+            "title": "Creative Head",
+            "category": 4
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 100,
+        "fields": {
+            "title": "Creative Lead",
+            "category": 4
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 101,
+        "fields": {
+            "title": "Art Director",
+            "category": 4
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 102,
+        "fields": {
+            "title": "UI",
+            "category": 4
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 103,
+        "fields": {
+            "title": "UX",
+            "category": 4
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 104,
+        "fields": {
+            "title": "Art Manager",
+            "category": 4
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 105,
+        "fields": {
+            "title": "Brand Identity",
+            "category": 4
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 106,
+        "fields": {
+            "title": "Logo",
+            "category": 4
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 107,
+        "fields": {
+            "title": "Illustrator",
+            "category": 4
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 108,
+        "fields": {
+            "title": "Illustration",
+            "category": 4
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 109,
+        "fields": {
+            "title": "Artist",
+            "category": 4
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 110,
+        "fields": {
+            "title": "Artworker",
+            "category": 4
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 111,
+        "fields": {
+            "title": "User Interface",
+            "category": 4
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 112,
+        "fields": {
+            "title": "User Experience",
+            "category": 4
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 113,
+        "fields": {
+            "title": "Prototyping",
+            "category": 4
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 114,
+        "fields": {
+            "title": "Prototype",
+            "category": 4
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 115,
+        "fields": {
+            "title": "Photoshop",
+            "category": 4
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 116,
+        "fields": {
+            "title": "Sketch",
+            "category": 4
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 117,
+        "fields": {
+            "title": "InDesign",
+            "category": 4
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 118,
+        "fields": {
+            "title": "Adobe",
+            "category": 4
+        }
+    },
+    {
+        "model": "master.jobcategory",
+        "pk": 5,
+        "fields": {
+            "name": "Public Relations"
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 119,
+        "fields": {
+            "title": "CEO",
+            "category": 5
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 120,
+        "fields": {
+            "title": "Chief Executive Officer",
+            "category": 5
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 121,
+        "fields": {
+            "title": "Communications",
+            "category": 5
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 122,
+        "fields": {
+            "title": "Marketing",
+            "category": 5
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 123,
+        "fields": {
+            "title": "Brand",
+            "category": 5
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 124,
+        "fields": {
+            "title": "Branding",
+            "category": 5
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 125,
+        "fields": {
+            "title": "Content Manager",
+            "category": 5
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 126,
+        "fields": {
+            "title": "Content Strategist",
+            "category": 5
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 127,
+        "fields": {
+            "title": "Copy Writer",
+            "category": 5
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 128,
+        "fields": {
+            "title": "Public Affairs",
+            "category": 5
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 129,
+        "fields": {
+            "title": "Public Relations",
+            "category": 5
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 130,
+        "fields": {
+            "title": "Event Coordinator",
+            "category": 5
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 131,
+        "fields": {
+            "title": "Event Manager",
+            "category": 5
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 132,
+        "fields": {
+            "title": "Social Media",
+            "category": 5
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 133,
+        "fields": {
+            "title": "Media Director",
+            "category": 5
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 134,
+        "fields": {
+            "title": "Media Coordinator",
+            "category": 5
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 135,
+        "fields": {
+            "title": "Relationship Manager",
+            "category": 5
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 136,
+        "fields": {
+            "title": "Media Relations",
+            "category": 5
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 137,
+        "fields": {
+            "title": "Media Coordinator",
+            "category": 5
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 138,
+        "fields": {
+            "title": "Media Director",
+            "category": 5
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 139,
+        "fields": {
+            "title": "Media Specialist",
+            "category": 5
+        }
+    },
+    {
+        "model": "master.jobcategory",
+        "pk": 6,
+        "fields": {
+            "name": "Marketing"
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 140,
+        "fields": {
+            "title": "CEO",
+            "category": 6
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 141,
+        "fields": {
+            "title": "Chief Executive Officer",
+            "category": 6
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 142,
+        "fields": {
+            "title": "Marketing",
+            "category": 6
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 143,
+        "fields": {
+            "title": "Marketer",
+            "category": 6
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 144,
+        "fields": {
+            "title": "Account Coordinator",
+            "category": 6
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 145,
+        "fields": {
+            "title": "Account Executive",
+            "category": 6
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 146,
+        "fields": {
+            "title": "Advertising",
+            "category": 6
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 147,
+        "fields": {
+            "title": "Ads",
+            "category": 6
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 148,
+        "fields": {
+            "title": "Advert",
+            "category": 6
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 149,
+        "fields": {
+            "title": "Art Director",
+            "category": 6
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 150,
+        "fields": {
+            "title": "Assistant Director",
+            "category": 6
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 151,
+        "fields": {
+            "title": "Brand",
+            "category": 6
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 152,
+        "fields": {
+            "title": "Branding",
+            "category": 6
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 153,
+        "fields": {
+            "title": "Product Manager",
+            "category": 6
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 154,
+        "fields": {
+            "title": "Business Development",
+            "category": 6
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 155,
+        "fields": {
+            "title": "Communications",
+            "category": 6
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 156,
+        "fields": {
+            "title": "Content Manager",
+            "category": 6
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 157,
+        "fields": {
+            "title": "Content Writer",
+            "category": 6
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 158,
+        "fields": {
+            "title": "Community Manager",
+            "category": 6
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 159,
+        "fields": {
+            "title": "Copywriter",
+            "category": 6
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 160,
+        "fields": {
+            "title": "Creative Assistant",
+            "category": 6
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 161,
+        "fields": {
+            "title": "Creative Director",
+            "category": 6
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 162,
+        "fields": {
+            "title": "Market Research",
+            "category": 6
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 163,
+        "fields": {
+            "title": "Media Assistant",
+            "category": 6
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 164,
+        "fields": {
+            "title": "Media Buyer",
+            "category": 6
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 165,
+        "fields": {
+            "title": "Media Director",
+            "category": 6
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 166,
+        "fields": {
+            "title": "Media Planner",
+            "category": 6
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 167,
+        "fields": {
+            "title": "Media Researcher",
+            "category": 6
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 168,
+        "fields": {
+            "title": "Media Relations",
+            "category": 6
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 169,
+        "fields": {
+            "title": "Promotion",
+            "category": 6
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 170,
+        "fields": {
+            "title": "Promotions",
+            "category": 6
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 171,
+        "fields": {
+            "title": "Public Relations",
+            "category": 6
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 172,
+        "fields": {
+            "title": "Publicity",
+            "category": 6
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 173,
+        "fields": {
+            "title": "SEO",
+            "category": 6
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 174,
+        "fields": {
+            "title": "Ecommerce",
+            "category": 6
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 175,
+        "fields": {
+            "title": "E commerce",
+            "category": 6
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 176,
+        "fields": {
+            "title": "PMM",
+            "category": 6
+        }
+    },
+    {
+        "model": "master.jobcategory",
+        "pk": 7,
+        "fields": {
+            "name": "Human Resources"
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 177,
+        "fields": {
+            "title": "HR",
+            "category": 7
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 178,
+        "fields": {
+            "title": "Human Resources",
+            "category": 7
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 179,
+        "fields": {
+            "title": "Talent",
+            "category": 7
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 180,
+        "fields": {
+            "title": "Recruiter",
+            "category": 7
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 181,
+        "fields": {
+            "title": "Recruiting",
+            "category": 7
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 182,
+        "fields": {
+            "title": "Administrative",
+            "category": 7
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 183,
+        "fields": {
+            "title": "Employee Relations",
+            "category": 7
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 184,
+        "fields": {
+            "title": "HRD",
+            "category": 7
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 185,
+        "fields": {
+            "title": "Sourcing",
+            "category": 7
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 186,
+        "fields": {
+            "title": "Staffing",
+            "category": 7
+        }
+    },
+    {
+        "model": "master.jobcategory",
+        "pk": 8,
+        "fields": {
+            "name": "Sales & Business Development"
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 187,
+        "fields": {
+            "title": "CEO",
+            "category": 8
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 188,
+        "fields": {
+            "title": "Chief Executive Officer",
+            "category": 8
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 189,
+        "fields": {
+            "title": "Sales",
+            "category": 8
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 190,
+        "fields": {
+            "title": "Salesperson",
+            "category": 8
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 191,
+        "fields": {
+            "title": "Salesman",
+            "category": 8
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 192,
+        "fields": {
+            "title": "Dealer",
+            "category": 8
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 193,
+        "fields": {
+            "title": "Business Development",
+            "category": 8
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 194,
+        "fields": {
+            "title": "Business Manager",
+            "category": 8
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 195,
+        "fields": {
+            "title": "Market Development",
+            "category": 8
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 196,
+        "fields": {
+            "title": "Account Manager",
+            "category": 8
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 197,
+        "fields": {
+            "title": "Account Director",
+            "category": 8
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 198,
+        "fields": {
+            "title": "Account Representative",
+            "category": 8
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 199,
+        "fields": {
+            "title": "Client Relationship",
+            "category": 8
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 200,
+        "fields": {
+            "title": "Customer Relationship",
+            "category": 8
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 201,
+        "fields": {
+            "title": "Customer Success",
+            "category": 8
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 202,
+        "fields": {
+            "title": "Customer Care",
+            "category": 8
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 203,
+        "fields": {
+            "title": "Telesales",
+            "category": 8
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 204,
+        "fields": {
+            "title": "Brand Ambassador",
+            "category": 8
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 205,
+        "fields": {
+            "title": "Industry Representative",
+            "category": 8
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 206,
+        "fields": {
+            "title": "Retail",
+            "category": 8
+        }
+    },
+    {
+        "model": "master.jobcategory",
+        "pk": 9,
+        "fields": {
+            "name": "Finance & Accounting"
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 207,
+        "fields": {
+            "title": "Accounting",
+            "category": 9
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 208,
+        "fields": {
+            "title": "Accountant",
+            "category": 9
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 209,
+        "fields": {
+            "title": "Financial",
+            "category": 9
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 210,
+        "fields": {
+            "title": "Finance",
+            "category": 9
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 211,
+        "fields": {
+            "title": "Auditor",
+            "category": 9
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 212,
+        "fields": {
+            "title": "Audit",
+            "category": 9
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 213,
+        "fields": {
+            "title": "Bookkeeper",
+            "category": 9
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 214,
+        "fields": {
+            "title": "Budget",
+            "category": 9
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 215,
+        "fields": {
+            "title": "Payroll",
+            "category": 9
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 216,
+        "fields": {
+            "title": "Tax",
+            "category": 9
+        }
+    },
+    {
+        "model": "master.jobcategory",
+        "pk": 10,
+        "fields": {
+            "name": "Product Management"
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 217,
+        "fields": {
+            "title": "Project Management",
+            "category": 10
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 218,
+        "fields": {
+            "title": "Product Management",
+            "category": 10
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 219,
+        "fields": {
+            "title": "Project Manager",
+            "category": 10
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 220,
+        "fields": {
+            "title": "Product Manager",
+            "category": 10
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 221,
+        "fields": {
+            "title": "Team Lead",
+            "category": 10
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 222,
+        "fields": {
+            "title": "Scrum",
+            "category": 10
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 223,
+        "fields": {
+            "title": "Kanban",
+            "category": 10
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 224,
+        "fields": {
+            "title": "PM",
+            "category": 10
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 225,
+        "fields": {
+            "title": "PMM",
+            "category": 10
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 226,
+        "fields": {
+            "title": "CEO",
+            "category": 10
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 227,
+        "fields": {
+            "title": "CTO",
+            "category": 10
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 228,
+        "fields": {
+            "title": "Chief Executive Officer",
+            "category": 10
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 229,
+        "fields": {
+            "title": "Chief Technology Officer",
+            "category": 10
+        }
+    },
+    {
+        "model": "master.jobtitle",
+        "pk": 230,
+        "fields": {
+            "title": "R&D",
+            "category": 10
+        }
+    },
+    {
+        "model": "master.jobcategory",
+        "pk": 11,
+        "fields": {
+            "name": "Startups"
+        }
+    }
+]
