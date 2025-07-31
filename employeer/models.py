@@ -2,6 +2,11 @@ from django.conf import settings
 from django.db import models
 from master import models as master
 
+STATUS_CHOICES = [
+        ('active', 'Active'),
+        ('closed', 'Closed'),
+    ]
+
 class CompanyUser(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     # Company Info
@@ -31,3 +36,42 @@ class CompanyUser(models.Model):
 
     def __str__(self):
         return self.company_name
+
+class JobPosting(models.Model):
+    company_user = models.ForeignKey(CompanyUser, on_delete=models.CASCADE, related_name='job_postings')
+    title = models.CharField(max_length=255)
+    category = models.ForeignKey(master.JobCategory, on_delete=models.SET_NULL, null=True, blank=True)
+    job_title = models.ForeignKey(master.JobTitle, on_delete=models.SET_NULL, null=True, blank=True)
+    company = models.CharField(max_length=255)
+    location = models.ForeignKey(master.City, on_delete=models.SET_NULL, null=True, blank=True)
+    experience = models.CharField(max_length=50)
+    currency = models.ForeignKey(master.Currency, on_delete=models.SET_NULL, blank=True, null=True, related_name="currency")
+    salary = models.CharField(max_length=50, blank=True, null=True)
+    job_type = models.CharField(max_length=50, choices=[
+        ('full-time', 'Full Time'),
+        ('part-time', 'Part Time'),
+        ('contract', 'Contract'),
+        ('internship', 'Internship')
+    ])
+    work_mode = models.CharField(max_length=50, choices=[
+        ('office', 'Work from Office'),
+        ('remote', 'Remote'),
+        ('hybrid', 'Hybrid')
+    ], blank=True, null=True)
+
+    vacancies = models.PositiveIntegerField(default=1)
+    application_deadline = models.DateField(blank=True, null=True)
+    description = models.TextField()
+    requirements = models.TextField(blank=True, null=True)
+    benefits = models.TextField(blank=True, null=True)
+    skills = models.JSONField(default=list, blank=True)
+    is_urgent = models.BooleanField(default=False)
+    is_remote = models.BooleanField(default=False)
+    # Meta
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='active')
+    
+
+    def __str__(self):
+        return self.title

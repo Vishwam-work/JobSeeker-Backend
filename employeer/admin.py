@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import CompanyUser
+from .models import CompanyUser, JobPosting
 
 @admin.register(CompanyUser)
 class CompanyUserAdmin(admin.ModelAdmin):
@@ -39,3 +39,7 @@ class CompanyUserAdmin(admin.ModelAdmin):
             'fields': ('agree_marketing', 'agree_terms')
         }),
     )
+@admin.register(JobPosting)
+class JobPostingAdmin(admin.ModelAdmin):
+    list_display = ('title', 'company', 'location', 'experience', 'salary', 'is_urgent', 'is_remote')
+

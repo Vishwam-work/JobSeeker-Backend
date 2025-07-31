@@ -4,9 +4,10 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import get_user_model, authenticate
-from .serializers import CompanyUserSerializer, CompanyLoginSerializer
-from .models import CompanyUser
+from .serializers import CompanyUserSerializer, CompanyLoginSerializer, JobPostingSerializer
+from .models import CompanyUser, JobPosting
 from master.models import Country, State, City
+from rest_framework import generics,status, viewsets, permissions, serializers
 
 User = get_user_model()
 @api_view(['POST'])
@@ -68,3 +69,29 @@ def login_company_user(request):
             )
 
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class JobPostingCreateView(generics.CreateAPIView):
+    queryset = JobPosting.objects.all()
+    serializer_class = JobPostingSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def perform_create(self, serializer):
+        try:
+            company_user = CompanyUser.objects.get(user=self.request.user)
+        except CompanyUser.DoesNotExist:
+            return Response(
+                {"detail": "Company profile not found for this user."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        serializer.save(
+            company_user=company_user,
+            company=company_user.company_name
+        )
+
+class JobPostingListView(generics.ListAPIView):
+    serializer_class = JobPostingSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        company_user = CompanyUser.objects.get(user=self.request.user)
+        return JobPosting.objects.filter(company_user=company_user).order_by('-created_at')
