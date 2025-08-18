@@ -24,9 +24,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-ai@+ami^x*)h-=kd_p-#ceyuqv-gk7%9rp+s7qx!pz4^w&j(@2'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['*', 'jobseeker-backend-jy1y.onrender.com']
 
 
 # Application definition
@@ -61,6 +61,12 @@ MIDDLEWARE = [
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "https://jobseeker-backend-jy1y.onrender.com"
+]
+
+# CSRF Trusted Origins for production
+CSRF_TRUSTED_ORIGINS = [
+    "https://jobseeker-backend-jy1y.onrender.com",
+    "http://localhost:3000"
 ]
 
 ROOT_URLCONF = 'Jobseeker.urls'
@@ -150,6 +156,23 @@ STATIC_URL = '/static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# CORS settings for production
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_ALL_ORIGINS = False  # Set to False for security in production
+
+# Additional CORS headers
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+]
 
 # CORS_ALLOW_ALL_ORIGINS = True
 AUTH_USER_MODEL = 'job_app.CustomUser'
