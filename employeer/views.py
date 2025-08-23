@@ -95,3 +95,31 @@ class JobPostingListView(generics.ListAPIView):
     def get_queryset(self):
         company_user = CompanyUser.objects.get(user=self.request.user)
         return JobPosting.objects.filter(company_user=company_user).order_by('-created_at')
+
+class AllJobsListView(generics.ListAPIView):
+    """
+    View to fetch all jobs from the database
+    This view is publicly accessible and returns all active job postings
+    """
+    serializer_class = JobPostingSerializer
+    permission_classes = [AllowAny]
+    queryset = JobPosting.objects.filter(status='active').order_by('-created_at')
+    
+    def get_queryset(self):       
+
+        queryset = JobPosting.objects.filter(status='active').order_by('-created_at')
+        job_type = self.request.query_params.get('job_type', None)
+        work_mode = self.request.query_params.get('work_mode', None)
+        location = self.request.query_params.get('location', None)
+        company = self.request.query_params.get('company', None)
+        
+        if job_type:
+            queryset = queryset.filter(job_type=job_type)
+        if work_mode:
+            queryset = queryset.filter(work_mode=work_mode)
+        if location:
+            queryset = queryset.filter(location__name__icontains=location)
+        if company:
+            queryset = queryset.filter(company__icontains=company)
+            
+        return queryset
