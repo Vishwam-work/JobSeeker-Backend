@@ -88,6 +88,16 @@ class JobPostingCreateView(generics.CreateAPIView):
             company=company_user.company_name
         )
 
+# Add the view for the view details
+class JobPostingDetailView(generics.RetrieveAPIView):
+    queryset = JobPosting.objects.all()
+    serializer_class = JobPostingSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        company_user = CompanyUser.objects.get(user=self.request.user)
+        return JobPosting.objects.filter(company_user=company_user)
+
 class JobPostingListView(generics.ListAPIView):
     serializer_class = JobPostingSerializer
     permission_classes = [permissions.IsAuthenticated]
