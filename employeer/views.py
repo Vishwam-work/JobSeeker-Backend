@@ -132,7 +132,7 @@ class AllJobsListView(generics.ListAPIView):
             queryset = queryset.filter(company__icontains=company)
         return queryset
 
-class JobPostingUpdateView(UpdateAPIView):
+class JobPostingUpdateView(generics.UpdateAPIView):
     queryset = JobPosting.objects.all()
     serializer_class = JobPostingSerializer
     permission_classes = [permissions.IsAuthenticated]
