@@ -114,15 +114,14 @@ class AllJobsListView(generics.ListAPIView):
     serializer_class = JobPostingSerializer
     permission_classes = [AllowAny]
     queryset = JobPosting.objects.filter(status='active').order_by('-created_at')
-    
-    def get_queryset(self):       
+
+    def get_queryset(self):
 
         queryset = JobPosting.objects.filter(status='active').order_by('-created_at')
         job_type = self.request.query_params.get('job_type', None)
         work_mode = self.request.query_params.get('work_mode', None)
         location = self.request.query_params.get('location', None)
         company = self.request.query_params.get('company', None)
-        
         if job_type:
             queryset = queryset.filter(job_type=job_type)
         if work_mode:
@@ -131,5 +130,14 @@ class AllJobsListView(generics.ListAPIView):
             queryset = queryset.filter(location__name__icontains=location)
         if company:
             queryset = queryset.filter(company__icontains=company)
-            
         return queryset
+
+class JobPostingUpdateView(UpdateAPIView):
+    queryset = JobPosting.objects.all()
+    serializer_class = JobPostingSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        """Ensure that only the company user's jobs can be updated"""
+        company_user = CompanyUser.objects.get(user=self.request.user)
+        return JobPosting.objects.filter(company_user=company_user)
