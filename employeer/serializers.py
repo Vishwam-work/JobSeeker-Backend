@@ -2,7 +2,7 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from .models import CompanyUser
-from master.serializers import CountrySerializer
+from master.serializers import CountrySerializer,JobCategorySerializer
 
 User = get_user_model()
 class CompanyUserSerializer(serializers.ModelSerializer):
@@ -38,6 +38,7 @@ from .models import JobPosting
 class JobPostingSerializer(serializers.ModelSerializer):
     company_user = serializers.ReadOnlyField(source='company_user.id')
     location = CountrySerializer(read_only=True)
+    category = JobCategorySerializer(read_only=True)
     class Meta:
         model = JobPosting
         fields = [
