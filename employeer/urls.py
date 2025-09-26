@@ -10,4 +10,5 @@ path('api/job-list-view/', views.JobPostingListView.as_view(), name='job-posting
 path('api/job-list-view/<int:pk>/', views.JobPostingDetailView.as_view(), name='job-posting-detail'),
 path('api/all-jobs/', views.AllJobsListView.as_view(), name='all-jobs'),
 path('job-postings/<int:pk>/update/', views.JobPostingUpdateView.as_view(), name='job-update'),
+path('job-postings/<int:pk>/delete/', views.JobPostingDeleteView.as_view(), name='job-delete'),
 ]
