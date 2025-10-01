@@ -67,6 +67,7 @@ class JobPosting(models.Model):
     skills = models.JSONField(default=list, blank=True)
     is_urgent = models.BooleanField(default=False)
     is_remote = models.BooleanField(default=False)
+    questions = models.JSONField(default=list, blank=True)
     # Meta
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
