@@ -3,10 +3,10 @@ from rest_framework.decorators import api_view, permission_classes, action
 from rest_framework.permissions import AllowAny
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import get_user_model, authenticate
-from .serializers import UserRegistrationSerializer, UserLoginSerializer, ProfileSerializer
+from .serializers import UserRegistrationSerializer, UserLoginSerializer, ProfileSerializer,ApplicationSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.response import Response
-from .models import Profile
+from .models import Profile,Application
 from rest_framework.exceptions import NotAuthenticated
 
 
@@ -99,3 +99,20 @@ def upload_resume(request):
     profile.save()
 
     return Response({"resume_url": profile.resume.url}, status=200)
+
+# Create Application of the user which hits this view
+class ApplicationCreateView(generics.CreateAPIView):
+    serializer_class = ApplicationSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+# This class view display all the data of applied candidates
+class JobApplicationsListView(generics.ListAPIView):
+    serializer_class = ApplicationSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        job_id = self.kwargs["job_id"]
+        return Application.objects.filter(job_id=job_id)

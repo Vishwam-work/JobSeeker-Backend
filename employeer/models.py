@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.db import models
 from master import models as master
+from job_app.models import CustomUser
 
 STATUS_CHOICES = [
         ('active', 'Active'),
@@ -72,7 +73,15 @@ class JobPosting(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='active')
-    
+
 
     def __str__(self):
         return self.title
+
+class Answers(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="answers")
+    job = models.ForeignKey(JobPosting, on_delete=models.CASCADE, related_name="answers")
+    question_index = models.PositiveIntegerField()
+    answer_text = models.TextField()
+    class Meta:
+        unique_together = ('user', 'job', 'question_index')
