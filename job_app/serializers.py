@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
-from .models import Profile, Experience, Education, Certificate, Skill
+from .models import Profile, Experience, Education, Certificate, Skill,Application
 from master.models import Currency
 from  master.serializers import CountrySerializer, StateSerializer, CitySerializer, JobCategorySerializer, JobTitleSerializer, CurrencySerializer
 
@@ -117,3 +117,16 @@ class ProfileSerializer(serializers.ModelSerializer):
             Skill.objects.create(profile=instance, **skill)
 
         return instance
+
+class ApplicationSerializer(serializers.ModelSerializer):
+    user_name = serializers.CharField(source="user.full_name", read_only=True)
+    user_email = serializers.EmailField(source="user.email", read_only=True)
+    job_title = serializers.CharField(source="job.title", read_only=True)
+
+    class Meta:
+        model = Application
+        fields = [
+            "id", "job", "user", "cover_letter", "resume", "status", "applied_at",
+            "user_name", "user_email", "job_title"
+        ]
+        read_only_fields = ["user", "status"]

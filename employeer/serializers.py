@@ -45,6 +45,6 @@ class JobPostingSerializer(serializers.ModelSerializer):
             'id', 'company_user', 'title', 'category', 'job_title', 'company',
             'location', 'experience', 'salary', 'job_type', 'work_mode',
             'vacancies', 'application_deadline', 'description', 'requirements',
-            'benefits', 'skills', 'is_urgent', 'is_remote', 'created_at', 'updated_at','status'
+            'benefits', 'skills', 'is_urgent', 'is_remote','questions' ,'created_at', 'updated_at','status'
         ]
         read_only_fields = ('company_user', 'created_at', 'updated_at')
