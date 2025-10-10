@@ -1,9 +1,11 @@
 # serializers.py
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
-from .models import CompanyUser
+from django.db import transaction
+from .models import CompanyUser,JobPosting,Answer, Application
+from job_app.models import Profile
 from master.serializers import CountrySerializer,JobCategorySerializer
-
+from master.models import JobCategory,Country
 User = get_user_model()
 class CompanyUserSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(write_only=True)
@@ -37,6 +39,8 @@ from .models import JobPosting
 
 class JobPostingSerializer(serializers.ModelSerializer):
     company_user = serializers.ReadOnlyField(source='company_user.id')
+    # category = serializers.PrimaryKeyRelatedField(queryset=JobCategory.objects.all())
+    # location = serializers.PrimaryKeyRelatedField(queryset=City.objects.all())
     location = CountrySerializer(read_only=True)
     category = JobCategorySerializer(read_only=True)
     class Meta:
@@ -48,3 +52,190 @@ class JobPostingSerializer(serializers.ModelSerializer):
             'benefits', 'skills', 'is_urgent', 'is_remote','questions','created_at', 'updated_at','status'
         ]
         read_only_fields = ('company_user', 'created_at', 'updated_at')
+
+class AnswerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Answer
+        fields = ['id', 'job', 'question_index', 'answer_text']
+        read_only_fields = ['id']
+
+    def validate(self, attrs):
+        user = self.context['request'].user
+        job = attrs['job']
+        question_index = attrs['question_index']
+
+        # Check if question index is valid for this job
+        if question_index >= len(job.questions):
+            raise serializers.ValidationError("Invalid question index for this job.")
+
+        # Prevent duplicates
+        if Answer.objects.filter(user=user, job=job, question_index=question_index).exists():
+            raise serializers.ValidationError("You have already submitted an answer for this question.")
+
+        return attrs
+
+    def create(self, validated_data):
+        validated_data['user'] = self.context['request'].user
+        return super().create(validated_data)
+
+class ApplicationAnswerItemSerializer(serializers.Serializer):
+    question = serializers.CharField()
+    answer = serializers.CharField(allow_blank=True)
+
+class ApplicationSubmitSerializer(serializers.Serializer):
+    job_id = serializers.IntegerField()
+    answers = ApplicationAnswerItemSerializer(many=True, required=False)
+
+    def validate(self, attrs):
+        request = self.context.get('request')
+        user = getattr(request, 'user', None)
+        if user is None or not user.is_authenticated:
+            raise serializers.ValidationError("Authentication required")
+
+        try:
+            job = JobPosting.objects.get(id=attrs['job_id'])
+        except JobPosting.DoesNotExist:
+            raise serializers.ValidationError({"job_id": "Job not found"})
+
+        # Prevent duplicate application
+        if Application.objects.filter(user=user, job=job).exists():
+            raise serializers.ValidationError("You have already applied to this job.")
+
+        # Validate answers: if job has questions, ensure all answered
+        job_questions = list(job.questions or [])
+        provided = attrs.get('answers') or []
+        if len(job_questions) > 0:
+            if len(provided) != len(job_questions):
+                raise serializers.ValidationError("Please answer all questions before submitting.")
+
+            # Optionally verify mapping by text presence
+            job_question_set = set(job_questions)
+            for item in provided:
+                if item['question'] not in job_question_set:
+                    raise serializers.ValidationError({"answers": f"Unknown question: {item['question']}"})
+
+        attrs['job'] = job
+        attrs['user'] = user
+        return attrs
+
+    @transaction.atomic
+    def create(self, validated_data):
+        user = validated_data['user']
+        job = validated_data['job']
+        answers = validated_data.get('answers') or []
+
+        application = Application.objects.create(user=user, job=job)
+
+        if answers:
+            # Map question text to index
+            question_to_index = {q: idx for idx, q in enumerate(job.questions or [])}
+            answer_objects = []
+            for item in answers:
+                question_text = item.get('question')
+                answer_text = item.get('answer', '')
+                if question_text in question_to_index:
+                    answer_objects.append(
+                        Answer(
+                            user=user,
+                            job=job,
+                            question_index=question_to_index[question_text],
+                            answer_text=answer_text
+                        )
+                    )
+            if answer_objects:
+                Answer.objects.bulk_create(answer_objects, ignore_conflicts=True)
+
+        return application
+
+    def to_representation(self, instance):
+        return {
+            "id": instance.id,
+            "job": instance.job.id,
+            "applied_at": instance.applied_at,
+            "message": "Application submitted successfully"
+        }
+
+class ApplicationListAnswerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Answer
+        fields = [
+            'question_index',
+            'answer_text',
+        ]
+
+class ApplicationListItemSerializer(serializers.ModelSerializer):
+    job_title = serializers.CharField(source='job.title', read_only=True)
+    user_email = serializers.EmailField(source='user.email', read_only=True)
+    answers = serializers.SerializerMethodField()
+    profile = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Application
+        fields = ['id', 'job', 'job_title', 'user', 'user_email', 'applied_at', 'answers', 'profile']
+
+    def get_answers(self, obj):
+        answers = Answer.objects.filter(user=obj.user, job=obj.job).order_by('question_index')
+        job_questions = list(obj.job.questions or [])
+        # Enrich with question text
+        enriched = []
+        for a in answers:
+            q_text = job_questions[a.question_index] if a.question_index < len(job_questions) else None
+            enriched.append({
+                'question_index': a.question_index,
+                'question_text': q_text,
+                'answer_text': a.answer_text,
+            })
+        return enriched
+
+    def get_profile(self, obj):
+        profile = Profile.objects.filter(user=obj.user).first()
+        if not profile:
+            return None
+        # skills
+        skills = list(profile.skills.values_list('name', flat=True)) if hasattr(profile, 'skills') else []
+        # experiences
+        experiences = []
+        if hasattr(profile, 'experiences'):
+            for exp in profile.experiences.all().order_by('-start_date'):
+                experiences.append({
+                    'company': exp.company,
+                    'role': getattr(exp.job_title, 'title', None) if getattr(exp, 'job_title', None) else None,
+                    'start_date': exp.start_date,
+                    'end_date': exp.end_date,
+                    'description': exp.description,
+                })
+        # educations
+        educations = []
+        if hasattr(profile, 'educations'):
+            for edu in profile.educations.all().order_by('-year'):
+                educations.append({
+                    'degree': edu.degree,
+                    'field': edu.field,
+                    'institution': edu.institution,
+                    'year': edu.year,
+                    'grade': getattr(edu, 'percentage', None),
+                })
+        # certifications
+        certifications = []
+        if hasattr(profile, 'certifications'):
+            for cert in profile.certifications.all().order_by('-year'):
+                certifications.append({
+                    'name': cert.name,
+                    'issuer': cert.issuer,
+                    'year': cert.year,
+                })
+
+        return {
+            'full_name': profile.full_name,
+            'email': profile.email,
+            'phone': profile.phone,
+            'experience': profile.experience,
+            'resume': profile.resume.url if profile.resume else None,
+            'country': getattr(profile.country, 'name', None),
+            'state': getattr(profile.state, 'name', None),
+            'city': getattr(profile.city, 'name', None),
+            'skills': skills,
+            'experiences': experiences,
+            'educations': educations,
+            'certifications': certifications,
+        }

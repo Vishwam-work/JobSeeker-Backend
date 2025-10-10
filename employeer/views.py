@@ -4,8 +4,8 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import get_user_model, authenticate
-from .serializers import CompanyUserSerializer, CompanyLoginSerializer, JobPostingSerializer
-from .models import CompanyUser, JobPosting
+from .serializers import CompanyUserSerializer, CompanyLoginSerializer, JobPostingSerializer,AnswerSerializer, ApplicationSubmitSerializer, ApplicationListItemSerializer
+from .models import CompanyUser, JobPosting,Answer, Application
 from master.models import Country, State, City
 from rest_framework import generics,status, viewsets, permissions, serializers
 
@@ -150,3 +150,41 @@ class JobPostingDeleteView(generics.DestroyAPIView):
         """Limit the queryset so that a company user can only delete their own job postings."""
         company_user = CompanyUser.objects.get(user=self.request.user)
         return JobPosting.objects.filter(company_user=company_user)
+    
+class AnswerCreateView(generics.CreateAPIView):
+    queryset = Answer.objects.all()
+    serializer_class = AnswerSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def perform_create(self, serializer):
+        try:
+            user = self.request.user
+        except Exception:
+            return Response(
+                {"detail": "User not found."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        serializer.save(user=user)
+
+class ApplicationSubmitView(generics.CreateAPIView):
+    serializer_class = ApplicationSubmitSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        application = serializer.save()
+        return Response(serializer.to_representation(application), status=status.HTTP_201_CREATED)
+
+class EmployerApplicationsListView(generics.ListAPIView):
+    serializer_class = ApplicationListItemSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        # List applications for jobs belonging to the current employer
+        try:
+            company_user = CompanyUser.objects.get(user=self.request.user)
+        except CompanyUser.DoesNotExist:
+            return Application.objects.none()
+        jobs = JobPosting.objects.filter(company_user=company_user)
+        return Application.objects.filter(job__in=jobs).order_by('-applied_at')
