@@ -33,6 +33,6 @@ class JobTitleSerializer(serializers.ModelSerializer):
             fields = ['id', 'title', 'category']
 
 class CurrencySerializer(serializers.ModelSerializer):
-        class Meta:
+         class Meta:
             model = Currency
             fields = ['id', 'name', 'symbol']
