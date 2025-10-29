@@ -13,8 +13,11 @@ class CustomUserAdmin(UserAdmin):
         ('Additional Info', {'fields': ('full_name', 'mobile_number', 'work_status', 'receive_promotions')}),
     )
 
+class ProfileAdmin(admin.ModelAdmin):
+    raw_id_fields = ['user', 'country', 'state', 'city']
+
 admin.site.register(CustomUser, CustomUserAdmin)
-admin.site.register(Profile)
+admin.site.register(Profile, ProfileAdmin)
 admin.site.register(Experience)
 admin.site.register(Education)
 admin.site.register(Certificate)

@@ -3,6 +3,7 @@ from .models import CompanyUser, JobPosting, Application, Answer
 
 @admin.register(CompanyUser)
 class CompanyUserAdmin(admin.ModelAdmin):
+    raw_id_fields = ['user', 'country', 'state', 'city']
     list_display = (
         'company_name',
         'contact_person_name',

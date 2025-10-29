@@ -4,8 +4,8 @@ from django.contrib.auth import get_user_model
 from django.db import transaction
 from .models import CompanyUser,JobPosting,Answer, Application
 from job_app.models import Profile
-from master.serializers import CountrySerializer,JobCategorySerializer
-from master.models import JobCategory,Country
+from master.serializers import CountrySerializer,JobCategorySerializer,CurrencySerializer
+from master.models import JobCategory,Country,Currency
 User = get_user_model()
 class CompanyUserSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(write_only=True)
@@ -39,18 +39,16 @@ from .models import JobPosting
 
 class JobPostingSerializer(serializers.ModelSerializer):
     company_user = serializers.ReadOnlyField(source='company_user.id')
-    # category = serializers.PrimaryKeyRelatedField(queryset=JobCategory.objects.all())
-    # location = serializers.PrimaryKeyRelatedField(queryset=City.objects.all())
     location = CountrySerializer(read_only=True)
     category = JobCategorySerializer(read_only=True)
+    currency = CurrencySerializer(read_only=True)
+
+    category_id = serializers.IntegerField(write_only=True, required=False, allow_null=True)
+    location_id = serializers.IntegerField(write_only=True, required=False, allow_null=True)
+    currency_id = serializers.IntegerField(write_only=True, required=False, allow_null=True)
     class Meta:
         model = JobPosting
-        fields = [
-            'id', 'company_user', 'title', 'category', 'job_title', 'company',
-            'location', 'experience', 'salary', 'job_type', 'work_mode',
-            'vacancies', 'application_deadline', 'description', 'requirements',
-            'benefits', 'skills', 'is_urgent', 'is_remote','questions','created_at', 'updated_at','status'
-        ]
+        fields = '__all__'
         read_only_fields = ('company_user', 'created_at', 'updated_at')
 
 class AnswerSerializer(serializers.ModelSerializer):

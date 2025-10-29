@@ -53,13 +53,16 @@ class SkillSerializer(serializers.ModelSerializer):
         read_only_fields = ['profile']
 
 class ProfileSerializer(serializers.ModelSerializer):
-
     country = CountrySerializer(read_only=True)
     state = StateSerializer(read_only=True)
     city = CitySerializer(read_only=True)
-
     current_currency = CurrencySerializer(read_only=True)
     expected_currency = CurrencySerializer(read_only=True)
+    country_id = serializers.IntegerField(write_only=True, required=False, allow_null=True)
+    state_id = serializers.IntegerField(write_only=True, required=False, allow_null=True)
+    city_id = serializers.IntegerField(write_only=True, required=False, allow_null=True)
+    current_currency_id = serializers.IntegerField(write_only=True, required=False, allow_null=True)
+    expected_currency_id = serializers.IntegerField(write_only=True, required=False, allow_null=True)
 
     experiences = ExperienceSerializer(many=True, required=False)
     educations = EducationSerializer(many=True, required=False)
@@ -97,11 +100,9 @@ class ProfileSerializer(serializers.ModelSerializer):
         educations = validated_data.pop('educations', [])
         certifications = validated_data.pop('certifications', [])
         skills = validated_data.pop('skills', [])
-
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
         instance.save()
-
         instance.experiences.all().delete()
         instance.educations.all().delete()
         instance.certifications.all().delete()
