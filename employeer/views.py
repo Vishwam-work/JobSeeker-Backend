@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import get_user_model, authenticate
-from .serializers import CompanyUserSerializer, CompanyLoginSerializer, JobPostingSerializer,AnswerSerializer, ApplicationSubmitSerializer, ApplicationListItemSerializer
+from .serializers import CompanyUserSerializer, CompanyLoginSerializer, JobPostingSerializer,AnswerSerializer, ApplicationSubmitSerializer, ApplicationListItemSerializer,CompanyListSerializer, CompanyDetailSerializer, JobPostingSerializer
 from .models import CompanyUser, JobPosting,Answer, Application
 from master.models import Country, State, City
 from rest_framework import generics,status, viewsets, permissions, serializers
@@ -188,3 +188,31 @@ class EmployerApplicationsListView(generics.ListAPIView):
             return Application.objects.none()
         jobs = JobPosting.objects.filter(company_user=company_user)
         return Application.objects.filter(job__in=jobs).order_by('-applied_at')
+
+@api_view(['GET'])
+def company_list(request):
+    """List all companies"""
+    companies = CompanyUser.objects.select_related('country', 'state', 'city')
+    serializer = CompanyListSerializer(companies, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+def company_detail(request, pk):
+    """Get company details with job postings"""
+    try:
+        company = CompanyUser.objects.prefetch_related('job_postings').get(pk=pk)
+    except CompanyUser.DoesNotExist:
+        return Response({'error': 'Company not found'}, status=404)
+    serializer = CompanyDetailSerializer(company)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+def company_jobs(request, pk):
+    """Get jobs for a specific company"""
+    try:
+        company = CompanyUser.objects.get(pk=pk)
+    except CompanyUser.DoesNotExist:
+        return Response({'error': 'Company not found'}, status=404)
+    jobs = company.job_postings.filter(status='active')
+    serializer = JobPostingSerializer(jobs, many=True)
+    return Response(serializer.data)

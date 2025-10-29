@@ -237,3 +237,47 @@ class ApplicationListItemSerializer(serializers.ModelSerializer):
             'educations': educations,
             'certifications': certifications,
         }
+
+class JobPostingSerializer(serializers.ModelSerializer):
+    location = serializers.CharField(source='location.name', read_only=True)
+    category = serializers.CharField(source='category.name', read_only=True)
+    job_title = serializers.CharField(source='job_title.name', read_only=True)
+    currency = serializers.CharField(source='currency.code', read_only=True)
+    class Meta:
+        model = JobPosting
+        fields = [
+            'id', 'title', 'category', 'job_title', 'company',
+            'location', 'experience', 'currency', 'salary',
+            'job_type', 'work_mode', 'vacancies', 'application_deadline',
+            'description', 'requirements', 'benefits', 'skills',
+            'is_urgent', 'is_remote', 'created_at', 'status'
+        ]
+
+class CompanyListSerializer(serializers.ModelSerializer):
+    job_count = serializers.SerializerMethodField()
+    country = serializers.CharField(source='country.name', read_only=True)
+    state = serializers.CharField(source='state.name', read_only=True)
+    city = serializers.CharField(source='city.name', read_only=True)
+    class Meta:
+        model = CompanyUser
+        fields = [
+            'id', 'company_name', 'company_type', 'industry',
+            'company_size', 'website', 'description',
+            'country', 'state', 'city', 'job_count'
+        ]
+
+    def get_job_count(self, obj):
+        return obj.job_postings.filter(status='active').count()
+class CompanyDetailSerializer(serializers.ModelSerializer):
+    job_postings = JobPostingSerializer(many=True, read_only=True)
+    country = serializers.CharField(source='country.name', read_only=True)
+    state = serializers.CharField(source='state.name', read_only=True)
+    city = serializers.CharField(source='city.name', read_only=True)
+    class Meta:
+        model = CompanyUser
+        fields = [
+            'id', 'company_name', 'company_type', 'industry',
+            'company_size', 'website', 'description', 'address',
+            'country', 'state', 'city', 'pincode', 'phone',
+            'contact_person_name', 'designation', 'job_postings'
+        ]
