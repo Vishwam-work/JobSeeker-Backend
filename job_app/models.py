@@ -8,7 +8,6 @@ class CustomUser(AbstractUser):
     WORK_STATUS_CHOICES = [
         ('fresher', 'Fresher'),
         ('experienced', 'Experienced'),
-
     ]
 
     full_name = models.CharField(max_length=255)

@@ -53,14 +53,11 @@ class SkillSerializer(serializers.ModelSerializer):
         read_only_fields = ['profile']
 
 class ProfileSerializer(serializers.ModelSerializer):
-
     country = CountrySerializer(read_only=True)
     state = StateSerializer(read_only=True)
     city = CitySerializer(read_only=True)
-
     current_currency = CurrencySerializer(read_only=True)
     expected_currency = CurrencySerializer(read_only=True)
-
     experiences = ExperienceSerializer(many=True, required=False)
     educations = EducationSerializer(many=True, required=False)
     certifications = CertificateSerializer(many=True, required=False)

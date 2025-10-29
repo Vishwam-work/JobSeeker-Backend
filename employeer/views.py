@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import get_user_model, authenticate
-from .serializers import CompanyUserSerializer, CompanyLoginSerializer, JobPostingSerializer,AnswerSerializer, ApplicationSubmitSerializer, ApplicationListItemSerializer
+from .serializers import CompanyUserSerializer, CompanyLoginSerializer, JobPostingSerializer,AnswerSerializer, ApplicationSubmitSerializer, ApplicationListItemSerializer,CompanySerialiser
 from .models import CompanyUser, JobPosting,Answer, Application
 from master.models import Country, State, City
 from rest_framework import generics,status, viewsets, permissions, serializers
@@ -188,3 +188,10 @@ class EmployerApplicationsListView(generics.ListAPIView):
             return Application.objects.none()
         jobs = JobPosting.objects.filter(company_user=company_user)
         return Application.objects.filter(job__in=jobs).order_by('-applied_at')
+    
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def all_companies(request):
+    companies = CompanyUser.objects.all()
+    serializer = CompanySerialiser(companies, many=True)
+    return Response(serializer.data)

@@ -5,7 +5,10 @@ from django.db import transaction
 from .models import CompanyUser,JobPosting,Answer, Application
 from job_app.models import Profile
 from master.serializers import CountrySerializer,JobCategorySerializer
-from master.models import JobCategory,Country
+from master.models import JobCategory,Country,City
+from rest_framework import serializers
+from .models import JobPosting
+
 User = get_user_model()
 class CompanyUserSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(write_only=True)
@@ -34,24 +37,28 @@ class CompanyLoginSerializer(serializers.Serializer):
     email = serializers.EmailField()
     password = serializers.CharField()
 
-from rest_framework import serializers
-from .models import JobPosting
-
 class JobPostingSerializer(serializers.ModelSerializer):
     company_user = serializers.ReadOnlyField(source='company_user.id')
-    # category = serializers.PrimaryKeyRelatedField(queryset=JobCategory.objects.all())
-    # location = serializers.PrimaryKeyRelatedField(queryset=City.objects.all())
-    location = CountrySerializer(read_only=True)
-    category = JobCategorySerializer(read_only=True)
+
+    # Accept IDs for write, but return nested data for read
+    category = serializers.PrimaryKeyRelatedField(
+        queryset=JobCategory.objects.all()
+    )
+    location = serializers.PrimaryKeyRelatedField(
+        queryset=City.objects.all()
+    )
+
     class Meta:
         model = JobPosting
         fields = [
             'id', 'company_user', 'title', 'category', 'job_title', 'company',
             'location', 'experience', 'salary', 'job_type', 'work_mode',
             'vacancies', 'application_deadline', 'description', 'requirements',
-            'benefits', 'skills', 'is_urgent', 'is_remote','questions','created_at', 'updated_at','status'
+            'benefits', 'skills', 'is_urgent', 'is_remote','questions',
+            'created_at', 'updated_at','status'
         ]
         read_only_fields = ('company_user', 'created_at', 'updated_at')
+
 
 class AnswerSerializer(serializers.ModelSerializer):
     class Meta:
@@ -239,3 +246,8 @@ class ApplicationListItemSerializer(serializers.ModelSerializer):
             'educations': educations,
             'certifications': certifications,
         }
+
+class CompanySerialiser(serializers.ModelSerializer):
+    class Meta:
+        model = CompanyUser
+        fields = '__all__'

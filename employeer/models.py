@@ -72,11 +72,11 @@ class JobPosting(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='active')
-    
+
 
     def __str__(self):
         return self.title
-    
+
 class Answer(models.Model):
     user = models.ForeignKey(job_app.CustomUser, on_delete=models.CASCADE, related_name='answers')
     job = models.ForeignKey(JobPosting, on_delete=models.CASCADE, related_name='answers')

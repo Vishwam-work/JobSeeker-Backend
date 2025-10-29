@@ -12,6 +12,7 @@ path('api/all-jobs/', views.AllJobsListView.as_view(), name='all-jobs'),
 path('job-postings/<int:pk>/update/', views.JobPostingUpdateView.as_view(), name='job-update'),
 path('job-postings/<int:pk>/delete/', views.JobPostingDeleteView.as_view(), name='job-delete'),
 path('save-answers/', views.AnswerCreateView.as_view(), name='save-answers'),
-    path('api/applications/submit/', views.ApplicationSubmitView.as_view(), name='application-submit'),
-    path('api/employer/applications/', views.EmployerApplicationsListView.as_view(), name='employer-applications-list'),
+path('api/applications/submit/', views.ApplicationSubmitView.as_view(), name='application-submit'),
+path('api/employer/applications/', views.EmployerApplicationsListView.as_view(), name='employer-applications-list'),
+path('api/companies/', views.all_companies, name='all_companies')
 ]
