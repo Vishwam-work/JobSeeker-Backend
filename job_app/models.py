@@ -48,6 +48,8 @@ class Experience(models.Model):
     category = models.ForeignKey(master.JobCategory, on_delete=models.SET_NULL, blank=True, null=True)
     location = models.ForeignKey(master.Country, on_delete=models.SET_NULL, blank=True, null=True)
     description = models.TextField(blank=True)
+    def __str__(self):
+        return f"{self.profile.user.full_name}'s Experience"
 
 class Education(models.Model):
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='educations')
@@ -56,13 +58,20 @@ class Education(models.Model):
     institution = models.CharField(max_length=255)
     year = models.CharField(max_length=10)
     percentage = models.CharField(max_length=20, blank=True)
+    def __str__(self):
+        return f"{self.profile.user.full_name}'s Education"
 
 class Certificate(models.Model):
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='certifications')
     name = models.CharField(max_length=255)
     issuer = models.CharField(max_length=255)
     year = models.CharField(max_length=10)
+    def __str__(self):
+        return f"{self.profile.user.full_name}'s Certificate"
 
 class Skill(models.Model):
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='skills')
     name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return f"{self.profile.user.full_name}'s Skill"

@@ -44,6 +44,8 @@ class JobCategoryList(generics.ListAPIView):
 class JobTitleList(generics.ListAPIView):
     serializer_class = JobTitleSerializer
     def get_queryset(self):
+        if self.request.query_params.get('category') is None:
+            return JobTitle.objects.all()
         category = self.request.query_params.get('category')
         return JobTitle.objects.filter(category=category)
     permission_classes  = []
