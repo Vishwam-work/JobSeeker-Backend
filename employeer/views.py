@@ -116,7 +116,6 @@ class AllJobsListView(generics.ListAPIView):
     queryset = JobPosting.objects.filter(status='active').order_by('-created_at')
 
     def get_queryset(self):
-
         queryset = JobPosting.objects.filter(status='active').order_by('-created_at')
         job_type = self.request.query_params.get('job_type', None)
         work_mode = self.request.query_params.get('work_mode', None)

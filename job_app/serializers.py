@@ -32,6 +32,8 @@ class ExperienceSerializer(serializers.ModelSerializer):
     category_id = serializers.IntegerField(write_only=True, required=False, allow_null=True)
     location_id = serializers.IntegerField(write_only=True, required=False, allow_null=True)
     job_title_id = serializers.IntegerField(write_only=True, required=False, allow_null=True)
+    job_title = JobTitleSerializer(read_only=True)
+    category = JobCategorySerializer(read_only=True)
     class Meta:
         model = Experience
         fields = '__all__'
