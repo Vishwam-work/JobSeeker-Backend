@@ -43,7 +43,7 @@ class JobPosting(models.Model):
     category = models.ForeignKey(master.JobCategory, on_delete=models.SET_NULL, null=True, blank=True)
     job_title = models.ForeignKey(master.JobTitle, on_delete=models.SET_NULL, null=True, blank=True)
     company = models.CharField(max_length=255)
-    location = models.ForeignKey(master.City, on_delete=models.SET_NULL, null=True, blank=True)
+    location = models.ForeignKey(master.Country, on_delete=models.SET_NULL, null=True, blank=True)
     experience = models.CharField(max_length=50)
     currency = models.ForeignKey(master.Currency, on_delete=models.SET_NULL, blank=True, null=True, related_name="currency")
     salary = models.CharField(max_length=50, blank=True, null=True)

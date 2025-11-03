@@ -42,13 +42,13 @@ class JobPostingSerializer(serializers.ModelSerializer):
     location = CountrySerializer(read_only=True)
     category = JobCategorySerializer(read_only=True)
     currency = CurrencySerializer(read_only=True)
-
+    questions = serializers.JSONField(required=False)
     category_id = serializers.IntegerField(write_only=True, required=False, allow_null=True)
     location_id = serializers.IntegerField(write_only=True, required=False, allow_null=True)
     currency_id = serializers.IntegerField(write_only=True, required=False, allow_null=True)
     class Meta:
         model = JobPosting
-        fields = '__all__'
+        fields = '__all__'  
         read_only_fields = ('company_user', 'created_at', 'updated_at')
 
 class AnswerSerializer(serializers.ModelSerializer):
@@ -238,20 +238,7 @@ class ApplicationListItemSerializer(serializers.ModelSerializer):
             'certifications': certifications,
         }
 
-class JobPostingSerializer(serializers.ModelSerializer):
-    location = serializers.CharField(source='location.name', read_only=True)
-    category = serializers.CharField(source='category.name', read_only=True)
-    job_title = serializers.CharField(source='job_title.name', read_only=True)
-    currency = serializers.CharField(source='currency.code', read_only=True)
-    class Meta:
-        model = JobPosting
-        fields = [
-            'id', 'title', 'category', 'job_title', 'company',
-            'location', 'experience', 'currency', 'salary',
-            'job_type', 'work_mode', 'vacancies', 'application_deadline',
-            'description', 'requirements', 'benefits', 'skills',
-            'is_urgent', 'is_remote', 'created_at', 'status'
-        ]
+
 
 class CompanyListSerializer(serializers.ModelSerializer):
     job_count = serializers.SerializerMethodField()
