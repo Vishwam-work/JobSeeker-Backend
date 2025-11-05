@@ -3,7 +3,6 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.conf import settings
 from master import models as master
-
 class CustomUser(AbstractUser):
     WORK_STATUS_CHOICES = [
         ('fresher', 'Fresher'),
@@ -75,3 +74,15 @@ class Skill(models.Model):
 
     def __str__(self):
         return f"{self.profile.user.full_name}'s Skill"
+    
+
+class SavedJob(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='saved_jobs')
+    job = models.ForeignKey("employeer.JobPosting", on_delete=models.CASCADE)
+    saved_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'job')
+        
+    def __str__(self):
+        return f"{self.user.username} saved {self.job.title}"

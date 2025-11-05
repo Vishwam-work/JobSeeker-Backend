@@ -1,7 +1,8 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
-from .models import Profile, Experience, Education, Certificate, Skill
+from .models import Profile, Experience, Education, Certificate, Skill, SavedJob
+from employeer.models import JobPosting
 from master.models import Currency
 from  master.serializers import CountrySerializer, StateSerializer, CitySerializer, JobCategorySerializer, JobTitleSerializer, CurrencySerializer
 
@@ -123,3 +124,24 @@ class ProfileSerializer(serializers.ModelSerializer):
             Skill.objects.create(profile=instance, **skill)
 
         return instance
+
+class SavedJobSerializer(serializers.ModelSerializer):
+    job_title = serializers.CharField(source="job.title", read_only=True)
+
+    class Meta:
+        model = SavedJob
+        fields = ["id", "user", "job", "job_title", "saved_at"]
+        read_only_fields = ["user", "saved_at"]
+
+    def validate_job(self, value):
+        if not JobPosting.objects.filter(id=value.id).exists():
+            raise serializers.ValidationError("Job does not exist.")
+        return value
+
+    def create(self, validated_data):
+        user = self.context["request"].user
+        job = validated_data["job"]
+        saved, created = SavedJob.objects.get_or_create(user=user, job=job)
+        if not created:
+            raise serializers.ValidationError("Already saved.")
+        return saved

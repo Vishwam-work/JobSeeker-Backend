@@ -10,4 +10,6 @@ urlpatterns = [
     path('api/login/', views.login, name='login'),
     path('api/profile/', views.ProfileDetail.as_view(), name='profile-detail'),
     path("api/profile/upload-resume/", views.upload_resume, name="upload-resume"),
-]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    path('api/saved-jobs/', views.SavedJobListCreateView.as_view(), name='saved-jobs-list-create'),
+    path('api/saved-jobs/<int:pk>/', views.SavedJobDeleteView.as_view(), name='saved-jobs-delete'),
+]+static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
