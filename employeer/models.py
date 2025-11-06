@@ -93,6 +93,6 @@ class Application(models.Model):
     user = models.ForeignKey(job_app.CustomUser, on_delete=models.CASCADE, related_name='applications')
     job = models.ForeignKey(JobPosting, on_delete=models.CASCADE, related_name='applications')
     applied_at = models.DateTimeField(auto_now_add=True)
-
+#is_selected
     class Meta:
         unique_together = ('user', 'job')
