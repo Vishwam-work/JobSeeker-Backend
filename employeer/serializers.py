@@ -46,6 +46,7 @@ class JobPostingSerializer(serializers.ModelSerializer):
     category_id = serializers.IntegerField(write_only=True, required=False, allow_null=True)
     location_id = serializers.IntegerField(write_only=True, required=False, allow_null=True)
     currency_id = serializers.IntegerField(write_only=True, required=False, allow_null=True)
+    
     class Meta:
         model = JobPosting
         fields = '__all__'  

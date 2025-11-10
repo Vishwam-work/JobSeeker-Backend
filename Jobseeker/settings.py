@@ -60,15 +60,14 @@ MIDDLEWARE = [
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
-    "http://127.0.0.1:8010",
+    "https://jobseeker-backend-jy1y.onrender.com",
     'https://jobseeker-backend-jy1y.onrender.com',
 ]
 
 # CSRF Trusted Origins for production
 CSRF_TRUSTED_ORIGINS = [
-    "http://127.0.0.1:8010",
+    "https://jobseeker-backend-jy1y.onrender.com",
     "http://localhost:3000",
-    'https://jobseeker-backend-jy1y.onrender.com',
 ]
 
 ROOT_URLCONF = 'Jobseeker.urls'
