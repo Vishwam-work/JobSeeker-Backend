@@ -9,8 +9,6 @@ from rest_framework.response import Response
 from .models import Profile,SavedJob
 from rest_framework.exceptions import NotAuthenticated
 
-
-
 User = get_user_model()
 
 @api_view(['POST'])
@@ -36,6 +34,7 @@ def register(request):
         }, status=status.HTTP_201_CREATED)
 
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 @api_view(['POST'])
 @permission_classes([AllowAny])

@@ -3,6 +3,7 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.conf import settings
 from master import models as master
+
 class CustomUser(AbstractUser):
     WORK_STATUS_CHOICES = [
         ('fresher', 'Fresher'),
