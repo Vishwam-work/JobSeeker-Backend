@@ -6,6 +6,12 @@ STATUS_CHOICES = [
         ('active', 'Active'),
         ('closed', 'Closed'),
     ]
+APPLICATION_CHOICES=[
+    ('shortlisted', 'Shortlisted'),
+    ('Rejected', 'Rejected'),
+    ('interview', 'Interview'),
+    ('Under Review', 'Under Review'),
+]
 
 class CompanyUser(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
@@ -93,6 +99,7 @@ class Application(models.Model):
     user = models.ForeignKey(job_app.CustomUser, on_delete=models.CASCADE, related_name='applications')
     job = models.ForeignKey(JobPosting, on_delete=models.CASCADE, related_name='applications')
     applied_at = models.DateTimeField(auto_now_add=True)
+    application_status = models.CharField(max_length=20, choices=APPLICATION_CHOICES, default='Under Review')
 #is_selected
     class Meta:
         unique_together = ('user', 'job')

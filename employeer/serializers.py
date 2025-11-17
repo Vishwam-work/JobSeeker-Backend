@@ -170,7 +170,7 @@ class ApplicationListItemSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Application
-        fields = ['id', 'job', 'job_title', 'user', 'user_email', 'applied_at', 'answers', 'profile']
+        fields = ['id', 'job', 'job_title', 'user', 'user_email', 'applied_at', 'answers', 'profile', 'application_status']
 
     def get_answers(self, obj):
         answers = Answer.objects.filter(user=obj.user, job=obj.job).order_by('question_index')
