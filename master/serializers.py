@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Country, State, City, Company, JobCategory, JobTitle, Currency
+from .models import Country, State, City, Company, JobCategory, JobTitle, Currency, Major, MajorCategory
 
 
 class CountrySerializer(serializers.ModelSerializer):
@@ -36,3 +36,20 @@ class CurrencySerializer(serializers.ModelSerializer):
          class Meta:
             model = Currency
             fields = ['id', 'name', 'symbol']
+
+class MajorCategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MajorCategory
+        fields = ["id", "name"]
+
+
+class MajorSerializer(serializers.ModelSerializer):
+    category = MajorCategorySerializer(read_only=True)
+    category_id = serializers.PrimaryKeyRelatedField(
+        queryset=MajorCategory.objects.all(),
+        source="category",
+        write_only=True
+    )
+    class Meta:
+        model = Major
+        fields = ["id", "code", "name", "category", "category_id"]

@@ -1,0 +1,1687 @@
+[
+    {
+        "model": "master.majorcategory",
+        "pk": 1,
+        "fields": {
+            "name": "Agriculture & Natural Resources"
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 1,
+        "fields": {
+            "code": "1100",
+            "name": "GENERAL AGRICULTURE",
+            "category": 1
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 2,
+        "fields": {
+            "code": "1101",
+            "name": "AGRICULTURE PRODUCTION AND MANAGEMENT",
+            "category": 1
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 3,
+        "fields": {
+            "code": "1102",
+            "name": "AGRICULTURAL ECONOMICS",
+            "category": 1
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 4,
+        "fields": {
+            "code": "1103",
+            "name": "ANIMAL SCIENCES",
+            "category": 1
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 5,
+        "fields": {
+            "code": "1104",
+            "name": "FOOD SCIENCE",
+            "category": 1
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 6,
+        "fields": {
+            "code": "1105",
+            "name": "PLANT SCIENCE AND AGRONOMY",
+            "category": 1
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 7,
+        "fields": {
+            "code": "1106",
+            "name": "SOIL SCIENCE",
+            "category": 1
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 8,
+        "fields": {
+            "code": "1199",
+            "name": "MISCELLANEOUS AGRICULTURE",
+            "category": 1
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 9,
+        "fields": {
+            "code": "1302",
+            "name": "FORESTRY",
+            "category": 1
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 10,
+        "fields": {
+            "code": "1303",
+            "name": "NATURAL RESOURCES MANAGEMENT",
+            "category": 1
+        }
+    },
+    {
+        "model": "master.majorcategory",
+        "pk": 2,
+        "fields": {
+            "name": "Arts"
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 11,
+        "fields": {
+            "code": "6000",
+            "name": "FINE ARTS",
+            "category": 2
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 12,
+        "fields": {
+            "code": "6001",
+            "name": "DRAMA AND THEATER ARTS",
+            "category": 2
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 13,
+        "fields": {
+            "code": "6002",
+            "name": "MUSIC",
+            "category": 2
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 14,
+        "fields": {
+            "code": "6003",
+            "name": "VISUAL AND PERFORMING ARTS",
+            "category": 2
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 15,
+        "fields": {
+            "code": "6004",
+            "name": "COMMERCIAL ART AND GRAPHIC DESIGN",
+            "category": 2
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 16,
+        "fields": {
+            "code": "6005",
+            "name": "FILM VIDEO AND PHOTOGRAPHIC ARTS",
+            "category": 2
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 17,
+        "fields": {
+            "code": "6007",
+            "name": "STUDIO ARTS",
+            "category": 2
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 18,
+        "fields": {
+            "code": "6099",
+            "name": "MISCELLANEOUS FINE ARTS",
+            "category": 2
+        }
+    },
+    {
+        "model": "master.majorcategory",
+        "pk": 3,
+        "fields": {
+            "name": "Biology & Life Science"
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 19,
+        "fields": {
+            "code": "1301",
+            "name": "ENVIRONMENTAL SCIENCE",
+            "category": 3
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 20,
+        "fields": {
+            "code": "3600",
+            "name": "BIOLOGY",
+            "category": 3
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 21,
+        "fields": {
+            "code": "3601",
+            "name": "BIOCHEMICAL SCIENCES",
+            "category": 3
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 22,
+        "fields": {
+            "code": "3602",
+            "name": "BOTANY",
+            "category": 3
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 23,
+        "fields": {
+            "code": "3603",
+            "name": "MOLECULAR BIOLOGY",
+            "category": 3
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 24,
+        "fields": {
+            "code": "3604",
+            "name": "ECOLOGY",
+            "category": 3
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 25,
+        "fields": {
+            "code": "3605",
+            "name": "GENETICS",
+            "category": 3
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 26,
+        "fields": {
+            "code": "3606",
+            "name": "MICROBIOLOGY",
+            "category": 3
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 27,
+        "fields": {
+            "code": "3607",
+            "name": "PHARMACOLOGY",
+            "category": 3
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 28,
+        "fields": {
+            "code": "3608",
+            "name": "PHYSIOLOGY",
+            "category": 3
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 29,
+        "fields": {
+            "code": "3609",
+            "name": "ZOOLOGY",
+            "category": 3
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 30,
+        "fields": {
+            "code": "3611",
+            "name": "NEUROSCIENCE",
+            "category": 3
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 31,
+        "fields": {
+            "code": "3699",
+            "name": "MISCELLANEOUS BIOLOGY",
+            "category": 3
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 32,
+        "fields": {
+            "code": "4006",
+            "name": "COGNITIVE SCIENCE AND BIOPSYCHOLOGY",
+            "category": 3
+        }
+    },
+    {
+        "model": "master.majorcategory",
+        "pk": 4,
+        "fields": {
+            "name": "Business"
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 33,
+        "fields": {
+            "code": "6200",
+            "name": "GENERAL BUSINESS",
+            "category": 4
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 34,
+        "fields": {
+            "code": "6201",
+            "name": "ACCOUNTING",
+            "category": 4
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 35,
+        "fields": {
+            "code": "6202",
+            "name": "ACTUARIAL SCIENCE",
+            "category": 4
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 36,
+        "fields": {
+            "code": "6203",
+            "name": "BUSINESS MANAGEMENT AND ADMINISTRATION",
+            "category": 4
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 37,
+        "fields": {
+            "code": "6204",
+            "name": "OPERATIONS LOGISTICS AND E-COMMERCE",
+            "category": 4
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 38,
+        "fields": {
+            "code": "6205",
+            "name": "BUSINESS ECONOMICS",
+            "category": 4
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 39,
+        "fields": {
+            "code": "6206",
+            "name": "MARKETING AND MARKETING RESEARCH",
+            "category": 4
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 40,
+        "fields": {
+            "code": "6207",
+            "name": "FINANCE",
+            "category": 4
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 41,
+        "fields": {
+            "code": "6209",
+            "name": "HUMAN RESOURCES AND PERSONNEL MANAGEMENT",
+            "category": 4
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 42,
+        "fields": {
+            "code": "6210",
+            "name": "INTERNATIONAL BUSINESS",
+            "category": 4
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 43,
+        "fields": {
+            "code": "6211",
+            "name": "HOSPITALITY MANAGEMENT",
+            "category": 4
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 44,
+        "fields": {
+            "code": "6212",
+            "name": "MANAGEMENT INFORMATION SYSTEMS AND STATISTICS",
+            "category": 4
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 45,
+        "fields": {
+            "code": "6299",
+            "name": "MISCELLANEOUS BUSINESS & MEDICAL ADMINISTRATION",
+            "category": 4
+        }
+    },
+    {
+        "model": "master.majorcategory",
+        "pk": 5,
+        "fields": {
+            "name": "Communications & Journalism"
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 46,
+        "fields": {
+            "code": "1901",
+            "name": "COMMUNICATIONS",
+            "category": 5
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 47,
+        "fields": {
+            "code": "1902",
+            "name": "JOURNALISM",
+            "category": 5
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 48,
+        "fields": {
+            "code": "1903",
+            "name": "MASS MEDIA",
+            "category": 5
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 49,
+        "fields": {
+            "code": "1904",
+            "name": "ADVERTISING AND PUBLIC RELATIONS",
+            "category": 5
+        }
+    },
+    {
+        "model": "master.majorcategory",
+        "pk": 6,
+        "fields": {
+            "name": "Computers & Mathematics"
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 50,
+        "fields": {
+            "code": "2001",
+            "name": "COMMUNICATION TECHNOLOGIES",
+            "category": 6
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 51,
+        "fields": {
+            "code": "2100",
+            "name": "COMPUTER AND INFORMATION SYSTEMS",
+            "category": 6
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 52,
+        "fields": {
+            "code": "2101",
+            "name": "COMPUTER PROGRAMMING AND DATA PROCESSING",
+            "category": 6
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 53,
+        "fields": {
+            "code": "2102",
+            "name": "COMPUTER SCIENCE",
+            "category": 6
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 54,
+        "fields": {
+            "code": "2105",
+            "name": "INFORMATION SCIENCES",
+            "category": 6
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 55,
+        "fields": {
+            "code": "2106",
+            "name": "COMPUTER ADMINISTRATION MANAGEMENT AND SECURITY",
+            "category": 6
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 56,
+        "fields": {
+            "code": "2107",
+            "name": "COMPUTER NETWORKING AND TELECOMMUNICATIONS",
+            "category": 6
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 57,
+        "fields": {
+            "code": "3700",
+            "name": "MATHEMATICS",
+            "category": 6
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 58,
+        "fields": {
+            "code": "3701",
+            "name": "APPLIED MATHEMATICS",
+            "category": 6
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 59,
+        "fields": {
+            "code": "3702",
+            "name": "STATISTICS AND DECISION SCIENCE",
+            "category": 6
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 60,
+        "fields": {
+            "code": "4005",
+            "name": "MATHEMATICS AND COMPUTER SCIENCE",
+            "category": 6
+        }
+    },
+    {
+        "model": "master.majorcategory",
+        "pk": 7,
+        "fields": {
+            "name": "Education"
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 61,
+        "fields": {
+            "code": "2300",
+            "name": "GENERAL EDUCATION",
+            "category": 7
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 62,
+        "fields": {
+            "code": "2301",
+            "name": "EDUCATIONAL ADMINISTRATION AND SUPERVISION",
+            "category": 7
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 63,
+        "fields": {
+            "code": "2303",
+            "name": "SCHOOL STUDENT COUNSELING",
+            "category": 7
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 64,
+        "fields": {
+            "code": "2304",
+            "name": "ELEMENTARY EDUCATION",
+            "category": 7
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 65,
+        "fields": {
+            "code": "2305",
+            "name": "MATHEMATICS TEACHER EDUCATION",
+            "category": 7
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 66,
+        "fields": {
+            "code": "2306",
+            "name": "PHYSICAL AND HEALTH EDUCATION TEACHING",
+            "category": 7
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 67,
+        "fields": {
+            "code": "2307",
+            "name": "EARLY CHILDHOOD EDUCATION",
+            "category": 7
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 68,
+        "fields": {
+            "code": "2308",
+            "name": "SCIENCE AND COMPUTER TEACHER EDUCATION",
+            "category": 7
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 69,
+        "fields": {
+            "code": "2309",
+            "name": "SECONDARY TEACHER EDUCATION",
+            "category": 7
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 70,
+        "fields": {
+            "code": "2310",
+            "name": "SPECIAL NEEDS EDUCATION",
+            "category": 7
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 71,
+        "fields": {
+            "code": "2311",
+            "name": "SOCIAL SCIENCE OR HISTORY TEACHER EDUCATION",
+            "category": 7
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 72,
+        "fields": {
+            "code": "2312",
+            "name": "TEACHER EDUCATION: MULTIPLE LEVELS",
+            "category": 7
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 73,
+        "fields": {
+            "code": "2313",
+            "name": "LANGUAGE AND DRAMA EDUCATION",
+            "category": 7
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 74,
+        "fields": {
+            "code": "2314",
+            "name": "ART AND MUSIC EDUCATION",
+            "category": 7
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 75,
+        "fields": {
+            "code": "2399",
+            "name": "MISCELLANEOUS EDUCATION",
+            "category": 7
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 76,
+        "fields": {
+            "code": "3501",
+            "name": "LIBRARY SCIENCE",
+            "category": 7
+        }
+    },
+    {
+        "model": "master.majorcategory",
+        "pk": 8,
+        "fields": {
+            "name": "Engineering"
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 77,
+        "fields": {
+            "code": "1401",
+            "name": "ARCHITECTURE",
+            "category": 8
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 78,
+        "fields": {
+            "code": "2400",
+            "name": "GENERAL ENGINEERING",
+            "category": 8
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 79,
+        "fields": {
+            "code": "2401",
+            "name": "AEROSPACE ENGINEERING",
+            "category": 8
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 80,
+        "fields": {
+            "code": "2402",
+            "name": "BIOLOGICAL ENGINEERING",
+            "category": 8
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 81,
+        "fields": {
+            "code": "2403",
+            "name": "ARCHITECTURAL ENGINEERING",
+            "category": 8
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 82,
+        "fields": {
+            "code": "2404",
+            "name": "BIOMEDICAL ENGINEERING",
+            "category": 8
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 83,
+        "fields": {
+            "code": "2405",
+            "name": "CHEMICAL ENGINEERING",
+            "category": 8
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 84,
+        "fields": {
+            "code": "2406",
+            "name": "CIVIL ENGINEERING",
+            "category": 8
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 85,
+        "fields": {
+            "code": "2407",
+            "name": "COMPUTER ENGINEERING",
+            "category": 8
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 86,
+        "fields": {
+            "code": "2408",
+            "name": "ELECTRICAL ENGINEERING",
+            "category": 8
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 87,
+        "fields": {
+            "code": "2409",
+            "name": "ENGINEERING MECHANICS PHYSICS AND SCIENCE",
+            "category": 8
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 88,
+        "fields": {
+            "code": "2410",
+            "name": "ENVIRONMENTAL ENGINEERING",
+            "category": 8
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 89,
+        "fields": {
+            "code": "2411",
+            "name": "GEOLOGICAL AND GEOPHYSICAL ENGINEERING",
+            "category": 8
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 90,
+        "fields": {
+            "code": "2412",
+            "name": "INDUSTRIAL AND MANUFACTURING ENGINEERING",
+            "category": 8
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 91,
+        "fields": {
+            "code": "2413",
+            "name": "MATERIALS ENGINEERING AND MATERIALS SCIENCE",
+            "category": 8
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 92,
+        "fields": {
+            "code": "2414",
+            "name": "MECHANICAL ENGINEERING",
+            "category": 8
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 93,
+        "fields": {
+            "code": "2415",
+            "name": "METALLURGICAL ENGINEERING",
+            "category": 8
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 94,
+        "fields": {
+            "code": "2416",
+            "name": "MINING AND MINERAL ENGINEERING",
+            "category": 8
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 95,
+        "fields": {
+            "code": "2417",
+            "name": "NAVAL ARCHITECTURE AND MARINE ENGINEERING",
+            "category": 8
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 96,
+        "fields": {
+            "code": "2418",
+            "name": "NUCLEAR ENGINEERING",
+            "category": 8
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 97,
+        "fields": {
+            "code": "2419",
+            "name": "PETROLEUM ENGINEERING",
+            "category": 8
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 98,
+        "fields": {
+            "code": "2499",
+            "name": "MISCELLANEOUS ENGINEERING",
+            "category": 8
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 99,
+        "fields": {
+            "code": "2500",
+            "name": "ENGINEERING TECHNOLOGIES",
+            "category": 8
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 100,
+        "fields": {
+            "code": "2501",
+            "name": "ENGINEERING AND INDUSTRIAL MANAGEMENT",
+            "category": 8
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 101,
+        "fields": {
+            "code": "2502",
+            "name": "ELECTRICAL ENGINEERING TECHNOLOGY",
+            "category": 8
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 102,
+        "fields": {
+            "code": "2503",
+            "name": "INDUSTRIAL PRODUCTION TECHNOLOGIES",
+            "category": 8
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 103,
+        "fields": {
+            "code": "2504",
+            "name": "MECHANICAL ENGINEERING RELATED TECHNOLOGIES",
+            "category": 8
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 104,
+        "fields": {
+            "code": "2599",
+            "name": "MISCELLANEOUS ENGINEERING TECHNOLOGIES",
+            "category": 8
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 105,
+        "fields": {
+            "code": "5008",
+            "name": "MATERIALS SCIENCE",
+            "category": 8
+        }
+    },
+    {
+        "model": "master.majorcategory",
+        "pk": 9,
+        "fields": {
+            "name": "Health"
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 106,
+        "fields": {
+            "code": "4002",
+            "name": "NUTRITION SCIENCES",
+            "category": 9
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 107,
+        "fields": {
+            "code": "6100",
+            "name": "GENERAL MEDICAL AND HEALTH SERVICES",
+            "category": 9
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 108,
+        "fields": {
+            "code": "6102",
+            "name": "COMMUNICATION DISORDERS SCIENCES AND SERVICES",
+            "category": 9
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 109,
+        "fields": {
+            "code": "6103",
+            "name": "HEALTH AND MEDICAL ADMINISTRATIVE SERVICES",
+            "category": 9
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 110,
+        "fields": {
+            "code": "6104",
+            "name": "MEDICAL ASSISTING SERVICES",
+            "category": 9
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 111,
+        "fields": {
+            "code": "6105",
+            "name": "MEDICAL TECHNOLOGIES TECHNICIANS",
+            "category": 9
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 112,
+        "fields": {
+            "code": "6106",
+            "name": "HEALTH AND MEDICAL PREPARATORY PROGRAMS",
+            "category": 9
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 113,
+        "fields": {
+            "code": "6107",
+            "name": "NURSING",
+            "category": 9
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 114,
+        "fields": {
+            "code": "6108",
+            "name": "PHARMACY PHARMACEUTICAL SCIENCES AND ADMINISTRATION",
+            "category": 9
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 115,
+        "fields": {
+            "code": "6109",
+            "name": "TREATMENT THERAPY PROFESSIONS",
+            "category": 9
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 116,
+        "fields": {
+            "code": "6110",
+            "name": "COMMUNITY AND PUBLIC HEALTH",
+            "category": 9
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 117,
+        "fields": {
+            "code": "6199",
+            "name": "MISCELLANEOUS HEALTH MEDICAL PROFESSIONS",
+            "category": 9
+        }
+    },
+    {
+        "model": "master.majorcategory",
+        "pk": 10,
+        "fields": {
+            "name": "Humanities & Liberal Arts"
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 118,
+        "fields": {
+            "code": "1501",
+            "name": "AREA ETHNIC AND CIVILIZATION STUDIES",
+            "category": 10
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 119,
+        "fields": {
+            "code": "2601",
+            "name": "LINGUISTICS AND COMPARATIVE LANGUAGE AND LITERATURE",
+            "category": 10
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 120,
+        "fields": {
+            "code": "2602",
+            "name": "FRENCH GERMAN LATIN AND OTHER COMMON FOREIGN LANGUAGE STUDIES",
+            "category": 10
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 121,
+        "fields": {
+            "code": "2603",
+            "name": "OTHER FOREIGN LANGUAGES",
+            "category": 10
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 122,
+        "fields": {
+            "code": "3301",
+            "name": "ENGLISH LANGUAGE AND LITERATURE",
+            "category": 10
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 123,
+        "fields": {
+            "code": "3302",
+            "name": "COMPOSITION AND RHETORIC",
+            "category": 10
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 124,
+        "fields": {
+            "code": "3401",
+            "name": "LIBERAL ARTS",
+            "category": 10
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 125,
+        "fields": {
+            "code": "3402",
+            "name": "HUMANITIES",
+            "category": 10
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 126,
+        "fields": {
+            "code": "4001",
+            "name": "INTERCULTURAL AND INTERNATIONAL STUDIES",
+            "category": 10
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 127,
+        "fields": {
+            "code": "4801",
+            "name": "PHILOSOPHY AND RELIGIOUS STUDIES",
+            "category": 10
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 128,
+        "fields": {
+            "code": "4901",
+            "name": "THEOLOGY AND RELIGIOUS VOCATIONS",
+            "category": 10
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 129,
+        "fields": {
+            "code": "5502",
+            "name": "ANTHROPOLOGY AND ARCHEOLOGY",
+            "category": 10
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 130,
+        "fields": {
+            "code": "6006",
+            "name": "ART HISTORY AND CRITICISM",
+            "category": 10
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 131,
+        "fields": {
+            "code": "6402",
+            "name": "HISTORY",
+            "category": 10
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 132,
+        "fields": {
+            "code": "6403",
+            "name": "UNITED STATES HISTORY",
+            "category": 10
+        }
+    },
+    {
+        "model": "master.majorcategory",
+        "pk": 11,
+        "fields": {
+            "name": "Industrial Arts & Consumer Services"
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 133,
+        "fields": {
+            "code": "2201",
+            "name": "COSMETOLOGY SERVICES AND CULINARY ARTS",
+            "category": 11
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 134,
+        "fields": {
+            "code": "2901",
+            "name": "FAMILY AND CONSUMER SCIENCES",
+            "category": 11
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 135,
+        "fields": {
+            "code": "3801",
+            "name": "MILITARY TECHNOLOGIES",
+            "category": 11
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 136,
+        "fields": {
+            "code": "4101",
+            "name": "PHYSICAL FITNESS PARKS RECREATION AND LEISURE",
+            "category": 11
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 137,
+        "fields": {
+            "code": "5601",
+            "name": "CONSTRUCTION SERVICES",
+            "category": 11
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 138,
+        "fields": {
+            "code": "5701",
+            "name": "ELECTRICAL, MECHANICAL, AND PRECISION TECHNOLOGIES AND PRODUCTION",
+            "category": 11
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 139,
+        "fields": {
+            "code": "5901",
+            "name": "TRANSPORTATION SCIENCES AND TECHNOLOGIES",
+            "category": 11
+        }
+    },
+    {
+        "model": "master.majorcategory",
+        "pk": 12,
+        "fields": {
+            "name": "Interdisciplinary"
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 140,
+        "fields": {
+            "code": "4000",
+            "name": "MULTI/INTERDISCIPLINARY STUDIES",
+            "category": 12
+        }
+    },
+    {
+        "model": "master.majorcategory",
+        "pk": 13,
+        "fields": {
+            "name": "Law & Public Policy"
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 141,
+        "fields": {
+            "code": "3201",
+            "name": "COURT REPORTING",
+            "category": 13
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 142,
+        "fields": {
+            "code": "3202",
+            "name": "PRE-LAW AND LEGAL STUDIES",
+            "category": 13
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 143,
+        "fields": {
+            "code": "5301",
+            "name": "CRIMINAL JUSTICE AND FIRE PROTECTION",
+            "category": 13
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 144,
+        "fields": {
+            "code": "5401",
+            "name": "PUBLIC ADMINISTRATION",
+            "category": 13
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 145,
+        "fields": {
+            "code": "5402",
+            "name": "PUBLIC POLICY",
+            "category": 13
+        }
+    },
+    {
+        "model": "master.majorcategory",
+        "pk": 14,
+        "fields": {
+            "name": "New Major"
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 146,
+        "fields": {
+            "code": "bbbb ",
+            "name": "N/A (less than bachelor's degree)",
+            "category": 14
+        }
+    },
+    {
+        "model": "master.majorcategory",
+        "pk": 15,
+        "fields": {
+            "name": "Physical Sciences"
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 147,
+        "fields": {
+            "code": "5000",
+            "name": "PHYSICAL SCIENCES",
+            "category": 15
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 148,
+        "fields": {
+            "code": "5001",
+            "name": "ASTRONOMY AND ASTROPHYSICS",
+            "category": 15
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 149,
+        "fields": {
+            "code": "5002",
+            "name": "ATMOSPHERIC SCIENCES AND METEOROLOGY",
+            "category": 15
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 150,
+        "fields": {
+            "code": "5003",
+            "name": "CHEMISTRY",
+            "category": 15
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 151,
+        "fields": {
+            "code": "5004",
+            "name": "GEOLOGY AND EARTH SCIENCE",
+            "category": 15
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 152,
+        "fields": {
+            "code": "5005",
+            "name": "GEOSCIENCES",
+            "category": 15
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 153,
+        "fields": {
+            "code": "5006",
+            "name": "OCEANOGRAPHY",
+            "category": 15
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 154,
+        "fields": {
+            "code": "5007",
+            "name": "PHYSICS",
+            "category": 15
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 155,
+        "fields": {
+            "code": "5098",
+            "name": "MULTI-DISCIPLINARY OR GENERAL SCIENCE",
+            "category": 15
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 156,
+        "fields": {
+            "code": "5102",
+            "name": "NUCLEAR, INDUSTRIAL RADIOLOGY, AND BIOLOGICAL TECHNOLOGIES",
+            "category": 15
+        }
+    },
+    {
+        "model": "master.majorcategory",
+        "pk": 16,
+        "fields": {
+            "name": "Psychology & Social Work"
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 157,
+        "fields": {
+            "code": "5200",
+            "name": "PSYCHOLOGY",
+            "category": 16
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 158,
+        "fields": {
+            "code": "5201",
+            "name": "EDUCATIONAL PSYCHOLOGY",
+            "category": 16
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 159,
+        "fields": {
+            "code": "5202",
+            "name": "CLINICAL PSYCHOLOGY",
+            "category": 16
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 160,
+        "fields": {
+            "code": "5203",
+            "name": "COUNSELING PSYCHOLOGY",
+            "category": 16
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 161,
+        "fields": {
+            "code": "5205",
+            "name": "INDUSTRIAL AND ORGANIZATIONAL PSYCHOLOGY",
+            "category": 16
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 162,
+        "fields": {
+            "code": "5206",
+            "name": "SOCIAL PSYCHOLOGY",
+            "category": 16
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 163,
+        "fields": {
+            "code": "5299",
+            "name": "MISCELLANEOUS PSYCHOLOGY",
+            "category": 16
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 164,
+        "fields": {
+            "code": "5403",
+            "name": "HUMAN SERVICES AND COMMUNITY ORGANIZATION",
+            "category": 16
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 165,
+        "fields": {
+            "code": "5404",
+            "name": "SOCIAL WORK",
+            "category": 16
+        }
+    },
+    {
+        "model": "master.majorcategory",
+        "pk": 17,
+        "fields": {
+            "name": "Social Science"
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 166,
+        "fields": {
+            "code": "4007",
+            "name": "INTERDISCIPLINARY SOCIAL SCIENCES",
+            "category": 17
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 167,
+        "fields": {
+            "code": "5500",
+            "name": "GENERAL SOCIAL SCIENCES",
+            "category": 17
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 168,
+        "fields": {
+            "code": "5501",
+            "name": "ECONOMICS",
+            "category": 17
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 169,
+        "fields": {
+            "code": "5503",
+            "name": "CRIMINOLOGY",
+            "category": 17
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 170,
+        "fields": {
+            "code": "5504",
+            "name": "GEOGRAPHY",
+            "category": 17
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 171,
+        "fields": {
+            "code": "5505",
+            "name": "INTERNATIONAL RELATIONS",
+            "category": 17
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 172,
+        "fields": {
+            "code": "5506",
+            "name": "POLITICAL SCIENCE AND GOVERNMENT",
+            "category": 17
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 173,
+        "fields": {
+            "code": "5507",
+            "name": "SOCIOLOGY",
+            "category": 17
+        }
+    },
+    {
+        "model": "master.major",
+        "pk": 174,
+        "fields": {
+            "code": "5599",
+            "name": "MISCELLANEOUS SOCIAL SCIENCES",
+            "category": 17
+        }
+    }
+]

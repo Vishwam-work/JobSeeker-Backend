@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework import generics
-from .models import Country, State, City, Company, JobCategory, JobTitle, Currency
-from .serializers import CountrySerializer, StateSerializer, CitySerializer, CompanySerializer, JobTitleSerializer, JobCategorySerializer, CurrencySerializer
+from .models import Country, State, City, Company, JobCategory, JobTitle, Currency, Major, MajorCategory
+from .serializers import CountrySerializer, StateSerializer, CitySerializer, CompanySerializer, JobTitleSerializer, JobCategorySerializer, CurrencySerializer, MajorSerializer, MajorCategorySerializer
 
 # Create your views here.
 class CountryList(generics.ListAPIView):
@@ -55,3 +55,25 @@ class CurrencyList(generics.ListAPIView):
     serializer_class = CurrencySerializer
     permission_classes  = []
 
+# List all category
+class MajorCategoryListView(generics.ListAPIView):
+    queryset = MajorCategory.objects.all().order_by("name")
+    serializer_class = MajorCategorySerializer
+
+# List all the Major
+class MajorListView(generics.ListAPIView):
+    queryset = Major.objects.all().order_by("name")
+    serializer_class = MajorSerializer
+
+# Get a single major (by ID)
+class MajorDetailView(generics.RetrieveAPIView):
+    queryset = Major.objects.all()
+    serializer_class = MajorSerializer
+
+# by major ID
+class MajorsByCategoryView(generics.ListAPIView):
+    serializer_class = MajorSerializer
+
+    def get_queryset(self):
+        category_id = self.kwargs['category_id']
+        return Major.objects.filter(category_id=category_id).order_by("name")
