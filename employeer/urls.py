@@ -17,4 +17,5 @@ path('api/employer/applications/', views.EmployerApplicationsListView.as_view(),
 path('api/companies/', views.company_list, name='company-list'),
 path('api/companies/<int:pk>/', views.company_detail, name='company-detail'),
 path('api/companies/<int:pk>/jobs/', views.company_jobs, name='company-jobs'),
+path('api/employer/applications/<int:pk>/update/', views.ApplicationUpdateView.as_view(), name='application-update'),
 ]

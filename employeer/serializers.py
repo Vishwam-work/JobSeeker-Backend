@@ -269,3 +269,8 @@ class CompanyDetailSerializer(serializers.ModelSerializer):
             'country', 'state', 'city', 'pincode', 'phone',
             'contact_person_name', 'designation', 'job_postings'
         ]
+
+class ApplicationUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Application
+        fields = ['application_status']

@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import get_user_model, authenticate
-from .serializers import CompanyUserSerializer, CompanyLoginSerializer, JobPostingSerializer,AnswerSerializer, ApplicationSubmitSerializer, ApplicationListItemSerializer,CompanyListSerializer, CompanyDetailSerializer, JobPostingSerializer
+from .serializers import CompanyUserSerializer, CompanyLoginSerializer, JobPostingSerializer,AnswerSerializer, ApplicationSubmitSerializer, ApplicationListItemSerializer,CompanyListSerializer, CompanyDetailSerializer, JobPostingSerializer,ApplicationUpdateSerializer
 from .models import CompanyUser, JobPosting,Answer, Application
 from master.models import Country, State, City
 from rest_framework import generics,status, viewsets, permissions, serializers
@@ -215,3 +215,15 @@ def company_jobs(request, pk):
     jobs = company.job_postings.filter(status='active')
     serializer = JobPostingSerializer(jobs, many=True)
     return Response(serializer.data)
+
+class ApplicationUpdateView(generics.UpdateAPIView):
+    queryset = Application.objects.all()
+    serializer_class = ApplicationUpdateSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    lookup_field = 'pk'
+
+    def get_queryset(self):
+        company_user = CompanyUser.objects.get(user=self.request.user)
+        print(company_user)
+        print(Application.objects.filter(job__company_user=company_user))
+        return Application.objects.filter(job__company_user=company_user)
