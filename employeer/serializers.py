@@ -124,7 +124,8 @@ class ApplicationSubmitSerializer(serializers.Serializer):
         answers = validated_data.get('answers') or []
 
         application = Application.objects.create(user=user, job=job)
-
+        
+        
         if answers:
             # Map question text to index
             question_to_index = {q: idx for idx, q in enumerate(job.questions or [])}
@@ -256,6 +257,7 @@ class CompanyListSerializer(serializers.ModelSerializer):
 
     def get_job_count(self, obj):
         return obj.job_postings.filter(status='active').count()
+        
 class CompanyDetailSerializer(serializers.ModelSerializer):
     job_postings = JobPostingSerializer(many=True, read_only=True)
     country = serializers.CharField(source='country.name', read_only=True)

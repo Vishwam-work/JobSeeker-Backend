@@ -107,7 +107,6 @@ class ProfileSerializer(serializers.ModelSerializer):
             Education.objects.create(profile=profile, **edu)
         for skill in skills:
             Skill.objects.create(profile=profile, **skill)
-
         return profile
 
     def update(self, instance, validated_data):

@@ -78,7 +78,7 @@ class JobPosting(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='active')
-    
+    applicants=models.PositiveIntegerField(default=0)
 
     def __str__(self):
         return self.title
