@@ -273,4 +273,4 @@ class CompanyDetailSerializer(serializers.ModelSerializer):
 class ApplicationUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Application
-        fields = ['application_status']
+        fields = ['id','application_status']
