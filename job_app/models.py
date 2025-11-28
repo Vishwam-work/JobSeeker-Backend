@@ -15,6 +15,8 @@ class CustomUser(AbstractUser):
     mobile_number = models.CharField(max_length=15)
     work_status = models.CharField(max_length=20, choices=WORK_STATUS_CHOICES)
     receive_promotions = models.BooleanField(default=False)
+    otp = models.CharField(max_length=6, blank=True, null=True)
+    is_verified = models.BooleanField(default=False)
 
     def __str__(self):
         return self.email

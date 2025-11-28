@@ -8,6 +8,8 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.response import Response
 from .models import Profile,SavedJob
 from rest_framework.exceptions import NotAuthenticated
+from django.core.mail import send_mail
+from .utils import generate_otp
 
 User = get_user_model()
 
@@ -18,23 +20,26 @@ def register(request):
 
     if serializer.is_valid():
         if User.objects.filter(email=serializer.validated_data['email']).exists():
-            return Response(
-                {'error': 'User with this email already exists'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response({'error': 'User with this email already exists'} , status=status.HTTP_400_BAD_REQUEST)
         user = serializer.save()
-        refresh = RefreshToken.for_user(user)
+        user.is_active = False  
+        user.otp = generate_otp()
+        user.save()
+
+        send_mail(
+            "Your OTP Verification Code",
+            f"Your OTP is: {user.otp}",
+            "akshitsahore282007@gmail.com",
+            [user.email],
+        )
+
         return Response({
-            'message': 'Registration successful',
+            'message': 'Registration successful. Please verify OTP.',
             'user_id': user.id,
             'email': user.email,
-            'full_name': user.full_name,
-            'access': str(refresh.access_token),
-            'refresh': str(refresh)
         }, status=status.HTTP_201_CREATED)
 
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
@@ -125,4 +130,33 @@ class SavedJobDeleteView(generics.DestroyAPIView):
 
     def get_queryset(self):
         return SavedJob.objects.filter(user=self.request.user)
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def verify_otp(request):
+    email = request.data.get("email")
+    otp = request.data.get("otp")
+
+    try:
+        user = User.objects.get(email=email)
+
+        if  user.otp == otp:
+            user.is_active = True
+            user.is_verified = True
+            user.otp = None
+            user.save()
+
+            refresh = RefreshToken.for_user(user)
+
+            return Response({
+                "message": "OTP verification successful",
+                "access": str(refresh.access_token),
+                "refresh": str(refresh),
+                "user_id": user.id,
+            }, status=status.HTTP_200_OK)
+
+        return Response({"error": "Invalid OTP"}, status=status.HTTP_400_BAD_REQUEST)
+
+    except User.DoesNotExist:
+        return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
 

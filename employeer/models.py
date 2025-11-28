@@ -15,7 +15,9 @@ APPLICATION_CHOICES=[
 
 class CompanyUser(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+
     # Company Info
+    
     company_name = models.CharField(max_length=255)
     company_type = models.CharField(max_length=100)
     industry = models.CharField(max_length=100)

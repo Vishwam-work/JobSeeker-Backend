@@ -228,7 +228,7 @@ def company_list(request):
 def company_detail(request, pk):
     """Get company details with job postings"""
     try:
-        company = CompanyUser.objects.prefetch_related('job_postings').get(pk=pk)
+        company = CompanyUser.objects.prefetch_related('job_postings').get(user_id=pk)
     except CompanyUser.DoesNotExist:
         return Response({'error': 'Company not found'}, status=404)
     serializer = CompanyDetailSerializer(company)

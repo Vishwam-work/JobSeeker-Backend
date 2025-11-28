@@ -13,4 +13,5 @@ urlpatterns = [
     path('api/saved-jobs/', views.SavedJobListCreateView.as_view(), name='saved-jobs-list-create'),
     path('api/saved-jobs-all/', views.SavedJobListView.as_view(), name='saved-jobs-list-all'),
     path('api/saved-jobs/<int:pk>/', views.SavedJobDeleteView.as_view(), name='saved-jobs-delete'),
+    path('api/verify-otp/', views.verify_otp, name='verify-otp'),
 ]+static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
