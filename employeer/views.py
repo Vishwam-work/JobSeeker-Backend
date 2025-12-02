@@ -178,7 +178,6 @@ class ApplicationSubmitView(generics.CreateAPIView):
 class EmployerApplicationsListView(generics.ListAPIView):
     serializer_class = ApplicationListItemSerializer
     permission_classes = [permissions.IsAuthenticated]
-
     def get_queryset(self):
         # List applications for jobs belonging to the current employer
         try:
@@ -227,3 +226,9 @@ class ApplicationUpdateView(generics.UpdateAPIView):
         print(company_user)
         print(Application.objects.filter(job__company_user=company_user))
         return Application.objects.filter(job__company_user=company_user)
+# Get all the applications
+class AllApplicationsListView(generics.ListAPIView):
+    serializer_class = ApplicationListItemSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    def get_queryset(self):
+        return Application.objects.all().order_by('-applied_at')
