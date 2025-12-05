@@ -187,6 +187,15 @@ class EmployerApplicationsListView(generics.ListAPIView):
         jobs = JobPosting.objects.filter(company_user=company_user)
         return Application.objects.filter(job__in=jobs).order_by('-applied_at')
 
+# View to get the list of candidates for a specific job
+class CandidateListView(generics.ListAPIView):
+    serializer_class = ApplicationListItemSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        job_id = self.kwargs['job_id']
+        return Application.objects.filter(job_id=job_id).order_by('-applied_at')
+
 @api_view(['GET'])
 def company_list(request):
     """List all companies"""
