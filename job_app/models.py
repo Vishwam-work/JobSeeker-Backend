@@ -17,7 +17,7 @@ class CustomUser(AbstractUser):
     receive_promotions = models.BooleanField(default=False)
     otp = models.CharField(max_length=6, blank=True, null=True)
     is_verified = models.BooleanField(default=False)
-
+    country_id = models.ForeignKey(master.Country, on_delete=models.SET_NULL, null=True, blank=True, related_name="users")
     def __str__(self):
         return self.email
 
