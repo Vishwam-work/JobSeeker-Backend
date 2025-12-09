@@ -72,6 +72,8 @@ CSRF_TRUSTED_ORIGINS = [
 
 ROOT_URLCONF = 'Jobseeker.urls'
 
+SESSION_ENGINE = "django.contrib.sessions.backends.db"
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -185,5 +187,5 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = ""
-EMAIL_HOST_PASSWORD = ""
+EMAIL_HOST_USER = "vishwamsolanki3011@gmail.com"
+EMAIL_HOST_PASSWORD = "vgme hzcp erwm rqoi"

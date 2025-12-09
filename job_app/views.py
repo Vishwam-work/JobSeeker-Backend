@@ -16,23 +16,18 @@ User = get_user_model()
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def register(request):
+    if not request.session.get("otp_verified"):
+        return Response({"error": "Please verify OTP first"}, status=400)
     serializer = UserRegistrationSerializer(data=request.data)
 
     if serializer.is_valid():
         if User.objects.filter(email=serializer.validated_data['email']).exists():
             return Response({'error': 'User with this email already exists'} , status=status.HTTP_400_BAD_REQUEST)
         user = serializer.save()
-        user.is_active = False  
-        user.otp = generate_otp()
+        user.is_active = True
+        user.is_verified = True
         user.save()
-
-        send_mail(
-            "Your OTP Verification Code",
-            f"Your OTP is: {user.otp}",
-            "akshitsahore282007@gmail.com",
-            [user.email],
-        )
-
+        request.session.flush()
         return Response({
             'message': 'Registration successful. Please verify OTP.',
             'user_id': user.id,
@@ -136,27 +131,40 @@ class SavedJobDeleteView(generics.DestroyAPIView):
 def verify_otp(request):
     email = request.data.get("email")
     otp = request.data.get("otp")
+    session_email = request.session.get("email")
+    session_otp = request.session.get("otp")
+    if not session_email or not session_otp:
+        return Response({"error": "OTP not generated"}, status=400)
 
-    try:
-        user = User.objects.get(email=email)
+    if email != session_email:
+        return Response({"error": "Email mismatch"}, status=400)
 
-        if  user.otp == otp:
-            user.is_active = True
-            user.is_verified = True
-            user.otp = None
-            user.save()
+    if otp != session_otp:
+        return Response({"error": "Invalid OTP"}, status=400)
 
-            refresh = RefreshToken.for_user(user)
+    request.session["otp_verified"] = True
+    return Response({"message": "OTP Verified Successfully!"}, status=200)
 
-            return Response({
-                "message": "OTP verification successful",
-                "access": str(refresh.access_token),
-                "refresh": str(refresh),
-                "user_id": user.id,
-            }, status=status.HTTP_200_OK)
 
-        return Response({"error": "Invalid OTP"}, status=status.HTTP_400_BAD_REQUEST)
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def send_otp(request):
+    email = request.data.get("email")
 
-    except User.DoesNotExist:
-        return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+    if not email:
+        return Response({"error": "Email is required"}, status=400)
 
+    if User.objects.filter(email=email).exists():
+        return Response({"error": "User already exists"}, status=400)
+
+    otp = generate_otp()
+
+    request.session['otp'] = otp
+    request.session['email'] = email
+    send_mail(
+        "Your OTP Verification Code",
+        f"Your OTP is: {otp}",
+        "vishwamsolanki3011@gmail.com",
+        [email],
+    )
+    return Response({"message": "OTP sent successfully"}, status=200)
