@@ -22,6 +22,14 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         user.username = validated_data['email']
         user.set_password(password)
         user.save()
+       
+        Profile.objects.create(
+            user=user,
+            full_name=user.full_name,
+            email=user.email,
+            phone=user.mobile_number
+        )
+        
         return user
 
 class UserLoginSerializer(serializers.Serializer):
@@ -99,7 +107,6 @@ class ProfileSerializer(serializers.ModelSerializer):
             Education.objects.create(profile=profile, **edu)
         for skill in skills:
             Skill.objects.create(profile=profile, **skill)
-
         return profile
 
     def update(self, instance, validated_data):

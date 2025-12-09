@@ -8,6 +8,7 @@ from .serializers import CompanyUserSerializer, CompanyLoginSerializer, JobPosti
 from .models import CompanyUser, JobPosting,Answer, Application
 from master.models import Country, State, City
 from rest_framework import generics,status, viewsets, permissions, serializers
+from django.db.models import F
 
 User = get_user_model()
 @api_view(['POST'])
@@ -165,6 +166,17 @@ class AnswerCreateView(generics.CreateAPIView):
             )
         serializer.save(user=user)
 
+# class ApplicationSubmitView(generics.CreateAPIView):
+#     serializer_class = ApplicationSubmitSerializer
+#     permission_classes = [permissions.IsAuthenticated]
+
+#     def create(self, request, *args, **kwargs):
+#         serializer = self.get_serializer(data=request.data)
+#         serializer.is_valid(raise_exception=True)
+#         application = serializer.save()
+#         job_id = serializer.validated_data['job_id']
+#         JobPosting.objects.filter(id=job_id).update(applicants=F("applicants") + 1)
+#         return Response(serializer.to_representation(application), status=status.HTTP_201_CREATED)
 class ApplicationSubmitView(generics.CreateAPIView):
     serializer_class = ApplicationSubmitSerializer
     permission_classes = [permissions.IsAuthenticated]
@@ -172,8 +184,17 @@ class ApplicationSubmitView(generics.CreateAPIView):
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
+        
         application = serializer.save()
-        return Response(serializer.to_representation(application), status=status.HTTP_201_CREATED)
+        job = serializer.validated_data['job']
+
+        # update applicant count safely
+        JobPosting.objects.filter(id=job.id).update(applicants=F("applicants") + 1)
+
+        return Response(
+            serializer.to_representation(application),
+            status=status.HTTP_201_CREATED
+        )
 
 class EmployerApplicationsListView(generics.ListAPIView):
     serializer_class = ApplicationListItemSerializer
@@ -207,7 +228,7 @@ def company_list(request):
 def company_detail(request, pk):
     """Get company details with job postings"""
     try:
-        company = CompanyUser.objects.prefetch_related('job_postings').get(pk=pk)
+        company = CompanyUser.objects.prefetch_related('job_postings').get(user_id=pk)
     except CompanyUser.DoesNotExist:
         return Response({'error': 'Company not found'}, status=404)
     serializer = CompanyDetailSerializer(company)

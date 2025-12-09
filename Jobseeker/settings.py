@@ -60,17 +60,19 @@ MIDDLEWARE = [
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
-    "https://jobseeker-backend-jy1y.onrender.com",
-    'https://jobseeker-backend-jy1y.onrender.com',
+    "http://127.0.0.1:8010",
+    'http://127.0.0.1:8010',
 ]
 
 # CSRF Trusted Origins for production
 CSRF_TRUSTED_ORIGINS = [
-    "https://jobseeker-backend-jy1y.onrender.com",
+    "http://127.0.0.1:8010",
     "http://localhost:3000",
 ]
 
 ROOT_URLCONF = 'Jobseeker.urls'
+
+SESSION_ENGINE = "django.contrib.sessions.backends.db"
 
 TEMPLATES = [
     {
@@ -180,3 +182,10 @@ AUTH_USER_MODEL = 'job_app.CustomUser'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = "vishwamsolanki3011@gmail.com"
+EMAIL_HOST_PASSWORD = "vgme hzcp erwm rqoi"
