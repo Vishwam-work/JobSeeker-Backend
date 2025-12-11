@@ -86,7 +86,7 @@ class JobPosting(models.Model):
         return self.title
     
 class Answer(models.Model):
-    user = models.ForeignKey(job_app.CustomUser, on_delete=models.CASCADE, related_name='answers')
+    user = models.ForeignKey(job_app.CustomUser, on_delete=models.CASCADE, related_name='answers', null=True)
     job = models.ForeignKey(JobPosting, on_delete=models.CASCADE, related_name='answers')
     question_index = models.PositiveIntegerField()
     answer_text = models.TextField()

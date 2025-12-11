@@ -82,14 +82,14 @@ class Currency(models.Model):
 
 #  Mojor Dataset
 class MajorCategory(models.Model):
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255,null=True,blank=True)
     def __str__(self):
         return self.name
 
 class Major(models.Model):
-    code = models.CharField(max_length=50)
-    name = models.CharField(max_length=255)
-    category = models.ForeignKey(MajorCategory, on_delete=models.CASCADE)
+    code = models.CharField(max_length=50,null=True,blank=True)
+    name = models.CharField(max_length=255,null=True,blank=True)
+    category = models.ForeignKey(MajorCategory, on_delete=models.CASCADE,null=True,blank=True)
 
     def __str__(self):
         return self.name
