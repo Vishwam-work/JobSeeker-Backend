@@ -37,6 +37,7 @@ class Profile(models.Model):
     state = models.ForeignKey(master.State, on_delete=models.SET_NULL, blank=True, null=True)
     city = models.ForeignKey(master.City, on_delete=models.SET_NULL, blank=True, null=True)
     phone_code = models.CharField(max_length=10, blank=True, null=True)
+    profile_image = models.ImageField(upload_to='profile_images/', blank=True, null=True)
 
     def __str__(self):
         return f"{self.user.full_name}'s Profile"
