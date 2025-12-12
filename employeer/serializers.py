@@ -276,3 +276,16 @@ class ApplicationUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Application
         fields = ['id','application_status']
+
+class InterviewScheduleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Application
+        fields = [
+            "interview_date",
+            "interview_time",
+            "interview_mode",
+            "meet_link",
+            "notes",
+            "application_status",
+        ]
+
