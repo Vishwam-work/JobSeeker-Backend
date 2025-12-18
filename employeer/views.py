@@ -256,6 +256,7 @@ class ApplicationUpdateView(generics.UpdateAPIView):
         print(company_user)
         print(Application.objects.filter(job__company_user=company_user))
         return Application.objects.filter(job__company_user=company_user)
+        
 # Get all the applications
 class AllApplicationsListView(generics.ListAPIView):
     serializer_class = ApplicationListItemSerializer
