@@ -102,6 +102,10 @@ class Application(models.Model):
     job = models.ForeignKey(JobPosting, on_delete=models.CASCADE, related_name='applications')
     applied_at = models.DateTimeField(auto_now_add=True)
     application_status = models.CharField(max_length=20, choices=APPLICATION_CHOICES, default='Under Review')
-#is_selected
+    interview_date = models.DateField(null=True, blank=True)
+    interview_time = models.CharField(max_length=20, null=True, blank=True)  
+    interview_mode = models.CharField(max_length=20, null=True, blank=True)  
+    meet_link = models.CharField(max_length=255, null=True, blank=True)     
+    notes = models.TextField(null=True, blank=True)  
     class Meta:
         unique_together = ('user', 'job')
