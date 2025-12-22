@@ -15,7 +15,6 @@ class CustomUser(AbstractUser):
     mobile_number = models.CharField(max_length=15)
     work_status = models.CharField(max_length=20, choices=WORK_STATUS_CHOICES)
     receive_promotions = models.BooleanField(default=False)
-    otp = models.CharField(max_length=6, blank=True, null=True)
     is_verified = models.BooleanField(default=False)
     country_id = models.ForeignKey(master.Country, on_delete=models.SET_NULL, null=True, blank=True, related_name="users")
     def __str__(self):
@@ -96,3 +95,12 @@ class SavedJob(models.Model):
         
     def __str__(self):
         return f"{self.user.username} saved {self.job.title}"
+
+class EmailOTP(models.Model):
+    email = models.EmailField(db_index=True)
+    otp = models.CharField(max_length=6)
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_used = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"{self.email} - {self.otp}"
