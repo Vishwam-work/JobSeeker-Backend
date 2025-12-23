@@ -9,7 +9,7 @@ from rest_framework.response import Response
 from .models import Profile,SavedJob,EmailOTP
 from rest_framework.exceptions import NotAuthenticated
 from django.core.mail import send_mail
-from .utils import generate_otp
+from .utils import generate_otp, send_email
 from django.utils import timezone
 from datetime import timedelta
 
@@ -181,12 +181,15 @@ def send_otp(request):
         otp=otp,
     )
 
-    request.session['otp'] = otp
-    request.session['email'] = email
-    send_mail(
-        "Your OTP Verification Code",
-        f"Your OTP is: {otp} It expires in 5 minutes.",
-        "ruchi@nvglobaltech.com",
-        [email],
+    email_sent = send_email(
+        to_email=email,
+        subject="Your OTP Verification Code",
+        content=f"Your OTP is {otp}. It expires in 5 minutes.",
     )
+    if not email_sent:
+        return Response(
+            {"error": "Failed to send OTP email"},
+            status=500
+        )
+
     return Response({"message": "OTP sent successfully"}, status=200)

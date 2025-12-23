@@ -83,7 +83,7 @@ class Skill(models.Model):
 
     def __str__(self):
         return f"{self.profile.user.full_name}'s Skill"
-    
+
 
 class SavedJob(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='saved_jobs')
@@ -92,7 +92,7 @@ class SavedJob(models.Model):
 
     class Meta:
         unique_together = ('user', 'job')
-        
+
     def __str__(self):
         return f"{self.user.username} saved {self.job.title}"
 
