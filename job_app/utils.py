@@ -15,7 +15,7 @@ def send_email(to_email, subject, content):
     )
 
     try:
-        sg = SendGridAPIClient(os.getenv("SECRET_KEY"))
+        sg = SendGridAPIClient(os.environ.get("SECRET_KEY"))
         sg.send(message)
         return True
     except Exception as e:
