@@ -289,3 +289,24 @@ class InterviewScheduleSerializer(serializers.ModelSerializer):
             "application_status",
         ]
 
+from rest_framework import serializers
+from .models import Application
+
+class AppliedJobSerializer(serializers.ModelSerializer):
+    job_title = serializers.CharField(source='job.title', read_only=True)
+    company_name = serializers.CharField(source='job.company_name', read_only=True)
+
+    class Meta:
+        model = Application
+        fields = [
+            'id',
+            'job_title',
+            'company_name',
+            'application_status',
+            'applied_at',
+            'interview_date',
+            'interview_time',
+            'interview_mode',
+            'meet_link',
+            'notes'
+        ]

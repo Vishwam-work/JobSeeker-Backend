@@ -12,6 +12,9 @@ from django.core.mail import send_mail
 from .utils import generate_otp, send_email
 from django.utils import timezone
 from datetime import timedelta
+from employeer.models import Application
+from employeer.serializers import AppliedJobSerializer
+from rest_framework.views import APIView
 
 User = get_user_model()
 OTP_EXPIRY_MINUTES = 5
@@ -193,3 +196,11 @@ def send_otp(request):
         )
 
     return Response({"message": "OTP sent successfully"}, status=200)
+
+class MyAppliedJobsView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        applications = Application.objects.filter(user=request.user)
+        serializer = AppliedJobSerializer(applications, many=True)
+        return Response(serializer.data)
