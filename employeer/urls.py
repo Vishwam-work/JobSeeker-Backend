@@ -20,5 +20,7 @@ path('api/companies/<int:pk>/jobs/', views.company_jobs, name='company-jobs'),
 path('api/employer/applications/<int:pk>/update/', views.ApplicationUpdateView.as_view(), name='application-update'),
 path('api/employer/applications/all/', views.AllApplicationsListView.as_view(), name='application-all'),
 path('api/employer/applications/job/<int:job_id>', views.CandidateListView.as_view(), name='candidate-sort'),
-path("api/employer/applications/<int:pk>/schedule-interview/",views.ScheduleInterviewView.as_view(),name="schedule-interview",)
-]
+path("api/employer/applications/<int:pk>/schedule-interview/",views.ScheduleInterviewView.as_view(),name="schedule-interview"),
+path('api/verify-otp/', views.verify_otp, name='verify-otp'),
+path('api/send_otp/', views.send_otp, name='send-otp'),
+] 
