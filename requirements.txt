@@ -6,6 +6,7 @@ django-cors-headers==4.7.0
 djangorestframework==3.16.0
 djangorestframework_simplejwt==5.5.0
 dotenv==0.9.9
+Jinja2==3.1.6
 MarkupSafe==3.0.3
 numpy==2.3.0
 pandas==2.3.0
