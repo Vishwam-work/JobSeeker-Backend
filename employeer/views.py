@@ -10,6 +10,9 @@ from master.models import Country, State, City
 from rest_framework import generics,status, viewsets, permissions, serializers
 from django.db.models import F
 from .utils import generate_otp, send_email
+from job_app.models import EmailOTP
+from django.utils import timezone
+from datetime import timedelta
 
 User = get_user_model()
 OTP_EXPIRY_MINUTES = 5
@@ -337,7 +340,6 @@ def send_otp(request):
     email_sent = send_email(
         to_email=email,
         subject="Your OTP Verification Code",
-        content=f"Your OTP is {otp}. It expires in 5 minutes.",
         template_name="Register_employer.html",
         context={"otp": otp}
     )

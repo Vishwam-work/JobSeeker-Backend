@@ -10,7 +10,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 def generate_otp():
     return str(random.randint(100000, 999999))
 
-def send_email(to_email, subject, content,template_name,context):
+def send_email(to_email, subject,template_name,context):
     env = Environment(
         loader=FileSystemLoader(os.path.join(BASE_DIR, "templates"))
     )
@@ -20,7 +20,7 @@ def send_email(to_email, subject, content,template_name,context):
         from_email="ruchi@nvglobaltech.com",
         to_emails=to_email,
         subject=subject,
-        plain_text_content=content,
+        html_content=html_content
     )
 
     try:
