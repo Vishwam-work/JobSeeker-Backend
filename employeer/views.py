@@ -9,7 +9,7 @@ from .models import CompanyUser, JobPosting,Answer, Application
 from master.models import Country, State, City
 from rest_framework import generics,status, viewsets, permissions, serializers
 from django.db.models import F
-from .utils import generate_otp, send_email
+from utils.utils import generate_otp, send_email
 from job_app.models import EmailOTP
 from django.utils import timezone
 from datetime import timedelta

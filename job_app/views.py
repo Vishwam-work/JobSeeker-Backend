@@ -9,7 +9,7 @@ from rest_framework.response import Response
 from .models import Profile,SavedJob,EmailOTP
 from rest_framework.exceptions import NotAuthenticated
 from django.core.mail import send_mail
-from .utils import generate_otp, send_email
+from utils.utils import generate_otp, send_email
 from django.utils import timezone
 from datetime import timedelta
 from employeer.models import Application

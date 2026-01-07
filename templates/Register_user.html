@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verification Code</title>
+
+    <style>
+        body, table, td {
+            margin: 0;
+            padding: 0;
+            border: 0;
+            -webkit-text-size-adjust: 100%;
+            -ms-text-size-adjust: 100%;
+        }
+
+        table {
+            border-collapse: collapse !important;
+        }
+
+        body {
+            width: 100% !important;
+            height: 100% !important;
+            background-color: #f1f5f9;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        .wrapper {
+            width: 100%;
+            padding: 40px 0;
+            background-color: #f1f5f9;
+        }
+
+        /* 🔥 STRETCHED CONTAINER */
+        .email-container {
+            max-width: 920px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        /* 🔥 WIDER SIDEBAR */
+        .sidebar {
+            width: 340px;
+            padding: 60px 40px;
+            color: #ffffff;
+            vertical-align: top;
+
+            background-color: #6d28d9;
+            background-image:
+                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='10' cy='10' r='6' opacity='0.06'/%3E%3Cline x1='21' y1='21' x2='14.2' y2='14.2' opacity='0.06'/%3E%3C/svg%3E"),
+                linear-gradient(to bottom, #6d28d9 0%, #1e3a8a 100%);
+            background-repeat: repeat, no-repeat;
+            background-size: 30px 30px, cover;
+        }
+
+        .logo {
+            font-size: 44px;
+            font-weight: 300;
+            letter-spacing: 6px;
+            margin-bottom: 12px;
+        }
+
+        .tagline {
+            font-size: 18px;
+            opacity: 0.9;
+            margin-bottom: 50px;
+        }
+
+        .sidebar-footer {
+            font-size: 13px;
+            line-height: 1.6;
+            opacity: 0.85;
+        }
+
+        /* RIGHT CONTENT */
+        .main-content {
+            padding: 60px 70px;
+            vertical-align: top;
+            background-color: #ffffff;
+            text-align: center;
+        }
+
+        .title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 16px;
+        }
+
+        .message {
+            font-size: 16px;
+            color: #64748b;
+            margin-bottom: 40px;
+        }
+
+        .otp-box {
+            background-color: #f8fafc;
+            border: 2px dashed #e2e8f0;
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 40px;
+        }
+
+        .otp-label {
+            font-size: 13px;
+            font-weight: 700;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        .otp-code {
+            font-size: 48px;
+            font-weight: 900;
+            letter-spacing: 10px;
+            color: #1e293b;
+        }
+
+        .expiry {
+            font-size: 14px;
+            color: #94a3b8;
+            margin-top: 12px;
+        }
+
+        .security {
+            background-color: #f8fafc;
+            border-radius: 12px;
+            padding: 20px;
+            font-size: 14px;
+            color: #64748b;
+            border: 1px solid #f1f5f9;
+        }
+
+        @media screen and (max-width: 768px) {
+            .sidebar,
+            .main-content {
+                display: block;
+                width: 100% !important;
+                padding: 40px 20px !important;
+            }
+
+            .otp-code {
+                font-size: 38px !important;
+                letter-spacing: 6px !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<div class="wrapper">
+    <div class="email-container">
+        <table width="100%" cellpadding="0" cellspacing="0" role="presentation">
+            <tr>
+                <td class="sidebar" valign="top">
+                    <div class="logo">JOBSEEKER</div>
+                    <div class="tagline">Find Your Next Opportunity</div>
+
+                    <div class="sidebar-footer">
+                        © 2026 NV Global Tech<br>
+                        All rights reserved.<br><br>
+                        Block C-501, Ashtavinayak Icon,<br>
+                        K.P. Heights, Viratnagar 100ft Road,<br>
+                        Nikol, Ahmedabad – 382350<br>
+                        Gujarat, India
+                    </div>
+                </td>
+
+                <td class="main-content" valign="top">
+                    <h1 class="title">Verification Code</h1>
+
+                    <p class="message">
+                        Please use the code below to complete your account registration securely.
+                    </p>
+
+                    <div class="otp-box">
+                        <span class="otp-label">Your OTP Code</span>
+                        <div class="otp-code">{{ otp }}</div>
+                        <p class="expiry">This code expires in 5 minutes</p>
+                    </div>
+                    <p class="message">
+                        After successfull registeration, please login to your account and create your profile to continue.</p>
+                    <div class="security">
+                        Security Reminder: Never share this code with anyone.
+                        Our team will never ask you for your verification code.
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+</body>
+</html>
