@@ -41,7 +41,9 @@ class State(models.Model):
 
     def __str__(self):
         return f"{self.name}, {self.country_id.name}"
-
+    
+    class Meta:
+        ordering = ['name']
 
 class City(models.Model):
     name = models.CharField(max_length=100)
@@ -56,6 +58,9 @@ class City(models.Model):
     wikiDataId= models.CharField(max_length=50, blank=True, null=True)
     def __str__(self):
         return f"{self.name}, {self.state_id.name}"
+
+    class Meta:
+        ordering = ['name']
 
 class Company(models.Model):
     name = models.CharField(max_length=255)
