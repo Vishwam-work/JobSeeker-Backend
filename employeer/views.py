@@ -9,11 +9,25 @@ from .models import CompanyUser, JobPosting,Answer, Application
 from master.models import Country, State, City
 from rest_framework import generics,status, viewsets, permissions, serializers
 from django.db.models import F
+from utils.utils import generate_otp, send_email
+from job_app.models import EmailOTP
+from django.utils import timezone
+from datetime import timedelta
 
 User = get_user_model()
+OTP_EXPIRY_MINUTES = 5
+
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def register_company_user(request):
+    email = request.data.get("email")
+
+    if not email:
+        return Response({"error": "Email is required"}, status=400)
+    otp_verified = EmailOTP.objects.filter(email=email, is_used=True).exists()
+    if not otp_verified:
+        return Response({"error": "Please verify OTP first"},status=status.HTTP_400_BAD_REQUEST)
+
     serializer = CompanyUserSerializer(data=request.data)
 
     if serializer.is_valid():
@@ -25,6 +39,9 @@ def register_company_user(request):
             )
 
         company_user = serializer.save()
+        company_user.is_verified = True
+        company_user.is_active = True
+        company_user.save()
         refresh = RefreshToken.for_user(company_user.user)
         return Response({
             'message': 'Company user registered successfully',
@@ -271,3 +288,65 @@ class ScheduleInterviewView(generics.UpdateAPIView):
 
     def perform_update(self, serializer):
         serializer.save(application_status="Interview Scheduled")
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def verify_otp(request):
+    email = request.data.get("email")
+    otp = request.data.get("otp")
+    if not email or not otp:
+        return Response({"error": "Email and OTP required"}, status=400)
+
+    try:
+        otp_obj = EmailOTP.objects.get(
+            email=email,
+            otp=otp,
+            is_used=False
+        )
+    except EmailOTP.DoesNotExist:
+        return Response({"error": "Invalid OTP"}, status=400)
+
+    expiry_time = otp_obj.created_at + timedelta(minutes=OTP_EXPIRY_MINUTES)
+    if timezone.now() > expiry_time:
+        otp_obj.delete()
+        return Response({"error": "OTP expired"}, status=400)
+
+    otp_obj.is_used = True
+    otp_obj.save(update_fields=["is_used"])
+
+    return Response({"message": "OTP verified successfully"}, status=200)
+
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def send_otp(request):
+    email = request.data.get("email")
+
+    if not email:
+        return Response({"error": "Email is required"}, status=400)
+
+    if User.objects.filter(email=email).exists():
+        return Response({"error": "User already exists"}, status=400)
+
+    EmailOTP.objects.filter(email=email).delete()
+
+    otp = generate_otp()
+
+    EmailOTP.objects.create(
+        email=email,
+        otp=otp,
+    )
+
+    email_sent = send_email(
+        to_email=email,
+        subject="Your OTP Verification Code",
+        template_name="Register_employer.html",
+        context={"otp": otp}
+    )
+    if not email_sent:
+        return Response(
+            {"error": "Failed to send OTP email"},
+            status=500
+        )
+
+    return Response({"message": "OTP sent successfully"}, status=200)

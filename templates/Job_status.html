@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Application Status Update</title>
+    <style type="text/css">
+        @media only screen and (max-width: 600px) {
+            .container { width: 100% !important; }
+            .button { width: 100% !important; box-sizing: border-box !important; }
+        }
+    </style>
+</head>
+<body style="margin:0; padding:0; background-color:#f4f4f4; font-family:Arial, Helvetica, sans-serif;">
+<table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
+<tr>
+<td align="center">
+
+<table role="presentation" class="container" width="600" cellspacing="0" cellpadding="0" border="0"
+       style="max-width:600px; width:100%; background-color:#ffffff; margin:20px 0;
+       border-radius:8px; overflow:hidden; box-shadow:0 2px 10px rgba(0,0,0,0.1);">
+
+<!-- Header -->
+<tr>
+<td align="center"
+    style="background: linear-gradient(90deg, #6A11CB 0%, #2575FC 100%);
+           padding:40px 20px; color:#ffffff;">
+    <h1 style="margin:0; font-size:28px; font-weight:600;">Jobseeker</h1>
+    <p style="margin:10px 0 0; font-size:16px; opacity:0.9;">Application Status Update</p>
+</td>
+</tr>
+
+<!-- Body -->
+<tr>
+<td style="padding:40px 30px;">
+<p style="font-size:16px; line-height:1.6; color:#333;">Dear {{candidate_name}},</p>
+
+<p style="font-size:16px; line-height:1.6; color:#333;">
+Thank you for applying for the position of <strong>{{job_title}}</strong> at {{company_name}}.
+</p>
+{% if application_status == 'shortlisted' %}
+<h2 style="color:#28a745; font-size:22px; margin:30px 0 15px;">
+Congratulations! You have been shortlisted.
+</h2>
+
+<p style="font-size:16px; line-height:1.6; color:#333;">
+We were impressed by your profile and would like to move forward.
+</p>
+
+<h3 style="font-size:18px; margin:30px 0 15px; color:#333;">Job Description</h3>
+    <p style="font-size:16px; line-height:1.6; color:#333;">
+    {{job_description}}
+</p>
+
+<!-- CTA -->
+<table role="presentation" align="center" cellspacing="0" cellpadding="0" border="0" style="margin:35px auto;">
+<tr>
+<td align="center"
+    style="background: linear-gradient(90deg, #6A11CB 0%, #2575FC 100%);
+           border-radius:30px;">
+<a href="https://example.com/next-step" target="_blank"
+   style="display:inline-block; padding:16px 36px; font-size:16px;
+          font-weight:600; color:#ffffff; text-decoration:none;
+          border-radius:30px;">
+Next Steps
+</a>
+</td>
+</tr>
+</table>
+
+
+{%elif application_status == 'rejected' %}
+<h2 style="color:#028dff; font-size:22px; margin:30px 0 15px;">
+Sorry! You have been Rejected.
+</h2>
+
+
+<p style="font-size:16px; line-height:1.6; color:#333;">
+    Thank you for submitting your interest to {{job_title}}. We appreciate the time and effort you put into your application and the opportunity to learn about your experience.
+
+    At this time, we've decided to move forward with another candidate for this position
+    </p>
+    
+{%endif%}
+
+
+
+<p style="font-size:16px; line-height:1.6; color:#333; margin-top:40px;">
+Best regards,<br>
+{{company_name}}<br>
+</p>
+</td>
+</tr>
+
+<!-- Footer -->
+<tr>
+<td align="center"
+    style="background: linear-gradient(90deg, #6A11CB 0%, #2575FC 100%);
+           padding:30px 20px; color:#ffffff; font-size:14px;">
+<p style="margin:0 0 10px; opacity:0.9;">© 2026 NV Global Tech. All rights reserved.</p>
+<p style="margin:0; opacity:0.9;">
+<a href="{unsubscribe}" style="color:#ffffff; text-decoration:underline;">Unsubscribe</a>
+</p>
+</td>
+</tr>
+
+</table>
+</td>
+</tr>
+</table>
+</body>
+</html>

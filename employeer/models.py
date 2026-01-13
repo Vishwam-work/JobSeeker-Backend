@@ -42,6 +42,9 @@ class CompanyUser(models.Model):
     agree_marketing = models.BooleanField(default=False)
     agree_terms = models.BooleanField(default=False)
 
+    #email verification
+    is_verified = models.BooleanField()
+
     def __str__(self):
         return self.company_name
 
