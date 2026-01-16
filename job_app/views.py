@@ -187,7 +187,8 @@ def send_otp(request):
     email_sent = send_email(
         to_email=email,
         subject="Your OTP Verification Code",
-        content=f"Your OTP is {otp}. It expires in 5 minutes.",
+        template_name="Register_user.html",
+        context={"otp":otp},
     )
     if not email_sent:
         return Response(
