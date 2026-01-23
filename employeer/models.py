@@ -2,6 +2,8 @@ from django.conf import settings
 from django.db import models
 from master import models as master
 from job_app import models as job_app
+import uuid
+
 STATUS_CHOICES = [
         ('active', 'Active'),
         ('closed', 'Closed'),
@@ -84,7 +86,7 @@ class JobPosting(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='active')
     applicants=models.PositiveIntegerField(default=0)
-
+    apply_clicks=models.PositiveIntegerField(default=0)
     def __str__(self):
         return self.title
     
@@ -112,3 +114,20 @@ class Application(models.Model):
     notes = models.TextField(null=True, blank=True)  
     class Meta:
         unique_together = ('user', 'job')
+
+class JobClickEvent(models.Model):
+    job = models.ForeignKey(
+        JobPosting,
+        on_delete=models.CASCADE,
+        related_name="click_events"
+    )
+    request_id = models.UUIDField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["job", "request_id"],
+                name="unique_job_click_event"
+            )
+        ]

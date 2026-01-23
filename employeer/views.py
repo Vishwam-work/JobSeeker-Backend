@@ -2,10 +2,12 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny,IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
+from django.shortcuts import get_object_or_404
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import get_user_model, authenticate
 from .serializers import CompanyUserSerializer, CompanyLoginSerializer, JobPostingSerializer,AnswerSerializer, ApplicationSubmitSerializer, ApplicationListItemSerializer,CompanyListSerializer, CompanyDetailSerializer, JobPostingSerializer,ApplicationUpdateSerializer,InterviewScheduleSerializer
-from .models import CompanyUser, JobPosting,Answer, Application
+from .models import CompanyUser, JobPosting,Answer, Application, JobClickEvent
+from django.db import transaction, IntegrityError
 from master.models import Country, State, City
 from rest_framework import generics,status, viewsets, permissions, serializers
 from django.db.models import F
@@ -350,3 +352,26 @@ def send_otp(request):
         )
 
     return Response({"message": "OTP sent successfully"}, status=200)
+
+@api_view(["POST"])
+@permission_classes([AllowAny])
+def increment_job_click(request, job_id):
+    request_id = request.data.get("request_id")
+
+    if not request_id:
+        return Response( {"error": "request_id is required"}, status=400)
+
+    try:
+        with transaction.atomic():
+            JobClickEvent.objects.create(job_id=job_id,request_id=request_id)
+            JobPosting.objects.filter(id=job_id).update(apply_clicks=F("apply_clicks") + 1)
+
+    except IntegrityError:
+         pass
+
+    return Response(status=204)
+    # return Response({
+    #                   "job_clicks": JobPosting.apply_clicks,
+    #                   "job_id" : JobPosting.id,
+    #                   "request_id":request_id,
+    #                 },status=200)
