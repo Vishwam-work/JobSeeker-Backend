@@ -10,9 +10,11 @@ from master.models import Country, State, City
 from rest_framework import generics,status, viewsets, permissions, serializers
 from django.db.models import F
 from utils.utils import generate_otp, send_email
-from job_app.models import EmailOTP
+from job_app.models import EmailOTP, Profile
 from django.utils import timezone
 from datetime import timedelta
+from job_app.serializers import ProfileSerializer
+from rest_framework.views import APIView
 
 User = get_user_model()
 OTP_EXPIRY_MINUTES = 5
@@ -350,3 +352,9 @@ def send_otp(request):
         )
 
     return Response({"message": "OTP sent successfully"}, status=200)
+# All the Candidate Profile Views
+class ProfileListAPIView(APIView):
+    def get(self, request):
+        profiles = Profile.objects.all()
+        serializer = ProfileSerializer(profiles, many=True)
+        return Response(serializer.data)
