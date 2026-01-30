@@ -17,7 +17,7 @@ from django.utils import timezone
 from datetime import timedelta
 
 User = get_user_model()
-OTP_EXPIRY_MINUTES = 5
+OTP_EXPIRY_MINUTES = 1
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
@@ -296,13 +296,13 @@ class ScheduleInterviewView(generics.UpdateAPIView):
 def verify_otp(request):
     email = request.data.get("email")
     otp = request.data.get("otp")
+
     if not email or not otp:
         return Response({"error": "Email and OTP required"}, status=400)
 
     try:
         otp_obj = EmailOTP.objects.get(
             email=email,
-            otp=otp,
             is_used=False
         )
     except EmailOTP.DoesNotExist:
@@ -312,6 +312,9 @@ def verify_otp(request):
     if timezone.now() > expiry_time:
         otp_obj.delete()
         return Response({"error": "OTP expired"}, status=400)
+
+    if otp_obj.otp != otp:
+        return Response({"error": "Invalid OTP"}, status=400)
 
     otp_obj.is_used = True
     otp_obj.save(update_fields=["is_used"])

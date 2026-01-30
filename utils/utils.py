@@ -26,7 +26,7 @@ def send_email(to_email, subject, template_name, context):
         html_content=html_content
     )
     try:
-        sg = SendGridAPIClient(os.environ["SECRET_KEY"])
+        sg = SendGridAPIClient(os.environ["SENDGRID_API_KEY"])
         sg.send(message)
         return True
     except Exception:
