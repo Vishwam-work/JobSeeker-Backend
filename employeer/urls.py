@@ -24,4 +24,5 @@ path("api/employer/applications/<int:pk>/schedule-interview/",views.ScheduleInte
 path('api/verify-otp/', views.verify_otp, name='verify-otp'),
 path('api/send_otp/', views.send_otp, name='send-otp'),
 path("api/<int:job_id>/click/", views.increment_job_click),
+path('api/profile-all/', views.ProfileListAPIView.as_view(), name='profile-detail'),
 ] 
