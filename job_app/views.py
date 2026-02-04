@@ -36,6 +36,7 @@ def register(request):
         user = serializer.save()
         user.is_active = True
         user.is_verified = True
+        user.role = 'job_seeker'
         user.save()
         EmailOTP.objects.filter(email=email).delete()
         return Response({
@@ -49,6 +50,10 @@ def register(request):
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def login(request):
+    print("request.data.get('role')",request.data.get('role'))
+    if request.data.get('role') == 'employer':
+        return Response({"error": "Employer login is not allowed"}, status=status.HTTP_400_BAD_REQUEST)
+
     serializer = UserLoginSerializer(data=request.data)
 
     if serializer.is_valid():

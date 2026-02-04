@@ -45,6 +45,8 @@ def register_company_user(request):
         company_user = serializer.save()
         company_user.is_verified = True
         company_user.is_active = True
+        company_user.user.role = 'employer'
+        company_user.user.save()
         company_user.save()
         refresh = RefreshToken.for_user(company_user.user)
         return Response({
@@ -61,6 +63,10 @@ def register_company_user(request):
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def login_company_user(request):
+    print("request.data.get('role')",request.data.get('role'))
+    if request.data.get('role') == 'job_seeker':
+        return Response({"error": "Normal User login is not allowed"}, status=status.HTTP_400_BAD_REQUEST)
+    
     serializer = CompanyLoginSerializer(data=request.data)
     if serializer.is_valid():
         email = serializer.validated_data['email']
