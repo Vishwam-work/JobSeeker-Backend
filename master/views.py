@@ -2,6 +2,7 @@ from django.shortcuts import render
 from rest_framework import generics
 from .models import Country, State, City, Company, JobCategory, JobTitle, Currency, Major, MajorCategory
 from .serializers import CountrySerializer, StateSerializer, CitySerializer, CompanySerializer, JobTitleSerializer, JobCategorySerializer, CurrencySerializer, MajorSerializer, MajorCategorySerializer
+from rest_framework.pagination import PageNumberPagination
 
 # Create your views here.
 class CountryList(generics.ListAPIView):
@@ -77,3 +78,8 @@ class MajorsByCategoryView(generics.ListAPIView):
     def get_queryset(self):
         category_id = self.kwargs['category_id']
         return Major.objects.filter(category_id=category_id).order_by("name")
+
+class CustomPageNumberPagination(PageNumberPagination):
+    page_size = 5
+    page_size_query_param = "page_size"
+    max_page_size = 5

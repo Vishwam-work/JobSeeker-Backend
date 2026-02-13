@@ -16,6 +16,7 @@ from job_app.models import EmailOTP, Profile
 from django.utils import timezone
 from datetime import timedelta
 from job_app.serializers import ProfileSerializer
+from master.views import CustomPageNumberPagination
 from rest_framework.views import APIView
 
 User = get_user_model()
@@ -135,6 +136,7 @@ class AllJobsListView(generics.ListAPIView):
     """
     serializer_class = JobPostingSerializer
     permission_classes = [AllowAny]
+    pagination_class = CustomPageNumberPagination
     queryset = JobPosting.objects.filter(status='active').order_by('-created_at')
 
     def get_queryset(self):

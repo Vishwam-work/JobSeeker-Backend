@@ -15,6 +15,7 @@ from datetime import timedelta
 from employeer.models import Application
 from employeer.serializers import AppliedJobSerializer
 from rest_framework.views import APIView
+from master.views import CustomPageNumberPagination
 
 User = get_user_model()
 OTP_EXPIRY_MINUTES = 5
@@ -61,7 +62,6 @@ def login(request):
             if user:
                 # token, created = Token.objects.get_or_create(user=user)
                 refresh = RefreshToken.for_user(user)
-                print("token>>>>>Token",refresh)
                 return Response({
                     'message': 'Login successful',
                     'user_id': user.id,
@@ -113,6 +113,7 @@ def upload_resume(request):
 class SavedJobListCreateView(generics.ListCreateAPIView):
     serializer_class = SavedJobSerializer
     permission_classes = [permissions.IsAuthenticated]
+    pagination_class = CustomPageNumberPagination
 
     def get_queryset(self):
         return SavedJob.objects.filter(user=self.request.user)
@@ -124,7 +125,8 @@ class SavedJobListCreateView(generics.ListCreateAPIView):
 class SavedJobListView(generics.ListAPIView):
     serializer_class = SavedJobListSerializer
     permission_classes = [permissions.IsAuthenticated]
-
+    pagination_class = CustomPageNumberPagination
+    
     def get_queryset(self):
         return SavedJob.objects.filter(user=self.request.user)
 

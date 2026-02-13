@@ -63,16 +63,16 @@ MIDDLEWARE = [
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
-    "https://jobseeker-backend-jy1y.onrender.com",
-    "https://jobseeker-backend-jy1y.onrender.com",
+    "http://127.0.0.1:8010",
+    "http://127.0.0.1:8010",
     "https://nvglobaltestingserver.vercel.app"
 ]
 
 # CSRF Trusted Origins for production
 CSRF_TRUSTED_ORIGINS = [
-    "https://jobseeker-backend-jy1y.onrender.com",
+    "http://127.0.0.1:8010",
     "http://localhost:3000",
-    "https://jobseeker-backend-jy1y.onrender.com",
+    "http://127.0.0.1:8010",
     "https://nvglobaltestingserver.vercel.app"
 ]
 
