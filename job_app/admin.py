@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import CustomUser, Profile, Experience, Education, Certificate, Skill,SavedJob
+from .models import CustomUser, Profile, Experience, Education, Certificate, Skill,SavedJob, EmailOTP
 
 class CustomUserAdmin(UserAdmin):
     model = CustomUser
@@ -23,3 +23,4 @@ admin.site.register(Education)
 admin.site.register(Certificate)
 admin.site.register(Skill)
 admin.site.register(SavedJob)
+admin.site.register(EmailOTP)

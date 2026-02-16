@@ -10,6 +10,7 @@ from .models import CompanyUser, JobPosting,Answer, Application, JobClickEvent
 from django.db import transaction, IntegrityError
 from master.models import Country, State, City
 from rest_framework import generics,status, viewsets, permissions, serializers
+from rest_framework.pagination import PageNumberPagination
 from django.db.models import F
 from utils.utils import generate_otp, send_email
 from job_app.models import EmailOTP, Profile
@@ -17,9 +18,17 @@ from django.utils import timezone
 from datetime import timedelta
 from job_app.serializers import ProfileSerializer
 from rest_framework.views import APIView
+import hashlib
+from django.conf import settings
+from django.db import transaction
+from django.utils.crypto import constant_time_compare
 
 User = get_user_model()
 OTP_EXPIRY_MINUTES = 1
+
+def hash_otp(otp: str) -> str:
+    secret = settings.SECRET_KEY
+    return hashlib.sha256((otp + secret).encode()).hexdigest()
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
@@ -141,9 +150,11 @@ class AllJobsListView(generics.ListAPIView):
     """
     serializer_class = JobPostingSerializer
     permission_classes = [AllowAny]
+    pagination_class = PageNumberPagination
     queryset = JobPosting.objects.filter(status='active').order_by('-created_at')
 
     def get_queryset(self):
+        self.pagination_class.page_size = 5
         queryset = JobPosting.objects.filter(status='active').order_by('-created_at')
         job_type = self.request.query_params.get('job_type', None)
         work_mode = self.request.query_params.get('work_mode', None)
@@ -308,24 +319,33 @@ def verify_otp(request):
     if not email or not otp:
         return Response({"error": "Email and OTP required"}, status=400)
 
-    try:
-        otp_obj = EmailOTP.objects.get(
+    otp_hash = hash_otp(otp)
+    valid_time = timezone.now() - timedelta(minutes=OTP_EXPIRY_MINUTES)
+
+    with transaction.atomic():
+        otp_obj = EmailOTP.objects.select_for_update().filter(
             email=email,
-            is_used=False
-        )
-    except EmailOTP.DoesNotExist:
-        return Response({"error": "Invalid OTP"}, status=400)
+            is_used=False,
+            created_at__gte=valid_time
+        ).order_by('-created_at').first()
 
-    expiry_time = otp_obj.created_at + timedelta(minutes=OTP_EXPIRY_MINUTES)
-    if timezone.now() > expiry_time:
-        otp_obj.delete()
-        return Response({"error": "OTP expired"}, status=400)
+        if not otp_obj:
+            return Response({"error": "Invalid or expired OTP"}, status=400)
 
-    if otp_obj.otp != otp:
-        return Response({"error": "Invalid OTP"}, status=400)
+        # Attempt limit check
+        if otp_obj.attempts >= MAX_OTP_ATTEMPTS:
+            otp_obj.delete()
+            return Response({"error": "Too many attempts. Request new OTP."}, status=400)
 
-    otp_obj.is_used = True
-    otp_obj.save(update_fields=["is_used"])
+        # Constant time comparison
+        if not constant_time_compare(otp_obj.otp_hash, otp_hash):
+            otp_obj.attempts = F('attempts') + 1
+            otp_obj.save(update_fields=["attempts"])
+            return Response({"error": "Invalid OTP"}, status=400)
+
+        # Mark used
+        otp_obj.is_used = True
+        otp_obj.save(update_fields=["is_used"])
 
     return Response({"message": "OTP verified successfully"}, status=200)
 
@@ -338,19 +358,36 @@ def send_otp(request):
     if not email:
         return Response({"error": "Email is required"}, status=400)
 
-    if User.objects.filter(email=email).exists():
-        return Response({"error": "User already exists"}, status=400)
+    # Always return generic message (prevent enumeration)
+    generic_response = {"message": "If eligible, OTP has been sent"}
 
-    EmailOTP.objects.filter(email=email).delete()
+    # Rate limiting: cooldown check
+    existing_otp = EmailOTP.objects.filter(
+        email=email,
+        is_used=False
+    ).order_by('-created_at').first()
 
+    if existing_otp:
+        elapsed = (timezone.now() - existing_otp.created_at).total_seconds()
+        if elapsed < OTP_RESEND_COOLDOWN_SECONDS:
+            return Response(generic_response, status=200)
+
+    # Delete only unused OTPs
+    EmailOTP.objects.filter(email=email, is_used=False).delete()
+
+    # Generate OTP
     otp = generate_otp()
+    otp_hash = hash_otp(otp)
 
+    # Store hashed OTP
     EmailOTP.objects.create(
         email=email,
-        otp=otp,
+        otp_hash=otp_hash,
+        attempts=0
     )
 
-    email_sent = send_email(
+    # Send email (ideally async in real production)
+    send_email(
         to_email=email,
         subject="Your OTP Verification Code",
         template_name="Register_employer.html",

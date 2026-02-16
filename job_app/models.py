@@ -104,9 +104,15 @@ class SavedJob(models.Model):
 
 class EmailOTP(models.Model):
     email = models.EmailField(db_index=True)
-    otp = models.CharField(max_length=6)
+    otp_hash = models.CharField(max_length=64)
+    attempts = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     is_used = models.BooleanField(default=False)
 
+    class Meta:
+        indexes = [
+            models.Index(fields=["email", "is_used"]),
+        ]
+
     def __str__(self):
-        return f"{self.email} - {self.otp}"
+        return f"{self.email}"
