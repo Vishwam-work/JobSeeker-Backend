@@ -4,30 +4,31 @@ from django.contrib.auth.password_validation import validate_password
 from .models import Profile, Experience, Education, Certificate, Skill, SavedJob
 from employeer.models import JobPosting
 from employeer.serializers import JobPostingSerializer
-from master.models import Currency
+from master.models import Currency, Country
 from  master.serializers import CountrySerializer, StateSerializer, CitySerializer, JobCategorySerializer, JobTitleSerializer, CurrencySerializer
 
 User = get_user_model()
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, validators=[validate_password])
-
+    country_id = serializers.IntegerField(write_only=True, required=False, allow_null=True)
     class Meta:
         model = User
-        fields = ('full_name', 'email', 'password', 'mobile_number', 'work_status', 'receive_promotions')
+        fields = ('full_name', 'email', 'password', 'mobile_number', 'work_status', 'receive_promotions', 'country_id')
 
     def create(self, validated_data):
+        country_id = validated_data.pop('country_id', None)
         password = validated_data.pop('password')
         user = User(**validated_data)
         user.username = validated_data['email']
         user.set_password(password)
         user.save()
-       
         Profile.objects.create(
             user=user,
             full_name=user.full_name,
             email=user.email,
-            phone=user.mobile_number
+            phone=user.mobile_number,
+            country_id=country_id,
         )
         
         return user
