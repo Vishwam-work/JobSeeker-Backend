@@ -6,7 +6,7 @@ from django.contrib.auth import get_user_model, authenticate
 from .serializers import UserRegistrationSerializer, UserLoginSerializer, ProfileSerializer,SavedJobSerializer,SavedJobListSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.response import Response
-from .models import Profile,SavedJob,EmailOTP
+from .models import Profile,SavedJob,EmailOTP,CustomUser
 from rest_framework.exceptions import NotAuthenticated
 from django.core.mail import send_mail
 from utils.utils import generate_otp, send_email
@@ -50,10 +50,10 @@ def register(request):
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def login(request):
-    print("request.data.get('role')",request.data.get('role'))
-    if request.data.get('role') == 'employer':
+    user_role = CustomUser.objects.get(email=request.data.get("email")).role
+    if user_role == 'employer':
         return Response({"error": "Employer login is not allowed"}, status=status.HTTP_400_BAD_REQUEST)
-
+    
     serializer = UserLoginSerializer(data=request.data)
 
     if serializer.is_valid():
@@ -146,25 +146,37 @@ class SavedJobDeleteView(generics.DestroyAPIView):
 def verify_otp(request):
     email = request.data.get("email")
     otp = request.data.get("otp")
+
     if not email or not otp:
         return Response({"error": "Email and OTP required"}, status=400)
 
-    try:
-        otp_obj = EmailOTP.objects.get(
+    otp_hash = hash_otp(otp)
+    valid_time = timezone.now() - timedelta(minutes=OTP_EXPIRY_MINUTES)
+
+    with transaction.atomic():
+        otp_obj = EmailOTP.objects.select_for_update().filter(
             email=email,
-            otp=otp,
-            is_used=False
-        )
-    except EmailOTP.DoesNotExist:
-        return Response({"error": "Invalid OTP"}, status=400)
+            is_used=False,
+            created_at__gte=valid_time
+        ).order_by('-created_at').first()
 
-    expiry_time = otp_obj.created_at + timedelta(minutes=OTP_EXPIRY_MINUTES)
-    if timezone.now() > expiry_time:
-        otp_obj.delete()
-        return Response({"error": "OTP expired"}, status=400)
+        if not otp_obj:
+            return Response({"error": "Invalid or expired OTP"}, status=400)
 
-    otp_obj.is_used = True
-    otp_obj.save(update_fields=["is_used"])
+        # Attempt limit check
+        if otp_obj.attempts >= MAX_OTP_ATTEMPTS:
+            otp_obj.delete()
+            return Response({"error": "Too many attempts. Request new OTP."}, status=400)
+
+        # Constant time comparison
+        if not constant_time_compare(otp_obj.otp_hash, otp_hash):
+            otp_obj.attempts = F('attempts') + 1
+            otp_obj.save(update_fields=["attempts"])
+            return Response({"error": "Invalid OTP"}, status=400)
+
+        # Mark used
+        otp_obj.is_used = True
+        otp_obj.save(update_fields=["is_used"])
 
     return Response({"message": "OTP verified successfully"}, status=200)
 
@@ -177,32 +189,42 @@ def send_otp(request):
     if not email:
         return Response({"error": "Email is required"}, status=400)
 
-    if User.objects.filter(email=email).exists():
-        return Response({"error": "User already exists"}, status=400)
+    # Always return generic message (prevent enumeration)
+    generic_response = {"message": "If eligible, OTP has been sent"}
 
-    EmailOTP.objects.filter(email=email).delete()
+    # Rate limiting: cooldown check
+    existing_otp = EmailOTP.objects.filter(
+        email=email,
+        is_used=False
+    ).order_by('-created_at').first()
 
+    if existing_otp:
+        elapsed = (timezone.now() - existing_otp.created_at).total_seconds()
+        if elapsed < OTP_RESEND_COOLDOWN_SECONDS:
+            return Response(generic_response, status=200)
+
+    # Delete only unused OTPs
+    EmailOTP.objects.filter(email=email, is_used=False).delete()
+
+    # Generate OTP
     otp = generate_otp()
+    otp_hash = hash_otp(otp)
 
+    # Store hashed OTP
     EmailOTP.objects.create(
         email=email,
-        otp=otp,
+        otp_hash=otp_hash,
+        attempts=0
     )
 
-    email_sent = send_email(
+    # Send email (ideally async in real production)
+    send_email(
         to_email=email,
         subject="Your OTP Verification Code",
         template_name="Register_user.html",
-        context={"otp":otp},
+        context={"otp": otp}
     )
-    if not email_sent:
-        return Response(
-            {"error": "Failed to send OTP email"},
-            status=500
-        )
-
-    return Response({"message": "OTP sent successfully"}, status=200)
-
+    return Response(generic_response, status=200)
 class MyAppliedJobsView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 

@@ -7,7 +7,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import get_user_model, authenticate
 from .serializers import CompanyUserSerializer, CompanyLoginSerializer, JobPostingSerializer,AnswerSerializer, ApplicationSubmitSerializer, ApplicationListItemSerializer,CompanyListSerializer, CompanyDetailSerializer, JobPostingSerializer,ApplicationUpdateSerializer,InterviewScheduleSerializer
 from .models import CompanyUser, JobPosting,Answer, Application, JobClickEvent
-from django.db import transaction, IntegrityError
+from job_app.models import CustomUser
 from master.models import Country, State, City
 from rest_framework import generics,status, viewsets, permissions, serializers
 from rest_framework.pagination import PageNumberPagination
@@ -20,7 +20,7 @@ from job_app.serializers import ProfileSerializer
 from rest_framework.views import APIView
 import hashlib
 from django.conf import settings
-from django.db import transaction
+from django.db import transaction,IntegrityError
 from django.utils.crypto import constant_time_compare
 
 User = get_user_model()
@@ -72,8 +72,8 @@ def register_company_user(request):
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def login_company_user(request):
-    print("request.data.get('role')",request.data.get('role'))
-    if request.data.get('role') == 'job_seeker':
+    user_role = CustomUser.objects.get(email=request.data.get("email")).role
+    if user_role == 'job_seeker':
         return Response({"error": "Normal User login is not allowed"}, status=status.HTTP_400_BAD_REQUEST)
     
     serializer = CompanyLoginSerializer(data=request.data)
