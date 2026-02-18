@@ -225,6 +225,8 @@ def send_otp(request):
         context={"otp": otp}
     )
     return Response(generic_response, status=200)
+
+
 class MyAppliedJobsView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 

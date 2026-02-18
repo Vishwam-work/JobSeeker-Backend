@@ -256,6 +256,7 @@ class CandidateListView(generics.ListAPIView):
         return Application.objects.filter(job_id=job_id).order_by('-applied_at')
 
 @api_view(['GET'])
+@permission_classes([AllowAny])
 def company_list(request):
     """List all companies"""
     companies = CompanyUser.objects.select_related('country', 'state', 'city')
