@@ -24,8 +24,9 @@ from django.db import transaction,IntegrityError
 from django.utils.crypto import constant_time_compare
 
 User = get_user_model()
-OTP_EXPIRY_MINUTES = 1
-
+OTP_EXPIRY_MINUTES = 5
+OTP_RESEND_COOLDOWN_SECONDS = 300
+MAX_OTP_ATTEMPTS = 5
 def hash_otp(otp: str) -> str:
     secret = settings.SECRET_KEY
     return hashlib.sha256((otp + secret).encode()).hexdigest()

@@ -18,7 +18,8 @@ from rest_framework.views import APIView
 
 User = get_user_model()
 OTP_EXPIRY_MINUTES = 5
-
+OTP_RESEND_COOLDOWN_SECONDS = 300
+MAX_OTP_ATTEMPTS = 5
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def register(request):
@@ -190,7 +191,7 @@ def send_otp(request):
         return Response({"error": "Email is required"}, status=400)
 
     # Always return generic message (prevent enumeration)
-    generic_response = {"message": "If eligible, OTP has been sent"}
+    generic_response = {"message": "OTP has been sent Already, Try again after 5 minutes!"}
 
     # Rate limiting: cooldown check
     existing_otp = EmailOTP.objects.filter(
@@ -224,8 +225,8 @@ def send_otp(request):
         template_name="Register_user.html",
         context={"otp": otp}
     )
-    return Response(generic_response, status=200)
-
+    actual_response = {"message":"OTP Sent Successfully"}
+    return Response(actual_response, status=200)
 
 class MyAppliedJobsView(APIView):
     permission_classes = [permissions.IsAuthenticated]
