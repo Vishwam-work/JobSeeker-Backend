@@ -24,9 +24,12 @@ from django.db import transaction,IntegrityError
 from django.utils.crypto import constant_time_compare
 
 User = get_user_model()
+
 OTP_EXPIRY_MINUTES = 5
 OTP_RESEND_COOLDOWN_SECONDS = 300
 MAX_OTP_ATTEMPTS = 5
+
+
 def hash_otp(otp: str) -> str:
     secret = settings.SECRET_KEY
     return hashlib.sha256((otp + secret).encode()).hexdigest()
@@ -310,7 +313,23 @@ class ScheduleInterviewView(generics.UpdateAPIView):
     permission_classes = [IsAuthenticated]
 
     def perform_update(self, serializer):
-        serializer.save(application_status="Interview Scheduled")
+        instance = serializer.save(application_status="Interview Scheduled")
+        email = instance.user.email
+        send_email(
+                    to_email=email,
+                    subject="Interview Scheduled",
+                    template_name="interview_schedule.html",
+                    context={
+                        "user": instance.user,
+                        "job": instance.job.title,
+                        "date": instance.interview_date,
+                        "time": instance.interview_time,
+                        "mode": instance.interview_mode,
+                        "link": instance.meet_link,
+                        "notes": instance.notes,
+                        "status": instance.application_status  #choices must be fromm the application model.
+                    }
+        )
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
