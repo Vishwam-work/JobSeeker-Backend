@@ -316,19 +316,19 @@ class ScheduleInterviewView(generics.UpdateAPIView):
         instance = serializer.save(application_status="Interview Scheduled")
         email = instance.user.email
         send_email(
-                    to_email=email,
-                    subject="Interview Scheduled",
-                    template_name="interview_schedule.html",
-                    context={
-                        "user": instance.user,
-                        "job": instance.job.title,
-                        "date": instance.interview_date,
-                        "time": instance.interview_time,
-                        "mode": instance.interview_mode,
-                        "link": instance.meet_link,
-                        "notes": instance.notes,
-                        "status": instance.application_status  #choices must be fromm the application model.
-                    }
+                to_email=email,
+                subject="Interview Scheduled",
+                template_name="interview_schedule.html",
+                context={
+                    "user": instance.user,
+                    "job": instance.job.title,
+                    "date": instance.interview_date,
+                    "time": instance.interview_time,
+                    "mode": instance.interview_mode,
+                    "link": instance.meet_link,
+                    "notes": instance.notes,
+                    "status": instance.application_status  #choices must be fromm the application model.
+                }
         )
 
 @api_view(['POST'])
@@ -353,18 +353,15 @@ def verify_otp(request):
         if not otp_obj:
             return Response({"error": "Invalid or expired OTP"}, status=400)
 
-        # Attempt limit check
         if otp_obj.attempts >= MAX_OTP_ATTEMPTS:
             otp_obj.delete()
             return Response({"error": "Too many attempts. Request new OTP."}, status=400)
 
-        # Constant time comparison
         if not constant_time_compare(otp_obj.otp_hash, otp_hash):
             otp_obj.attempts = F('attempts') + 1
             otp_obj.save(update_fields=["attempts"])
             return Response({"error": "Invalid OTP"}, status=400)
 
-        # Mark used
         otp_obj.is_used = True
         otp_obj.save(update_fields=["is_used"])
 
@@ -378,11 +375,9 @@ def send_otp(request):
 
     if not email:
         return Response({"error": "Email is required"}, status=400)
-
-    # Always return generic message (prevent enumeration)
+   
     generic_response = {"message": "If eligible, OTP has been sent"}
 
-    # Rate limiting: cooldown check
     existing_otp = EmailOTP.objects.filter(
         email=email,
         is_used=False
@@ -393,14 +388,11 @@ def send_otp(request):
         if elapsed < OTP_RESEND_COOLDOWN_SECONDS:
             return Response(generic_response, status=200)
 
-    # Delete only unused OTPs
     EmailOTP.objects.filter(email=email, is_used=False).delete()
 
-    # Generate OTP
     otp = generate_otp()
     otp_hash = hash_otp(otp)
 
-    # Store hashed OTP
     EmailOTP.objects.create(
         email=email,
         otp_hash=otp_hash,
