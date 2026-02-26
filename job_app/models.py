@@ -11,12 +11,18 @@ class CustomUser(AbstractUser):
 
     ]
 
+    ROLE_CHOICES = [
+        ('employer', 'Employer'),
+        ('job_seeker', 'Job Seeker'),
+    ]
+    
     full_name = models.CharField(max_length=255)
     mobile_number = models.CharField(max_length=15)
     work_status = models.CharField(max_length=20, choices=WORK_STATUS_CHOICES)
     receive_promotions = models.BooleanField(default=False)
     is_verified = models.BooleanField(default=False)
     country_id = models.ForeignKey(master.Country, on_delete=models.SET_NULL, null=True, blank=True, related_name="users")
+    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='job_seeker') 
     def __str__(self):
         return self.email
 
@@ -98,9 +104,15 @@ class SavedJob(models.Model):
 
 class EmailOTP(models.Model):
     email = models.EmailField(db_index=True)
-    otp = models.CharField(max_length=6)
+    otp_hash = models.CharField(max_length=64)
+    attempts = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     is_used = models.BooleanField(default=False)
 
+    class Meta:
+        indexes = [
+            models.Index(fields=["email", "is_used"]),
+        ]
+
     def __str__(self):
-        return f"{self.email} - {self.otp}"
+        return f"{self.email}"

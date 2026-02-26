@@ -7,9 +7,10 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import get_user_model, authenticate
 from .serializers import CompanyUserSerializer, CompanyLoginSerializer, JobPostingSerializer,AnswerSerializer, ApplicationSubmitSerializer, ApplicationListItemSerializer,CompanyListSerializer, CompanyDetailSerializer, JobPostingSerializer,ApplicationUpdateSerializer,InterviewScheduleSerializer
 from .models import CompanyUser, JobPosting,Answer, Application, JobClickEvent
-from django.db import transaction, IntegrityError
+from job_app.models import CustomUser
 from master.models import Country, State, City
 from rest_framework import generics,status, viewsets, permissions, serializers
+from rest_framework.pagination import PageNumberPagination
 from django.db.models import F
 from utils.utils import generate_otp, send_email
 from job_app.models import EmailOTP, Profile
@@ -17,9 +18,21 @@ from django.utils import timezone
 from datetime import timedelta
 from job_app.serializers import ProfileSerializer
 from rest_framework.views import APIView
+import hashlib
+from django.conf import settings
+from django.db import transaction,IntegrityError
+from django.utils.crypto import constant_time_compare
 
 User = get_user_model()
-OTP_EXPIRY_MINUTES = 1
+
+OTP_EXPIRY_MINUTES = 5
+OTP_RESEND_COOLDOWN_SECONDS = 300
+MAX_OTP_ATTEMPTS = 5
+
+
+def hash_otp(otp: str) -> str:
+    secret = settings.SECRET_KEY
+    return hashlib.sha256((otp + secret).encode()).hexdigest()
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
@@ -45,6 +58,8 @@ def register_company_user(request):
         company_user = serializer.save()
         company_user.is_verified = True
         company_user.is_active = True
+        company_user.user.role = 'employer'
+        company_user.user.save()
         company_user.save()
         refresh = RefreshToken.for_user(company_user.user)
         return Response({
@@ -61,6 +76,10 @@ def register_company_user(request):
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def login_company_user(request):
+    user_role = CustomUser.objects.get(email=request.data.get("email")).role
+    if user_role == 'job_seeker':
+        return Response({"error": "Normal User login is not allowed"}, status=status.HTTP_400_BAD_REQUEST)
+    
     serializer = CompanyLoginSerializer(data=request.data)
     if serializer.is_valid():
         email = serializer.validated_data['email']
@@ -135,9 +154,11 @@ class AllJobsListView(generics.ListAPIView):
     """
     serializer_class = JobPostingSerializer
     permission_classes = [AllowAny]
+    pagination_class = PageNumberPagination
     queryset = JobPosting.objects.filter(status='active').order_by('-created_at')
 
     def get_queryset(self):
+        self.pagination_class.page_size = 5
         queryset = JobPosting.objects.filter(status='active').order_by('-created_at')
         job_type = self.request.query_params.get('job_type', None)
         work_mode = self.request.query_params.get('work_mode', None)
@@ -239,6 +260,7 @@ class CandidateListView(generics.ListAPIView):
         return Application.objects.filter(job_id=job_id).order_by('-applied_at')
 
 @api_view(['GET'])
+@permission_classes([AllowAny])
 def company_list(request):
     """List all companies"""
     companies = CompanyUser.objects.select_related('country', 'state', 'city')
@@ -291,7 +313,23 @@ class ScheduleInterviewView(generics.UpdateAPIView):
     permission_classes = [IsAuthenticated]
 
     def perform_update(self, serializer):
-        serializer.save(application_status="Interview Scheduled")
+        instance = serializer.save(application_status="Interview Scheduled")
+        email = instance.user.email
+        send_email(
+                to_email=email,
+                subject="Interview Scheduled",
+                template_name="interview_schedule.html",
+                context={
+                    "user": instance.user,
+                    "job": instance.job.title,
+                    "date": instance.interview_date,
+                    "time": instance.interview_time,
+                    "mode": instance.interview_mode,
+                    "link": instance.meet_link,
+                    "notes": instance.notes,
+                    "status": instance.application_status  #choices must be fromm the application model.
+                }
+        )
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
@@ -302,24 +340,30 @@ def verify_otp(request):
     if not email or not otp:
         return Response({"error": "Email and OTP required"}, status=400)
 
-    try:
-        otp_obj = EmailOTP.objects.get(
+    otp_hash = hash_otp(otp)
+    valid_time = timezone.now() - timedelta(minutes=OTP_EXPIRY_MINUTES)
+
+    with transaction.atomic():
+        otp_obj = EmailOTP.objects.select_for_update().filter(
             email=email,
-            is_used=False
-        )
-    except EmailOTP.DoesNotExist:
-        return Response({"error": "Invalid OTP"}, status=400)
+            is_used=False,
+            created_at__gte=valid_time
+        ).order_by('-created_at').first()
 
-    expiry_time = otp_obj.created_at + timedelta(minutes=OTP_EXPIRY_MINUTES)
-    if timezone.now() > expiry_time:
-        otp_obj.delete()
-        return Response({"error": "OTP expired"}, status=400)
+        if not otp_obj:
+            return Response({"error": "Invalid or expired OTP"}, status=400)
 
-    if otp_obj.otp != otp:
-        return Response({"error": "Invalid OTP"}, status=400)
+        if otp_obj.attempts >= MAX_OTP_ATTEMPTS:
+            otp_obj.delete()
+            return Response({"error": "Too many attempts. Request new OTP."}, status=400)
 
-    otp_obj.is_used = True
-    otp_obj.save(update_fields=["is_used"])
+        if not constant_time_compare(otp_obj.otp_hash, otp_hash):
+            otp_obj.attempts = F('attempts') + 1
+            otp_obj.save(update_fields=["attempts"])
+            return Response({"error": "Invalid OTP"}, status=400)
+
+        otp_obj.is_used = True
+        otp_obj.save(update_fields=["is_used"])
 
     return Response({"message": "OTP verified successfully"}, status=200)
 
@@ -331,20 +375,32 @@ def send_otp(request):
 
     if not email:
         return Response({"error": "Email is required"}, status=400)
+   
+    generic_response = {"message": "If eligible, OTP has been sent"}
 
-    if User.objects.filter(email=email).exists():
-        return Response({"error": "User already exists"}, status=400)
+    existing_otp = EmailOTP.objects.filter(
+        email=email,
+        is_used=False
+    ).order_by('-created_at').first()
 
-    EmailOTP.objects.filter(email=email).delete()
+    if existing_otp:
+        elapsed = (timezone.now() - existing_otp.created_at).total_seconds()
+        if elapsed < OTP_RESEND_COOLDOWN_SECONDS:
+            return Response(generic_response, status=200)
+
+    EmailOTP.objects.filter(email=email, is_used=False).delete()
 
     otp = generate_otp()
+    otp_hash = hash_otp(otp)
 
     EmailOTP.objects.create(
         email=email,
-        otp=otp,
+        otp_hash=otp_hash,
+        attempts=0
     )
 
-    email_sent = send_email(
+    # Send email (ideally async in real production)
+    send_email(
         to_email=email,
         subject="Your OTP Verification Code",
         template_name="Register_employer.html",
