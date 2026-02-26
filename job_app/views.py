@@ -15,11 +15,18 @@ from datetime import timedelta
 from employeer.models import Application
 from employeer.serializers import AppliedJobSerializer
 from rest_framework.views import APIView
+from django.conf import settings
+import hashlib
 
 User = get_user_model()
 OTP_EXPIRY_MINUTES = 5
 OTP_RESEND_COOLDOWN_SECONDS = 300
 MAX_OTP_ATTEMPTS = 5
+
+def hash_otp(otp: str) -> str:
+    secret = settings.SECRET_KEY
+    return hashlib.sha256((otp + secret).encode()).hexdigest()
+
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def register(request):
