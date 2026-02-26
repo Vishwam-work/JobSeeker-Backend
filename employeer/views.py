@@ -400,7 +400,7 @@ def send_otp(request):
     )
 
     # Send email (ideally async in real production)
-    send_email(
+    email_sent = send_email(
         to_email=email,
         subject="Your OTP Verification Code",
         template_name="Register_employer.html",

@@ -18,6 +18,9 @@ from rest_framework.views import APIView
 from django.conf import settings
 import hashlib
 from django.db import transaction,IntegrityError
+from django.utils.crypto import constant_time_compare
+from django.db.models import F
+
 
 User = get_user_model()
 OTP_EXPIRY_MINUTES = 5
