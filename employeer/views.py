@@ -318,7 +318,7 @@ class ScheduleInterviewView(generics.UpdateAPIView):
         send_email(
                 to_email=email,
                 subject="Interview Scheduled",
-                template_name="interview_schedule.html",
+                template_name="Job_status.html",
                 context={
                     "user": instance.user,
                     "job": instance.job.title,
