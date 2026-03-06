@@ -23,14 +23,6 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         user.username = validated_data['email']
         user.set_password(password)
         user.save()
-        Profile.objects.create(
-            user=user,
-            full_name=user.full_name,
-            email=user.email,
-            phone=user.mobile_number,
-            country_id=country_id,
-        )
-        
         return user
 
 class UserLoginSerializer(serializers.Serializer):
@@ -51,6 +43,7 @@ class ExperienceSerializer(serializers.ModelSerializer):
         read_only_fields = ['profile']
 
 class EducationSerializer(serializers.ModelSerializer):
+    course_name = serializers.CharField(source="course.name", read_only=True)
     class Meta:
         model = Education
         fields = '__all__'

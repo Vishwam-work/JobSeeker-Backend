@@ -1,8 +1,10 @@
 from django.shortcuts import render
-from rest_framework import generics
-from .models import Country, State, City, Company, JobCategory, JobTitle, Currency, Major, MajorCategory
+from rest_framework import generics, status, viewsets, permissions, serializers
+from .models import Country, State, City, Company, JobCategory, JobTitle, Currency, Major, MajorCategory, CourseMaster
 from .serializers import CountrySerializer, StateSerializer, CitySerializer, CompanySerializer, JobTitleSerializer, JobCategorySerializer, CurrencySerializer, MajorSerializer, MajorCategorySerializer
-
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.response import Response
+from rest_framework.permissions import AllowAny
 # Create your views here.
 class CountryList(generics.ListAPIView):
     queryset = Country.objects.all()
@@ -77,3 +79,22 @@ class MajorsByCategoryView(generics.ListAPIView):
     def get_queryset(self):
         category_id = self.kwargs['category_id']
         return Major.objects.filter(category_id=category_id).order_by("name")
+
+@api_view(["GET"])
+@permission_classes([AllowAny])
+def search_courses(request):
+    query = request.GET.get("q", "")
+    courses = CourseMaster.objects.filter(name__icontains=query)[:10]
+    data = [{"id": c.id, "name": c.name} for c in courses]
+    return Response(data)
+
+@api_view(["POST"])
+@permission_classes([AllowAny])
+def create_course(request):
+    name = request.data.get("name")
+
+    course, created = CourseMaster.objects.get_or_create(name=name)
+
+    return Response({
+        "id": course.id,
+        "name": course.name})

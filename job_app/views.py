@@ -1,5 +1,5 @@
 from rest_framework import generics,status, viewsets, permissions, serializers
-from rest_framework.decorators import api_view, permission_classes, action
+from rest_framework.decorators import api_view, parser_classes, permission_classes, action
 from rest_framework.permissions import AllowAny
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import get_user_model, authenticate
@@ -20,6 +20,7 @@ import hashlib
 from django.db import transaction,IntegrityError
 from django.utils.crypto import constant_time_compare
 from django.db.models import F
+from rest_framework.parsers import MultiPartParser, FormParser
 
 
 User = get_user_model()
@@ -33,6 +34,7 @@ def hash_otp(otp: str) -> str:
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
+@parser_classes([MultiPartParser, FormParser])
 def register(request):
     email = request.data.get("email")
 
@@ -50,6 +52,16 @@ def register(request):
         user.is_verified = True
         user.role = 'job_seeker'
         user.save()
+
+        resume_file = request.FILES.get("resume")
+        Profile.objects.create(
+            user=user,
+            full_name=user.full_name,
+            email=user.email,
+            phone=user.mobile_number,
+            country_id=request.data.get("country_id"),
+            resume=resume_file if resume_file else None
+        )
         EmailOTP.objects.filter(email=email).delete()
         return Response({
             'message': 'Registration successful. Please verify OTP.',

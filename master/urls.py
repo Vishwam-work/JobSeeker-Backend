@@ -15,4 +15,7 @@ urlpatterns = [
     path('api/majors/', views.MajorListView.as_view(), name='major_list'),
     path('api/majors/<int:pk>/', views.MajorDetailView.as_view(), name='major_detail'),
     path('api/majors/category/<int:category_id>/', views.MajorsByCategoryView.as_view(), name='majors_by_category'),
+    # Course search path
+    path('api/courses/search/', views.search_courses, name='search-courses'),
+    path('api/courses/create/', views.create_course, name='create-course'),
 ]
