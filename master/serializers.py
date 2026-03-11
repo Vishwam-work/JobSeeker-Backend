@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Country, State, City, Company, JobCategory, JobTitle, Currency, Major, MajorCategory
+from .models import Country, CourseMaster, State, City, Company, JobCategory, JobTitle, Currency, Major, MajorCategory
 
 
 class CountrySerializer(serializers.ModelSerializer):
@@ -53,3 +53,8 @@ class MajorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Major
         fields = ["id", "code", "name", "category", "category_id"]
+
+class CourseSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CourseMaster
+        fields = ["id", "name"]

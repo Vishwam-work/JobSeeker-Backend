@@ -66,7 +66,7 @@ CORS_ALLOWED_ORIGINS = [
     "https://jobseeker-backend-jy1y.onrender.com",
     "https://jobseeker-backend-jy1y.onrender.com",
     "https://testingservernvglobal.vercel.app",
-    "https://nvglobaltestserverv30.vercel.app/"
+    "https://nvglobaltestserverv30.vercel.app"
 ]
 
 # CSRF Trusted Origins for production

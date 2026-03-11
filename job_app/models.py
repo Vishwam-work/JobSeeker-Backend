@@ -58,10 +58,10 @@ class Profile(models.Model):
 class Experience(models.Model):
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='experiences', null=True)
     company = models.CharField(max_length=255, blank=True, null=True)
-    job_title = models.ForeignKey(master.JobTitle, on_delete=models.SET_NULL, blank=True, null=True)
+    job_title = models.CharField(max_length=255, blank=True, null=True)
     start_date = models.DateField(blank=True, null=True)
     end_date = models.DateField(blank=True, null=True)
-    category = models.ForeignKey(master.JobCategory, on_delete=models.SET_NULL, blank=True, null=True)
+    category = models.CharField(max_length=255, blank=True, null=True)
     location = models.ForeignKey(master.Country, on_delete=models.SET_NULL, blank=True, null=True)
     description = models.TextField(blank=True)
     def __str__(self):
@@ -80,7 +80,7 @@ class Education(models.Model):
     ]
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='educations')
     education = models.CharField(max_length=255)
-    course = models.ForeignKey(master.CourseMaster, on_delete=models.SET_NULL, null=True)
+    course = models.CharField(max_length=255 , blank=True, null=True)
     institution = models.CharField(max_length=255)
     year = models.CharField(max_length=10)
     percentage = models.CharField(max_length=20, blank=True)

@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework import generics, status, viewsets, permissions, serializers
 from .models import Country, State, City, Company, JobCategory, JobTitle, Currency, Major, MajorCategory, CourseMaster
-from .serializers import CountrySerializer, StateSerializer, CitySerializer, CompanySerializer, JobTitleSerializer, JobCategorySerializer, CurrencySerializer, MajorSerializer, MajorCategorySerializer
+from .serializers import CountrySerializer, StateSerializer, CitySerializer, CompanySerializer, JobTitleSerializer, JobCategorySerializer, CurrencySerializer, MajorSerializer, MajorCategorySerializer, CourseSerializer
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
@@ -34,23 +34,39 @@ class CityList(generics.ListAPIView):
         fields = ['id', 'name', 'state_id', 'country_id']
 
 class CompanyList(generics.ListAPIView):
-    queryset = Company.objects.all()
     serializer_class = CompanySerializer
-    permission_classes  = []
+    permission_classes = []
+
+    def get_queryset(self):
+        query = self.request.GET.get("q", None)
+
+        if query:
+            return Company.objects.filter(name__icontains=query)[:10]
+
+        return Company.objects.all()[:10]
+
+
+
 
 class JobCategoryList(generics.ListAPIView):
-    queryset = JobCategory.objects.all()
     serializer_class = JobCategorySerializer
     permission_classes  = []
+    def get_queryset(self):
+        query = self.request.GET.get("q", None)
+        if query:
+            return JobCategory.objects.filter(name__icontains=query)[:10]
+        return JobCategory.objects.all()[:10]
 
 class JobTitleList(generics.ListAPIView):
     serializer_class = JobTitleSerializer
+    permission_classes = []
     def get_queryset(self):
-        if self.request.query_params.get('category') is None:
-            return JobTitle.objects.all()
-        category = self.request.query_params.get('category')
-        return JobTitle.objects.filter(category=category)
-    permission_classes  = []
+        q = self.request.GET.get("q")
+
+        if q:
+            return JobTitle.objects.filter(title__icontains=q)[:10]
+
+        return JobTitle.objects.all()[:10]
 
 class CurrencyList(generics.ListAPIView):
     queryset = Currency.objects.all()
@@ -98,3 +114,8 @@ def create_course(request):
     return Response({
         "id": course.id,
         "name": course.name})
+
+class CourseList(generics.ListAPIView):
+    queryset = CourseMaster.objects.all()
+    serializer_class = CourseSerializer
+    permission_classes  = []
