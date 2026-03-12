@@ -43,7 +43,7 @@ class CompanyList(generics.ListAPIView):
         if query:
             return Company.objects.filter(name__icontains=query)[:10]
 
-        return Company.objects.all()[:10]
+        return Company.objects.all()[:10].order_by("name")
 
 
 

@@ -1,0 +1,212 @@
+Oracle
+Accenture
+Deloitte
+PwC
+EY
+KPMG
+Capgemini
+Tata Consultancy Services (TCS)
+Infosys
+Wipro
+Cognizant
+HCLTech
+IBM Consulting
+Tech Mahindra
+NTT DATA
+LTIMindtree
+DXC Technology
+Fujitsu
+CGI
+Atos
+Birlasoft
+Hexaware
+ValueLabs
+Aspire Systems
+Godrej Infotech
+ITC Infotech
+Allied Digital Services
+Ramco Systems
+Mastek
+Fusion Practices
+Drivestream
+Accelalpha
+AST Corporation
+Sierra-Cedar
+Apps Associates
+NexInfo
+Jade Global
+Kovaion Consulting
+Terillium
+GSI Inc.
+Inoapps
+Syntax
+Centroid Systems
+Keste
+Redfaire International
+Claremont Consulting
+Certus Solutions
+Four Cornerstone
+Highstreet IT Solutions
+OptimalSols
+Queryon
+INFOLOB
+ITOrizon
+Promatis
+KS2 Technologies
+Airiodion Group
+GrowExx
+Smart ERP Solutions
+Surety Systems
+ERP Success Partners
+DSP
+AXIA Consulting
+Primaned
+RIA Advisory
+The Hackett Group
+Velocity Technology Solutions
+DTC Global Services
+TechWize
+Rittman Mead
+Doyensys
+Alithya
+Viscosity North America
+Codestone
+BISP Solutions
+eGrove Systems
+Excelencia Consulting
+Ignisov Global
+Arche Softronix
+Simplus
+AppsPro
+ERP Analysts
+DoFort Technologies
+Management and Computer Consultants (MCC)
+Ramer Software Solutions
+Exacore IT Solutions
+Sparity
+Conneqtion Group
+ISCS Technologies
+Geno Consulting Services
+Softech ERP Solutions
+Anekvurna Consultancy
+Connaissant Consultancy Services
+RAIDON Cloud
+Mangosoft Technologies
+Integs Cloud Technologies
+Bazaar247 Mcommerce
+Cerebra IT Services
+Connate People Technology
+Knack Systems
+IT Convergence
+GSPANN
+Inatech
+Algarytm
+Tquila
+SoftClouds
+Bright Curve IT Solutions
+Datamorphosis
+Trustly Technology Solutions
+Rite Software Solutions and Services
+vCentriCloud Services
+Kaladi Consulting
+OGES Infotech
+Miracle Software Systems
+Clarisity
+Zertia Telecomunicaciones
+Eurolink Srl
+Prioritic Consulting
+ITIS Support Ltda
+The Cloudors
+Hangzhou Alti Technology
+BRF Consulting
+Navsoft
+DevTeamPro
+DecisivEdge
+Hyde Park Solutions
+eSkillz
+Course5 Intelligence
+EBR Software
+Nile Technologies
+OracleAPEXConsultant
+Trinamix
+TransSys Solutions
+Pythian
+Speridian Technologies
+MDS Systems Integration
+Sigmia Solutions
+SkillNet Solutions
+Spark::red
+Level-Gold Retail Solutions
+SoftArt Solutions
+ArcLight Consulting
+Exalogic Consulting
+de Novo Solutions
+Navsoft Consulting
+Queryon Solutions
+OptimalSols Consulting
+Four Cornerstone Group
+Certus ERP Solutions
+Highstreet Consulting
+Airiodion Consulting
+BrightStar Partners
+ClearPeaks
+Cloud4C
+Collaborate Solutions
+Conneqt Business Solutions
+CrossVue
+Digital Route
+Edgewater Fullscope
+Elire
+EQ Technologic
+Everest Group
+Fullscope
+Gideon Taylor
+Groupsoft
+Inatech Marine
+Infovity
+Intech Systems
+Integra Micro Systems
+InterRel Consulting
+Jade Global Services
+KPI Partners
+Mindstream Analytics
+Mythics
+Namos Solutions
+Novigo Solutions
+Onesta Solutions
+OpKey
+Orbit Analytics
+PCS Software
+PeritusSoft
+Pratham Software
+Prodapt
+Qubix
+Rolta
+Rubicon Red
+SCS Cloud
+Serene Corporation
+Sikich
+Solera
+SolutionBeacon
+Spinnaker Support
+Storm Reply
+Strategic Systems Group
+Sunera Technologies
+Support Revolution
+Sysco Software
+Talan
+Team Computers
+Trellis Consulting
+Virtusa
+Winfo Solutions
+Xavor Corporation
+Zensar Technologies
+Zettagrid
+Znode
+Data Intensity
+Conexess Group
+InterRel
+Storm Reply Consulting
+Mythics Consulting
+Groupsoft US Inc
+Orbit Analytics Inc
