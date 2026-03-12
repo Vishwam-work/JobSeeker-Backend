@@ -82,7 +82,8 @@ class Education(models.Model):
     education = models.CharField(max_length=255)
     course = models.CharField(max_length=255 , blank=True, null=True)
     institution = models.CharField(max_length=255)
-    year = models.CharField(max_length=10)
+    start_year = models.CharField(max_length=10, blank=True, null=True)
+    end_year = models.CharField(max_length=10, blank=True, null=True)
     percentage = models.CharField(max_length=20, blank=True)
     score_type = models.CharField(max_length=20, choices=SCORE_TYPES, default="cgpa")
     course_type = models.CharField(

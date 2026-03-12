@@ -442,3 +442,14 @@ class ProfileListAPIView(APIView):
         profiles = Profile.objects.all()
         serializer = ProfileSerializer(profiles, many=True)
         return Response(serializer.data)
+
+class CompanyUserDetail(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, pk):
+        try:
+            company = CompanyUser.objects.get(pk=pk)
+        except CompanyUser.DoesNotExist:
+            return Response({'error': 'Company not found'}, status=404)
+        serializer = CompanyUserSerializer(company)
+        return Response(serializer.data)

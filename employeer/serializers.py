@@ -199,20 +199,22 @@ class ApplicationListItemSerializer(serializers.ModelSerializer):
             for exp in profile.experiences.all().order_by('-start_date'):
                 experiences.append({
                     'company': exp.company,
-                    'role': getattr(exp.job_title, 'title', None) if getattr(exp, 'job_title', None) else None,
+                    'role': exp.job_title,
                     'start_date': exp.start_date,
                     'end_date': exp.end_date,
                     'description': exp.description,
+                    'category': exp.category,
                 })
         # educations
         educations = []
         if hasattr(profile, 'educations'):
-            for edu in profile.educations.all().order_by('-year'):
+            for edu in profile.educations.all().order_by('-start_year'):
                 educations.append({
-                    'degree': edu.degree,
-                    'field': edu.field,
+                    'education': edu.education,
+                    'course': edu.course,
                     'institution': edu.institution,
-                    'year': edu.year,
+                    'start_year': edu.start_year,
+                    'end_year': edu.end_year,
                     'grade': getattr(edu, 'percentage', None),
                 })
         # certifications
