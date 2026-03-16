@@ -10,7 +10,7 @@ from  master.serializers import CountrySerializer, StateSerializer, CitySerializ
 User = get_user_model()
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(write_only=True, validators=[validate_password])
+    password = serializers.CharField(write_only=True, required=True)
     country_id = serializers.IntegerField(write_only=True, required=False, allow_null=True)
     class Meta:
         model = User

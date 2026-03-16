@@ -24,9 +24,9 @@ from rest_framework.parsers import MultiPartParser, FormParser
 
 
 User = get_user_model()
-OTP_EXPIRY_MINUTES = 5
-OTP_RESEND_COOLDOWN_SECONDS = 300
-MAX_OTP_ATTEMPTS = 5
+OTP_EXPIRY_MINUTES = 1
+OTP_RESEND_COOLDOWN_SECONDS = 60
+MAX_OTP_ATTEMPTS = 3
 
 def hash_otp(otp: str) -> str:
     secret = settings.SECRET_KEY
@@ -224,8 +224,12 @@ def send_otp(request):
 
     if existing_otp:
         elapsed = (timezone.now() - existing_otp.created_at).total_seconds()
+        remaining = int(OTP_RESEND_COOLDOWN_SECONDS - elapsed)
         if elapsed < OTP_RESEND_COOLDOWN_SECONDS:
-            return Response(generic_response, status=200)
+            return Response(
+            {"error": f"Please wait {remaining} seconds before requesting a new OTP."},
+            status=400
+            )
 
     # Delete only unused OTPs
     EmailOTP.objects.filter(email=email, is_used=False).delete()
