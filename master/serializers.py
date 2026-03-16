@@ -35,7 +35,7 @@ class JobTitleSerializer(serializers.ModelSerializer):
 class CurrencySerializer(serializers.ModelSerializer):
          class Meta:
             model = Currency
-            fields = ['id', 'name', 'symbol']
+            fields = ['id', 'name', 'symbol', 'code', 'symbol_native']
 
 class MajorCategorySerializer(serializers.ModelSerializer):
     class Meta:
