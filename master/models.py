@@ -81,6 +81,8 @@ class JobTitle(models.Model):
 class Currency(models.Model):
     name = models.CharField(max_length=255)
     symbol = models.CharField(max_length=10)
+    code = models.CharField(max_length=10, unique=True, blank=True, null=True)
+    symbol_native = models.CharField(max_length=10, blank=True, null=True)
     def __str__(self):
         return self.name
 
