@@ -41,9 +41,9 @@ class CompanyList(generics.ListAPIView):
         query = self.request.GET.get("q", None)
 
         if query:
-            return Company.objects.filter(name__icontains=query)[:10]
+            return Company.objects.filter(name__icontains=query).order_by("name")[:10]
 
-        return Company.objects.all()[:10].order_by("name")
+        return Company.objects.all().order_by("name")[:10]
 
 
 
@@ -54,8 +54,8 @@ class JobCategoryList(generics.ListAPIView):
     def get_queryset(self):
         query = self.request.GET.get("q", None)
         if query:
-            return JobCategory.objects.filter(name__icontains=query)[:10]
-        return JobCategory.objects.all()[:10]
+            return JobCategory.objects.filter(name__icontains=query).order_by("name")[:10]
+        return JobCategory.objects.all().order_by("name")[:10]
 
 class JobTitleList(generics.ListAPIView):
     serializer_class = JobTitleSerializer
@@ -64,9 +64,9 @@ class JobTitleList(generics.ListAPIView):
         q = self.request.GET.get("q")
 
         if q:
-            return JobTitle.objects.filter(title__icontains=q)[:10]
+            return JobTitle.objects.filter(title__icontains=q).order_by("title")[:10]
 
-        return JobTitle.objects.all()[:10]
+        return JobTitle.objects.all().order_by("title")[:10]
 
 class CurrencyList(generics.ListAPIView):
     queryset = Currency.objects.all()
