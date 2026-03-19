@@ -32,6 +32,8 @@ class UserLoginSerializer(serializers.Serializer):
 class ExperienceSerializer(serializers.ModelSerializer):
     location = CountrySerializer(read_only=True)
     location_id = serializers.IntegerField(write_only=True, required=False, allow_null=True)
+    start_date = serializers.DateField(format="%d-%m-%Y", input_formats=["%d-%m-%Y"], required=False, allow_null=True)
+    end_date = serializers.DateField(format="%d-%m-%Y", input_formats=["%d-%m-%Y"], required=False, allow_null=True)
     class Meta:
         model = Experience
         fields = '__all__'
@@ -74,6 +76,8 @@ class ProfileSerializer(serializers.ModelSerializer):
     certifications = CertificateSerializer(many=True, required=False)
     skills = SkillSerializer(many=True, required=False)
     resume = serializers.FileField(required=False)
+    date_of_birth = serializers.DateField(format="%d-%m-%Y", input_formats=["%d-%m-%Y"])
+
 
     class Meta:
         model = Profile
