@@ -123,6 +123,13 @@ class ProfileDetail(generics.RetrieveUpdateAPIView):
 
     def get_object(self):
         return Profile.objects.get_or_create(user=self.request.user)[0]
+    def perform_update(self, serializer):
+        profile = serializer.save()
+
+        user = self.request.user
+        if user.full_name != profile.full_name:
+            user.full_name = profile.full_name
+            user.save()
 
 # Resume Upload view
 @api_view(['PATCH'])
