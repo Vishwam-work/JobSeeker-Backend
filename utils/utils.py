@@ -4,6 +4,7 @@ import logging
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
 from jinja2 import Environment, FileSystemLoader
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
 
 logger = logging.getLogger(__name__)
 
@@ -32,3 +33,9 @@ def send_email(to_email, subject, template_name, context):
     except Exception:
         logger.exception("SendGrid email failed")
         return False
+
+
+class CustomTokenGenerator(PasswordResetTokenGenerator):
+    pass
+
+password_reset_token = CustomTokenGenerator()

@@ -9,7 +9,7 @@ from rest_framework.response import Response
 from .models import Profile,SavedJob,EmailOTP,CustomUser
 from rest_framework.exceptions import NotAuthenticated
 from django.core.mail import send_mail
-from utils.utils import generate_otp, send_email
+from utils.utils import generate_otp, send_email, password_reset_token
 from django.utils import timezone
 from datetime import timedelta
 from employeer.models import Application
@@ -21,7 +21,10 @@ from django.db import transaction,IntegrityError
 from django.utils.crypto import constant_time_compare
 from django.db.models import F
 from rest_framework.parsers import MultiPartParser, FormParser
-
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes
+from django.utils.http import urlsafe_base64_decode
+from django.utils.encoding import force_str
 
 User = get_user_model()
 OTP_EXPIRY_MINUTES = 1
@@ -262,3 +265,51 @@ class MyAppliedJobsView(APIView):
         applications = Application.objects.filter(user=request.user)
         serializer = AppliedJobSerializer(applications, many=True)
         return Response(serializer.data)
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def forgot_password(request):
+    email = request.data.get("email")
+
+    try:
+        user = User.objects.get(email=email)
+        if not user:
+            return Response({"error": "User not found"}, status=404)
+        uid = urlsafe_base64_encode(force_bytes(user.id))
+        token = password_reset_token.make_token(user)
+
+        reset_link = f"http://localhost:3000/reset-password/{uid}/{token}/"
+
+        # 🔥 Send email using SendGrid
+        send_email(
+            to_email=email,
+            subject="Reset Your Password",
+            template_name="Forget_password.html",
+            context={"reset_link": reset_link}
+        )
+
+        return Response({"message": "Reset link sent to email"})
+
+    except User.DoesNotExist:
+        return Response({"error": "User not found"}, status=404)
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def reset_password(request):
+    uid = request.data.get("uid")
+    token = request.data.get("token")
+    password = request.data.get("password")
+
+    try:
+        user_id = force_str(urlsafe_base64_decode(uid))
+        user = User.objects.get(id=user_id)
+
+        if password_reset_token.check_token(user, token):
+            user.set_password(password)
+            user.save()
+            return Response({"message": "Password reset successful"})
+        else:
+            return Response({"error": "Invalid or expired token"}, status=400)
+
+    except Exception:
+        return Response({"error": "Invalid request"}, status=400)

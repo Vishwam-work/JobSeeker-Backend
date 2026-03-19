@@ -16,4 +16,6 @@ urlpatterns = [
     path('api/verify-otp/', views.verify_otp, name='verify-otp'),
     path('api/send_otp/', views.send_otp, name='send-otp'),
     path('api/my-applied-jobs/', views.MyAppliedJobsView.as_view(), name='my-applied-jobs'),
+    path('api/reset-password/', views.reset_password, name='request-password-reset'),
+    path('api/forgot-password/', views.forgot_password, name='forgot-password'),
 ]+static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
