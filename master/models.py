@@ -94,7 +94,6 @@ class MajorCategory(models.Model):
         return self.name
 
 class Major(models.Model):
-    code = models.CharField(max_length=50,null=True,blank=True)
     name = models.CharField(max_length=255,null=True,blank=True)
     category = models.ForeignKey(MajorCategory, on_delete=models.CASCADE,null=True,blank=True)
 

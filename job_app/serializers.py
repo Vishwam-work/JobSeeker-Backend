@@ -5,7 +5,7 @@ from .models import Profile, Experience, Education, Certificate, Skill, SavedJob
 from employeer.models import JobPosting
 from employeer.serializers import JobPostingSerializer
 from master.models import Currency, Country
-from  master.serializers import CountrySerializer, StateSerializer, CitySerializer, JobCategorySerializer, JobTitleSerializer, CurrencySerializer, CourseSerializer
+from  master.serializers import CountrySerializer, StateSerializer, CitySerializer, CurrencySerializer, MajorCategorySerializer, MajorSerializer
 
 User = get_user_model()
 
@@ -38,6 +38,8 @@ class ExperienceSerializer(serializers.ModelSerializer):
         read_only_fields = ['profile']
 
 class EducationSerializer(serializers.ModelSerializer):
+    education_detail = MajorCategorySerializer(source='education', read_only=True)
+    course_detail = MajorSerializer(source='course', read_only=True)
     class Meta:
         model = Education
         fields = '__all__'

@@ -1,0 +1,927 @@
+[
+  {
+    "model": "master.majorcategory",
+    "pk": 1,
+    "fields": {
+      "name": "Doctorate/PhD"
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 1,
+    "fields": {
+      "name": "Ph.D/Doctorate",
+      "category": 1
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 2,
+    "fields": {
+      "name": "MPhil",
+      "category": 1
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 3,
+    "fields": {
+      "name": "DrNB",
+      "category": 1
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 4,
+    "fields": {
+      "name": "Other Post Graduate",
+      "category": 1
+    }
+  },
+  {
+    "model": "master.majorcategory",
+    "pk": 2,
+    "fields": {
+      "name": "Masters / Post-Graduation"
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 5,
+    "fields": {
+      "name": "MBA/PGDM",
+      "category": 2
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 6,
+    "fields": {
+      "name": "M.Tech",
+      "category": 2
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 7,
+    "fields": {
+      "name": "MS/M.Sc (Science)",
+      "category": 2
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 8,
+    "fields": {
+      "name": "MCA",
+      "category": 2
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 9,
+    "fields": {
+      "name": "M.Com",
+      "category": 2
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 10,
+    "fields": {
+      "name": "PG Diploma",
+      "category": 2
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 11,
+    "fields": {
+      "name": "M.A",
+      "category": 2
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 12,
+    "fields": {
+      "name": "CA",
+      "category": 2
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 13,
+    "fields": {
+      "name": "CS",
+      "category": 2
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 14,
+    "fields": {
+      "name": "DM",
+      "category": 2
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 15,
+    "fields": {
+      "name": "ICWA (CMA)",
+      "category": 2
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 16,
+    "fields": {
+      "name": "Integrated PG",
+      "category": 2
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 17,
+    "fields": {
+      "name": "LLM",
+      "category": 2
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 18,
+    "fields": {
+      "name": "M.Arch",
+      "category": 2
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 19,
+    "fields": {
+      "name": "M.Ch",
+      "category": 2
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 20,
+    "fields": {
+      "name": "M.Des.",
+      "category": 2
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 21,
+    "fields": {
+      "name": "M.Ed",
+      "category": 2
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 22,
+    "fields": {
+      "name": "M.Pharma",
+      "category": 2
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 23,
+    "fields": {
+      "name": "MCM",
+      "category": 2
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 24,
+    "fields": {
+      "name": "MDS",
+      "category": 2
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 25,
+    "fields": {
+      "name": "Medical-MS/MD",
+      "category": 2
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 26,
+    "fields": {
+      "name": "MFA",
+      "category": 2
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 27,
+    "fields": {
+      "name": "MVSC",
+      "category": 2
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 28,
+    "fields": {
+      "name": "Master of Science in International Business",
+      "category": 2
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 29,
+    "fields": {
+      "name": "Post Graduate Diploma in Marketing Management",
+      "category": 2
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 30,
+    "fields": {
+      "name": "Master of Science in Marketing",
+      "category": 2
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 31,
+    "fields": {
+      "name": "Master of Science in Medical Laboratory Science",
+      "category": 2
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 32,
+    "fields": {
+      "name": "Master of Science in Medical Microbiology",
+      "category": 2
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 33,
+    "fields": {
+      "name": "Master of Science in Biomedical Science",
+      "category": 2
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 34,
+    "fields": {
+      "name": "Master of Journalism and Mass Communication",
+      "category": 2
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 35,
+    "fields": {
+      "name": "Master of Arts in Mass Communication",
+      "category": 2
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 36,
+    "fields": {
+      "name": "Post Graduate Diploma in Mass Communication",
+      "category": 2
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 37,
+    "fields": {
+      "name": "Post Graduate Diploma in International Business",
+      "category": 2
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 38,
+    "fields": {
+      "name": "Master of Business Administration in International Business",
+      "category": 2
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 39,
+    "fields": {
+      "name": "Master in IT Management",
+      "category": 2
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 40,
+    "fields": {
+      "name": "Post Graduate Diploma in Information Technology",
+      "category": 2
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 41,
+    "fields": {
+      "name": "Master of Social Work",
+      "category": 2
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 42,
+    "fields": {
+      "name": "Master of Science in Nursing and Master of Business Administration",
+      "category": 2
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 43,
+    "fields": {
+      "name": "Post Graduate Diploma in Nursing Education",
+      "category": 2
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 44,
+    "fields": {
+      "name": "Master of Public Administration",
+      "category": 2
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 45,
+    "fields": {
+      "name": "Master of Political Science",
+      "category": 2
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 46,
+    "fields": {
+      "name": "Master of Public Policy",
+      "category": 2
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 47,
+    "fields": {
+      "name": "Master of Arts in Media and Communication",
+      "category": 2
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 48,
+    "fields": {
+      "name": "Post Graduate Diploma in Journalism and Mass Communication",
+      "category": 2
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 49,
+    "fields": {
+      "name": "Master of Arts in Journalism and Mass Communication",
+      "category": 2
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 50,
+    "fields": {
+      "name": "Master of Science in Human Resource Management",
+      "category": 2
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 51,
+    "fields": {
+      "name": "Master of Human Resource Development",
+      "category": 2
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 52,
+    "fields": {
+      "name": "Master of Human Resources and Industrial Relation",
+      "category": 2
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 53,
+    "fields": {
+      "name": "Diplomate National Board (DNB) Diploma",
+      "category": 2
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 54,
+    "fields": {
+      "name": "Diplomate of National Board (DNB)",
+      "category": 2
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 55,
+    "fields": {
+      "name": "DM (Doctor of Medicine) Fellowship",
+      "category": 2
+    }
+  },
+  {
+    "model": "master.majorcategory",
+    "pk": 3,
+    "fields": {
+      "name": "Graduation / Diploma"
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 56,
+    "fields": {
+      "name": "B.Tech/B.E. - Bachelor of Technology / Engineering",
+      "category": 3
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 57,
+    "fields": {
+      "name": "B.Com - Bachelor of Commerce",
+      "category": 3
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 58,
+    "fields": {
+      "name": "B.Sc - Bachelor of Science",
+      "category": 3
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 59,
+    "fields": {
+      "name": "B.A - Bachelor of Arts",
+      "category": 3
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 60,
+    "fields": {
+      "name": "Diploma",
+      "category": 3
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 61,
+    "fields": {
+      "name": "BCA - Bachelor of Computer Applications",
+      "category": 3
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 62,
+    "fields": {
+      "name": "MBBS - Bachelor of Medicine and Bachelor of Surgery",
+      "category": 3
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 63,
+    "fields": {
+      "name": "B.B.A / B.M.S - Bachelor of Business Admin / Management Studies",
+      "category": 3
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 64,
+    "fields": {
+      "name": "BDS - Bachelor of Dental Surgery",
+      "category": 3
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 65,
+    "fields": {
+      "name": "B.Pharma - Bachelor of Pharmacy",
+      "category": 3
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 66,
+    "fields": {
+      "name": "LLB - Bachelor of Laws",
+      "category": 3
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 67,
+    "fields": {
+      "name": "B.Ed - Bachelor of Education",
+      "category": 3
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 68,
+    "fields": {
+      "name": "B.Arch - Bachelor of Architecture",
+      "category": 3
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 69,
+    "fields": {
+      "name": "BHM - Bachelor of Hotel Management",
+      "category": 3
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 70,
+    "fields": {
+      "name": "ITI Certification",
+      "category": 3
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 71,
+    "fields": {
+      "name": "Bachelor of Artificial Intelligence",
+      "category": 3
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 72,
+    "fields": {
+      "name": "Bachelor of Arts (Honours) (B.A. Hons)",
+      "category": 3
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 73,
+    "fields": {
+      "name": "Bachelor of Audiology and Speech-Language Pathology",
+      "category": 3
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 74,
+    "fields": {
+      "name": "BAMS - Bachelor of Ayurvedic Medicine and Surgery",
+      "category": 3
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 75,
+    "fields": {
+      "name": "Bachelor of Commerce in Banking and Finance",
+      "category": 3
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 76,
+    "fields": {
+      "name": "Bachelor of Commerce in Business Economics",
+      "category": 3
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 77,
+    "fields": {
+      "name": "B.Des. - Bachelor of Design",
+      "category": 3
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 78,
+    "fields": {
+      "name": "Bachelor of Development Studies",
+      "category": 3
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 79,
+    "fields": {
+      "name": "B.Ed. Special Education - Bachelor of Education in Special Education",
+      "category": 3
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 80,
+    "fields": {
+      "name": "B.El.Ed - Bachelor of Elementary Education",
+      "category": 3
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 81,
+    "fields": {
+      "name": "Bachelor of Environmental Design",
+      "category": 3
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 82,
+    "fields": {
+      "name": "Bachelor of Environmental Management",
+      "category": 3
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 83,
+    "fields": {
+      "name": "Bachelor of Event Management",
+      "category": 3
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 84,
+    "fields": {
+      "name": "BFA - Bachelor of Fine Arts",
+      "category": 3
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 85,
+    "fields": {
+      "name": "BHMS - Bachelor of Homeopathic Medicine and Surgery",
+      "category": 3
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 86,
+    "fields": {
+      "name": "BHMCT - Bachelor of Hotel Management and Catering Technology",
+      "category": 3
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 87,
+    "fields": {
+      "name": "Bachelor of International Economics",
+      "category": 3
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 88,
+    "fields": {
+      "name": "Bachelor of Journalism and Mass Communication",
+      "category": 3
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 89,
+    "fields": {
+      "name": "Bachelor of Liberal Arts",
+      "category": 3
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 90,
+    "fields": {
+      "name": "Bachelor of Literature",
+      "category": 3
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 91,
+    "fields": {
+      "name": "Bachelor of Music",
+      "category": 3
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 92,
+    "fields": {
+      "name": "Bachelor of Music Therapy",
+      "category": 3
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 93,
+    "fields": {
+      "name": "Bachelor of Naturopathy and Yogic Sciences",
+      "category": 3
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 94,
+    "fields": {
+      "name": "Bachelor of Occupational Therapy",
+      "category": 3
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 95,
+    "fields": {
+      "name": "B.P.Ed - Bachelor of Physical Education",
+      "category": 3
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 96,
+    "fields": {
+      "name": "Bachelor of Physiotherapy",
+      "category": 3
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 97,
+    "fields": {
+      "name": "Bachelor of Public Health",
+      "category": 3
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 98,
+    "fields": {
+      "name": "B.Sc. - Bachelor of Science",
+      "category": 3
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 99,
+    "fields": {
+      "name": "BS - Bachelor of Science",
+      "category": 3
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 100,
+    "fields": {
+      "name": "Bachelor of Social Innovation",
+      "category": 3
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 101,
+    "fields": {
+      "name": "Bachelor of Social Work",
+      "category": 3
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 102,
+    "fields": {
+      "name": "Bachelor of Tourism Studies in Cultural Heritage and Eco-Tourism",
+      "category": 3
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 103,
+    "fields": {
+      "name": "BUMS - Bachelor of Unani Medicine and Surgery",
+      "category": 3
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 104,
+    "fields": {
+      "name": "Bachelor of Urban Planning",
+      "category": 3
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 105,
+    "fields": {
+      "name": "Bachelor of Veterinary Science",
+      "category": 3
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 106,
+    "fields": {
+      "name": "BVSC - Bachelor of Veterinary Science",
+      "category": 3
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 107,
+    "fields": {
+      "name": "Bachelor of Vocational Studies",
+      "category": 3
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 108,
+    "fields": {
+      "name": "Certified Financial Planner",
+      "category": 3
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 109,
+    "fields": {
+      "name": "Company Secretary",
+      "category": 3
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 110,
+    "fields": {
+      "name": "Diploma in Elementary Education",
+      "category": 3
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 111,
+    "fields": {
+      "name": "Junior Basic Training",
+      "category": 3
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 112,
+    "fields": {
+      "name": "Nursery Teacher Training",
+      "category": 3
+    }
+  },
+  {
+    "model": "master.major",
+    "pk": 113,
+    "fields": {
+      "name": "Other Post Graduate",
+      "category": 3
+    }
+  }
+]

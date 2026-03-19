@@ -75,8 +75,14 @@ class CurrencyList(generics.ListAPIView):
 
 # List all category
 class MajorCategoryListView(generics.ListAPIView):
-    queryset = MajorCategory.objects.all().order_by("name")
     serializer_class = MajorCategorySerializer
+    def get_queryset(self):
+        query = self.request.GET.get("q")
+
+        if query:
+            return MajorCategory.objects.filter(name__icontains=query)[:10]
+
+        return MajorCategory.objects.all()[:10]
 
 # List all the Major
 class MajorListView(generics.ListAPIView):
@@ -94,7 +100,14 @@ class MajorsByCategoryView(generics.ListAPIView):
 
     def get_queryset(self):
         category_id = self.kwargs['category_id']
-        return Major.objects.filter(category_id=category_id).order_by("name")
+        query = self.request.GET.get("q")
+
+        qs = Major.objects.filter(category_id=category_id)
+
+        if query:
+            qs = qs.filter(name__icontains=query)
+
+        return qs.order_by("name")[:10]
 
 @api_view(["GET"])
 @permission_classes([AllowAny])

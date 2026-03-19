@@ -40,19 +40,14 @@ class CurrencySerializer(serializers.ModelSerializer):
 class MajorCategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = MajorCategory
-        fields = ["id", "name"]
+        fields = "__all__"
 
 
 class MajorSerializer(serializers.ModelSerializer):
     category = MajorCategorySerializer(read_only=True)
-    category_id = serializers.PrimaryKeyRelatedField(
-        queryset=MajorCategory.objects.all(),
-        source="category",
-        write_only=True
-    )
     class Meta:
         model = Major
-        fields = ["id", "code", "name", "category", "category_id"]
+        fields = ["id","name", "category"]
 
 class CourseSerializer(serializers.ModelSerializer):
     class Meta:

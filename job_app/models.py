@@ -74,13 +74,13 @@ class Education(models.Model):
         ("grade", "Grade"),
     ]
     COURSE_TYPES = [
-        ("full_time", "Full Time"),
-        ("part_time", "Part Time"),
-        ("distance", "Correspondence/Distance Learning"),
+        ("Full Time", "Full Time"),
+        ("Part Time", "Part Time"),
+        ("Distance Learning", "Correspondence/Distance Learning"),
     ]
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='educations')
-    education = models.CharField(max_length=255)
-    course = models.CharField(max_length=255 , blank=True, null=True)
+    education = models.ForeignKey(master.MajorCategory, on_delete=models.SET_NULL, blank=True, null=True, related_name="education_category")
+    course = models.ForeignKey(master.Major, on_delete=models.SET_NULL, blank=True, null=True, related_name="course")
     institution = models.CharField(max_length=255)
     start_year = models.CharField(max_length=10, blank=True, null=True)
     end_year = models.CharField(max_length=10, blank=True, null=True)
