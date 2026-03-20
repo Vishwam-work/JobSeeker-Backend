@@ -4,6 +4,7 @@ from . import views
 
 urlpatterns = [
     path('api/countries/', views.CountryList.as_view(), name='country-list'),
+    path('api/locations/search/', views.CountryListExperience.as_view(), name='country-search'),
     path('api/states/', views.StateList.as_view(), name='state-list'),
     path('api/cities/', views.CityList.as_view(), name='city-list'),
     path('api/companies/', views.CompanyList.as_view(), name='company-list'),
