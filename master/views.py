@@ -7,9 +7,14 @@ from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 # Create your views here.
 class CountryList(generics.ListAPIView):
-    queryset = Country.objects.all()
     serializer_class = CountrySerializer
     permission_classes  = []
+    def get_queryset(self):
+        query = self.request.GET.get("q", None)
+        if query:
+            return Country.objects.filter(name__icontains=query).order_by("name")[:10]
+        return Country.objects.all().order_by("name")[:10]
+
 
 class StateList(generics.ListAPIView):
     serializer_class = StateSerializer

@@ -30,8 +30,8 @@ class UserLoginSerializer(serializers.Serializer):
     password = serializers.CharField()
 
 class ExperienceSerializer(serializers.ModelSerializer):
-    location = CountrySerializer(read_only=True)
-    location_id = serializers.IntegerField(write_only=True, required=False, allow_null=True)
+    # location = CountrySerializer(read_only=True)
+    # location_id = serializers.IntegerField(write_only=True, required=False, allow_null=True)
     start_date = serializers.DateField(format="%d/%m/%Y", input_formats=["%d/%m/%Y"], required=False, allow_null=True)
     end_date = serializers.DateField(format="%d/%m/%Y", input_formats=["%d/%m/%Y"], required=False, allow_null=True)
     class Meta:
