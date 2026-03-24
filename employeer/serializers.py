@@ -297,7 +297,7 @@ from .models import Application
 class AppliedJobSerializer(serializers.ModelSerializer):
     job_title = serializers.CharField(source='job.title', read_only=True)
     company_name = serializers.CharField(source='job.company_name', read_only=True)
-
+    job = JobPostingSerializer(read_only=True)
     class Meta:
         model = Application
         fields = [
@@ -310,5 +310,6 @@ class AppliedJobSerializer(serializers.ModelSerializer):
             'interview_time',
             'interview_mode',
             'meet_link',
-            'notes'
+            'notes',
+            'job'
         ]
