@@ -320,3 +320,19 @@ def reset_password(request):
 
     except Exception:
         return Response({"error": "Invalid request"}, status=400)
+
+@api_view(['PATCH'])
+@permission_classes([permissions.IsAuthenticated])
+def image_upload(request):
+    try:
+        profile = Profile.objects.get(user=request.user)
+    except Profile.DoesNotExist:
+        return Response({"error": "Profile not found."}, status=404)
+
+    if 'profile_image' not in request.FILES:
+        return Response({"error": "No profile image file found in the request."}, status=400)
+
+    profile.profile_image = request.FILES['profile_image']
+    profile.save()
+
+    return Response({"profile_image_url": profile.profile_image.url, "message": "Image uploaded successfully."}, status=200)
