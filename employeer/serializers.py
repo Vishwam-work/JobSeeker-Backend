@@ -39,12 +39,8 @@ from .models import JobPosting
 
 class JobPostingSerializer(serializers.ModelSerializer):
     company_user = serializers.ReadOnlyField(source='company_user.id')
-    location = CountrySerializer(read_only=True)
-    category = JobCategorySerializer(read_only=True)
     currency = CurrencySerializer(read_only=True)
     questions = serializers.JSONField(required=False)
-    category_id = serializers.IntegerField(write_only=True, required=False, allow_null=True)
-    location_id = serializers.IntegerField(write_only=True, required=False, allow_null=True)
     currency_id = serializers.IntegerField(write_only=True, required=False, allow_null=True)
     
     class Meta:
