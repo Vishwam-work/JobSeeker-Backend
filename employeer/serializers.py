@@ -42,7 +42,8 @@ class JobPostingSerializer(serializers.ModelSerializer):
     currency = CurrencySerializer(read_only=True)
     questions = serializers.JSONField(required=False)
     currency_id = serializers.IntegerField(write_only=True, required=False, allow_null=True)
-    
+    application_deadline = serializers.DateField(format="%d/%m/%Y", input_formats=["%d/%m/%Y"])
+
     class Meta:
         model = JobPosting
         fields = '__all__'  
@@ -200,6 +201,7 @@ class ApplicationListItemSerializer(serializers.ModelSerializer):
                     'end_date': exp.end_date,
                     'description': exp.description,
                     'category': exp.category,
+                    'location': exp.location
                 })
         # educations
         educations = []
@@ -212,6 +214,8 @@ class ApplicationListItemSerializer(serializers.ModelSerializer):
                     'start_year': edu.start_year,
                     'end_year': edu.end_year,
                     'grade': getattr(edu, 'percentage', None),
+                    'score_type': edu.score_type,
+                    'course_type': edu.course_type,
                 })
         # certifications
         certifications = []
@@ -227,6 +231,7 @@ class ApplicationListItemSerializer(serializers.ModelSerializer):
             'full_name': profile.full_name,
             'email': profile.email,
             'phone': profile.phone,
+            'phone_code': profile.phone_code,
             'experience': profile.experience,
             'resume': profile.resume.url if profile.resume else None,
             'country': getattr(profile.country, 'name', None),
