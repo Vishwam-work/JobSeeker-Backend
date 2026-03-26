@@ -206,8 +206,8 @@ class ApplicationListItemSerializer(serializers.ModelSerializer):
         if hasattr(profile, 'educations'):
             for edu in profile.educations.all().order_by('-start_year'):
                 educations.append({
-                    'education': edu.education,
-                    'course': edu.course,
+                    'education': getattr(edu.education, 'name', None),
+                    'course': getattr(edu.course, 'name', None),
                     'institution': edu.institution,
                     'start_year': edu.start_year,
                     'end_year': edu.end_year,
