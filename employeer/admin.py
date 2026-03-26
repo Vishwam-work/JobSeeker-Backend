@@ -42,7 +42,7 @@ class CompanyUserAdmin(admin.ModelAdmin):
     )
 @admin.register(JobPosting)
 class JobPostingAdmin(admin.ModelAdmin):
-    raw_id_fields = ['company_user', 'category' ,'job_title' ,'location' ,'currency']
+    raw_id_fields = ['company_user' ,'currency']
     list_display = ('title', 'company', 'location', 'experience', 'salary', 'is_urgent', 'is_remote', 'location' ,'currency')
 
 @admin.register(Application)

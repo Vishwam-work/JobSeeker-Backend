@@ -51,7 +51,7 @@ class CompanyList(generics.ListAPIView):
         if query:
             return Company.objects.filter(name__icontains=query).order_by("name")[:10]
 
-        return Company.objects.all().order_by("name")[:10]
+        return Company.objects.all().order_by("name")
 
 
 
@@ -63,8 +63,7 @@ class JobCategoryList(generics.ListAPIView):
         query = self.request.GET.get("q", None)
         if query:
             return JobCategory.objects.filter(name__icontains=query).order_by("name")[:10]
-        return JobCategory.objects.all().order_by("name")[:10]
-
+        return JobCategory.objects.all().order_by("name")
 class JobTitleList(generics.ListAPIView):
     serializer_class = JobTitleSerializer
     permission_classes = []
@@ -74,7 +73,7 @@ class JobTitleList(generics.ListAPIView):
         if q:
             return JobTitle.objects.filter(title__icontains=q).order_by("title")[:10]
 
-        return JobTitle.objects.all().order_by("title")[:10]
+        return JobTitle.objects.all().order_by("title")
 
 class CurrencyList(generics.ListAPIView):
     queryset = Currency.objects.all()
@@ -90,7 +89,7 @@ class MajorCategoryListView(generics.ListAPIView):
         if query:
             return MajorCategory.objects.filter(name__icontains=query)[:10]
 
-        return MajorCategory.objects.all()[:10]
+        return MajorCategory.objects.all()
 
 # List all the Major
 class MajorListView(generics.ListAPIView):
@@ -115,7 +114,7 @@ class MajorsByCategoryView(generics.ListAPIView):
         if query:
             qs = qs.filter(name__icontains=query)
 
-        return qs.order_by("name")[:10]
+        return qs.order_by("name")
 
 @api_view(["GET"])
 @permission_classes([AllowAny])
