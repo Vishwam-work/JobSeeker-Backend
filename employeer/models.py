@@ -24,7 +24,7 @@ class CompanyUser(models.Model):
     company_type = models.CharField(max_length=100)
     industry = models.CharField(max_length=100)
     company_size = models.CharField(max_length=100)
-    website = models.URLField(blank=True)
+    website = models.CharField(blank=True)
     description = models.TextField(blank=True)
 
     # Contact Info
