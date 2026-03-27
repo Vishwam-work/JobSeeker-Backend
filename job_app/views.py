@@ -79,7 +79,7 @@ def register(request):
 def login(request):
     user_role = CustomUser.objects.get(email=request.data.get("email")).role
     if user_role == 'employer':
-        return Response({"error": "Employer login is not allowed"}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"error": "User Not Found Please Registerd"}, status=status.HTTP_400_BAD_REQUEST)
     
     serializer = UserLoginSerializer(data=request.data)
 
@@ -219,12 +219,13 @@ def verify_otp(request):
 @permission_classes([AllowAny])
 def send_otp(request):
     email = request.data.get("email")
-
+    if User.objects.filter(email=email).exists():
+        return Response({"error": "User with this email already Registered"}, status=400)
     if not email:
         return Response({"error": "Email is required"}, status=400)
 
     # Always return generic message (prevent enumeration)
-    generic_response = {"message": "OTP has been sent Already, Try again after 5 minutes!"}
+    generic_response = {"message": "OTP has been sent Already, Try again after 1 minutes!"}
 
     # Rate limiting: cooldown check
     existing_otp = EmailOTP.objects.filter(

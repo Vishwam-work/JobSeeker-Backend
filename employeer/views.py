@@ -78,7 +78,7 @@ def register_company_user(request):
 def login_company_user(request):
     user_role = CustomUser.objects.get(email=request.data.get("email")).role
     if user_role == 'job_seeker':
-        return Response({"error": "Normal User login is not allowed"}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"error": "User Not Found Please Register"}, status=status.HTTP_400_BAD_REQUEST)
     
     serializer = CompanyLoginSerializer(data=request.data)
     if serializer.is_valid():
@@ -372,10 +372,11 @@ def verify_otp(request):
 @permission_classes([AllowAny])
 def send_otp(request):
     email = request.data.get("email")
-
+    if User.objects.filter(email=email).exists():
+        return Response({"error": "User with this email already Registered"}, status=400)
     if not email:
         return Response({"error": "Email is required"}, status=400)
-   
+
     generic_response = {"message": "If eligible, OTP has been sent"}
 
     existing_otp = EmailOTP.objects.filter(
