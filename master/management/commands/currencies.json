@@ -1,9 +1,27 @@
 {
+  "INR": {
+    "code": "INR",
+    "name": "Indian Rupee",
+    "symbol": "Rs.",
+    "symbolNative": "₹"
+  },
   "AED": {
     "code": "AED",
     "name": "United Arab Emirates Dirham",
     "symbol": "د.إ.",
     "symbolNative": "د.إ."
+  },
+  "USD": {
+    "code": "USD",
+    "name": "United States Dollar",
+    "symbol": "$",
+    "symbolNative": "$"
+  },
+  "GBP": {
+    "code": "GBP",
+    "name": "Pound Sterling",
+    "symbol": "£",
+    "symbolNative": "£"
   },
   "AFN": {
     "code": "AFN",
@@ -293,12 +311,6 @@
     "symbol": "kr",
     "symbolNative": "kr"
   },
-  "GBP": {
-    "code": "GBP",
-    "name": "Pound Sterling",
-    "symbol": "£",
-    "symbolNative": "£"
-  },
   "GEL": {
     "code": "GEL",
     "name": "Georgian Lari",
@@ -394,12 +406,6 @@
     "name": "Manx Pound",
     "symbol": "£",
     "symbolNative": "£"
-  },
-  "INR": {
-    "code": "INR",
-    "name": "Indian Rupee",
-    "symbol": "Rs.",
-    "symbolNative": "₹"
   },
   "IQD": {
     "code": "IQD",
@@ -916,12 +922,6 @@
     "name": "Ugandan Shilling",
     "symbol": "USh",
     "symbolNative": "Sh"
-  },
-  "USD": {
-    "code": "USD",
-    "name": "United States Dollar",
-    "symbol": "$",
-    "symbolNative": "$"
   },
   "UYU": {
     "code": "UYU",
