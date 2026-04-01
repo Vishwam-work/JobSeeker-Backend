@@ -60,6 +60,7 @@ class JobPosting(models.Model):
     experience = models.CharField(max_length=50)
     currency = models.ForeignKey(master.Currency, on_delete=models.SET_NULL, blank=True, null=True, related_name="currency")
     salary = models.CharField(max_length=50, blank=True, null=True)
+    salary_max = models.CharField(max_length=50, blank=True, null=True)
     job_type = models.JSONField(default=list, blank=True)
     work_mode = models.CharField(max_length=50, choices=[
         ('office', 'Work from Office'),
