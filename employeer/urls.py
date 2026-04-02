@@ -26,4 +26,5 @@ path('api/send_otp/', views.send_otp, name='send-otp'),
 path("api/<int:job_id>/click/", views.increment_job_click),
 path('api/profile-all/', views.ProfileListAPIView.as_view(), name='profile-detail'),
 path('api/company/<int:pk>/', views.CompanyUserDetail.as_view(), name='company-detail'),
+path('api/company/<int:pk>/update/', views.CompanyUpdateView.as_view(), name='company-update'),
 ] 

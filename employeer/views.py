@@ -454,3 +454,13 @@ class CompanyUserDetail(APIView):
             return Response({'error': 'Company not found'}, status=404)
         serializer = CompanyUserSerializer(company)
         return Response(serializer.data)
+
+class CompanyUpdateView(generics.UpdateAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+    def get_queryset(self, pk, request):
+        try:
+            company = CompanyUser.objects.get(pk=pk)
+        except CompanyUser.DoesNotExist:
+            return Response({'error': 'Company not found'}, status=404)
+        serializer = CompanyUserSerializer(company)
+        return Response(serializer.data)

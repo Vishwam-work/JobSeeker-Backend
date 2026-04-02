@@ -83,6 +83,7 @@ class JobPosting(models.Model):
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='active')
     applicants=models.PositiveIntegerField(default=0)
     apply_clicks=models.PositiveIntegerField(default=0)
+    website_apply = models.URLField(blank=True, null=True)
     def __str__(self):
         return self.title
     
