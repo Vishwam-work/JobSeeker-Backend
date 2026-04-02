@@ -25,6 +25,8 @@ from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_decode
 from django.utils.encoding import force_str
+from google.oauth2 import id_token
+from google.auth.transport import requests as google_requests
 
 User = get_user_model()
 OTP_EXPIRY_MINUTES = 1
@@ -337,3 +339,47 @@ def image_upload(request):
     profile.save()
 
     return Response({"profile_image_url": profile.profile_image.url, "message": "Image uploaded successfully."}, status=200)
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def google_login(request):
+    token = request.data.get("token")
+    if not token:
+        return Response({"error": "Token is required"}, status=400)
+    try:
+        idinfo = id_token.verify_oauth2_token(
+            token,
+            google_requests.Request(),
+            settings.GOOGLE_CLIENT_ID
+        )
+        email = idinfo.get("email")
+        full_name = idinfo.get("name")
+        if not email:
+            return Response({"error": "Email not found"}, status=400)
+        user, created = User.objects.get_or_create(
+            email=email,
+            defaults={
+                "username": email,
+                "full_name": full_name,
+                "is_verified": True,
+                "is_active": True,
+                "role": "job_seeker",
+            }
+        )
+        if created:
+            Profile.objects.create(
+                user=user,
+                full_name=full_name,
+                email=email,
+            )
+        refresh = RefreshToken.for_user(user)
+        return Response({
+            "message": "Login successful",
+            "user_id": user.id,
+            "email": user.email,
+            "full_name": user.full_name,
+            "access": str(refresh.access_token),
+            "refresh": str(refresh),
+        })
+    except ValueError:
+        return Response({"error": "Invalid token"}, status=400)
