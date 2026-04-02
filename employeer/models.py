@@ -46,6 +46,8 @@ class CompanyUser(models.Model):
 
     #email verification
     is_verified = models.BooleanField()
+    company_logo = models.ImageField(upload_to='company_logos/', blank=True, null=True)
+    
 
     def __str__(self):
         return self.company_name

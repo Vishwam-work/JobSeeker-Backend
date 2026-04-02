@@ -27,4 +27,6 @@ path("api/<int:job_id>/click/", views.increment_job_click),
 path('api/profile-all/', views.ProfileListAPIView.as_view(), name='profile-detail'),
 path('api/company/<int:pk>/', views.CompanyUserDetail.as_view(), name='company-detail'),
 path('api/company/<int:pk>/update/', views.CompanyUpdateView.as_view(), name='company-update'),
+path('api/company/upload-company-logo/', views.logo_upload, name='upload-company-logo')
+
 ] 
