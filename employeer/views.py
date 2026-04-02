@@ -448,24 +448,29 @@ class ProfileListAPIView(APIView):
 
 class CompanyUserDetail(APIView):
     permission_classes = [permissions.IsAuthenticated]
+    def get(self, request, *args, **kwargs):
+        pk = kwargs.get('pk')
 
-    def get(self, pk):
         try:
             company = CompanyUser.objects.get(user_id=pk)
         except CompanyUser.DoesNotExist:
             return Response({'error': 'Company not found'}, status=404)
+
         serializer = CompanyUserSerializer(company)
         return Response(serializer.data)
-
 class CompanyUpdateView(generics.UpdateAPIView):
     permission_classes = [permissions.IsAuthenticated]
-    def get_queryset(self, pk):
+    serializer_class = CompanyUserSerializer
+    lookup_field = 'pk'
+
+    def get_queryset(self):
+        return CompanyUser.objects.all()
+
+    def get_object(self):
         try:
-            company = CompanyUser.objects.get(user_id=pk)
+            return CompanyUser.objects.get(user_id=self.kwargs['pk'])
         except CompanyUser.DoesNotExist:
-            return Response({'error': 'Company not found'}, status=404)
-        serializer = CompanyUserSerializer(company)
-        return Response(serializer.data)
+            raise Response("Company not found")
 
 @api_view(['PATCH'])
 @permission_classes([permissions.IsAuthenticated])
