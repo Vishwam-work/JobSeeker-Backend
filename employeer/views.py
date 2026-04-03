@@ -7,7 +7,7 @@ from rest_framework import status
 from django.shortcuts import get_object_or_404
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import get_user_model, authenticate
-from .serializers import CompanyUserSerializer, CompanyLoginSerializer, JobPostingSerializer,AnswerSerializer, ApplicationSubmitSerializer, ApplicationListItemSerializer,CompanyListSerializer, CompanyDetailSerializer, JobPostingSerializer,ApplicationUpdateSerializer,InterviewScheduleSerializer
+from .serializers import CompanyUserSerializer, CompanyLoginSerializer, JobPostingSerializer,AnswerSerializer, ApplicationSubmitSerializer, ApplicationListItemSerializer,CompanyListSerializer, CompanyDetailSerializer, JobPostingSerializer,ApplicationUpdateSerializer,InterviewScheduleSerializer,CompanyUserUpdateSerializer
 from .models import CompanyUser, JobPosting,Answer, Application, JobClickEvent
 from job_app.models import CustomUser
 from master.models import Country, State, City
@@ -20,6 +20,7 @@ from django.utils import timezone
 from datetime import timedelta
 from job_app.serializers import ProfileSerializer
 from rest_framework.views import APIView
+from rest_framework.parsers import MultiPartParser, FormParser
 import hashlib
 from django.conf import settings
 from django.db import transaction,IntegrityError
@@ -458,20 +459,27 @@ class CompanyUserDetail(APIView):
 
         serializer = CompanyUserSerializer(company)
         return Response(serializer.data)
-class CompanyUpdateView(generics.UpdateAPIView):
+class CompanyUserUpdateView(APIView):
     permission_classes = [permissions.IsAuthenticated]
-    serializer_class = CompanyUserSerializer
-    lookup_field = 'pk'
+    parser_classes = (MultiPartParser, FormParser)
 
-    def get_queryset(self):
-        return CompanyUser.objects.all()
-
-    def get_object(self):
+    def put(self, request, pk):
         try:
-            return CompanyUser.objects.get(user_id=self.kwargs['pk'])
+            company = CompanyUser.objects.get(user__id=pk)
         except CompanyUser.DoesNotExist:
-            raise Response("Company not found")
+            return Response({"error": "Company not found"}, status=404)
 
+        serializer = CompanyUserUpdateSerializer(
+            company,
+            data=request.data,
+            partial=True
+        )
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"message": "Updated successfully"})
+
+        return Response(serializer.errors, status=400)
 @api_view(['PATCH'])
 @permission_classes([permissions.IsAuthenticated])
 def logo_upload(request):
