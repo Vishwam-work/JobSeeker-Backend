@@ -381,5 +381,6 @@ def google_login(request):
             "access": str(refresh.access_token),
             "refresh": str(refresh),
         })
-    except ValueError:
-        return Response({"error": "Invalid token"}, status=400)
+    except Exception as e:
+        print("ERROR:", str(e))
+        return Response({"error": str(e)}, status=400)
