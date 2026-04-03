@@ -6,6 +6,9 @@ from .models import CompanyUser,JobPosting,Answer, Application
 from job_app.models import Profile
 from master.serializers import CountrySerializer,JobCategorySerializer,CurrencySerializer
 from master.models import JobCategory,Country,Currency
+from rest_framework import serializers
+from .models import JobPosting
+
 User = get_user_model()
 class CompanyUserSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(write_only=True)
@@ -29,13 +32,15 @@ class CompanyUserSerializer(serializers.ModelSerializer):
         user = User.objects.create_user(username=email, email=email, password=password)
         company_user = CompanyUser.objects.create(user=user, **validated_data)
         return company_user
-
 class CompanyLoginSerializer(serializers.Serializer):
     email = serializers.EmailField()
     password = serializers.CharField()
 
-from rest_framework import serializers
-from .models import JobPosting
+class CompanyUserUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CompanyUser
+        exclude = ['user']
+
 
 class JobPostingSerializer(serializers.ModelSerializer):
     company_user = serializers.ReadOnlyField(source='company_user.id')

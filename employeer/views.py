@@ -1,3 +1,5 @@
+import profile
+
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny,IsAuthenticated
 from rest_framework.response import Response
@@ -5,7 +7,7 @@ from rest_framework import status
 from django.shortcuts import get_object_or_404
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import get_user_model, authenticate
-from .serializers import CompanyUserSerializer, CompanyLoginSerializer, JobPostingSerializer,AnswerSerializer, ApplicationSubmitSerializer, ApplicationListItemSerializer,CompanyListSerializer, CompanyDetailSerializer, JobPostingSerializer,ApplicationUpdateSerializer,InterviewScheduleSerializer
+from .serializers import CompanyUserSerializer, CompanyLoginSerializer, JobPostingSerializer,AnswerSerializer, ApplicationSubmitSerializer, ApplicationListItemSerializer,CompanyListSerializer, CompanyDetailSerializer, JobPostingSerializer,ApplicationUpdateSerializer,InterviewScheduleSerializer,CompanyUserUpdateSerializer
 from .models import CompanyUser, JobPosting,Answer, Application, JobClickEvent
 from job_app.models import CustomUser
 from master.models import Country, State, City
@@ -18,6 +20,7 @@ from django.utils import timezone
 from datetime import timedelta
 from job_app.serializers import ProfileSerializer
 from rest_framework.views import APIView
+from rest_framework.parsers import MultiPartParser, FormParser
 import hashlib
 from django.conf import settings
 from django.db import transaction,IntegrityError
@@ -446,11 +449,49 @@ class ProfileListAPIView(APIView):
 
 class CompanyUserDetail(APIView):
     permission_classes = [permissions.IsAuthenticated]
+    def get(self, request, *args, **kwargs):
+        pk = kwargs.get('pk')
 
-    def get(self, request, pk):
         try:
-            company = CompanyUser.objects.get(pk=pk)
+            company = CompanyUser.objects.get(user_id=pk)
         except CompanyUser.DoesNotExist:
             return Response({'error': 'Company not found'}, status=404)
+
         serializer = CompanyUserSerializer(company)
         return Response(serializer.data)
+class CompanyUserUpdateView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+    parser_classes = (MultiPartParser, FormParser)
+
+    def put(self, request, pk):
+        try:
+            company = CompanyUser.objects.get(user__id=pk)
+        except CompanyUser.DoesNotExist:
+            return Response({"error": "Company not found"}, status=404)
+
+        serializer = CompanyUserUpdateSerializer(
+            company,
+            data=request.data,
+            partial=True
+        )
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"message": "Updated successfully"})
+
+        return Response(serializer.errors, status=400)
+@api_view(['PATCH'])
+@permission_classes([permissions.IsAuthenticated])
+def logo_upload(request):
+    try:
+        company = CompanyUser.objects.get(user=request.user)
+    except CompanyUser.DoesNotExist:
+        return Response({"error": "Company not found."}, status=404)
+
+    if 'company_logo' not in request.FILES:
+        return Response({"error": "No company logo file found in the request."}, status=400)
+
+    company.company_logo = request.FILES['company_logo']
+    company.save()
+
+    return Response({"company_logo_url": company.company_logo.url, "message": "Logo uploaded successfully."}, status=200)
