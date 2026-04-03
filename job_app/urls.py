@@ -8,6 +8,7 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('api/register/', views.register, name='register'),
     path('api/login/', views.login, name='login'),
+    path('api/google-login/', views.google_login, name='google-login'),
     path('api/profile/', views.ProfileDetail.as_view(), name='profile-detail'),
     path("api/profile/upload-resume/", views.upload_resume, name="upload-resume"),
     path('api/saved-jobs/', views.SavedJobListCreateView.as_view(), name='saved-jobs-list-create'),

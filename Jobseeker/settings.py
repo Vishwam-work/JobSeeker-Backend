@@ -97,6 +97,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'Jobseeker.wsgi.application'
 
+GOOGLE_CLIENT_ID = "839330984972-s0g17d8e9ou8eghct8h9f4cnv0p6lm2p.apps.googleusercontent.com"
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
