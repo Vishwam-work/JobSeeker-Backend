@@ -299,10 +299,38 @@ class ApplicationUpdateView(generics.UpdateAPIView):
 
     def get_queryset(self):
         company_user = CompanyUser.objects.get(user=self.request.user)
-        print(company_user)
-        print(Application.objects.filter(job__company_user=company_user))
         return Application.objects.filter(job__company_user=company_user)
-        
+    def perform_update(self, serializer):
+        instance = serializer.save()
+        if instance.application_status == "rejected":
+            user_email = instance.user.email
+
+            send_email(
+                to_email=user_email,
+                subject="Application Rejected",
+                template_name="Job_status.html",
+                context={
+                    "user": instance.user,
+                    "job_title": instance.job.title,
+                    "company_name": instance.job.company_user.company_name,
+                    "application_status": instance.application_status
+                }
+            )
+        elif instance.application_status == "shortlisted":
+            user_email = instance.user.email
+
+            send_email(
+                to_email=user_email,
+                subject="Application Shortlisted",
+                template_name="Job_status.html",
+                context={
+                    "user": instance.user,
+                    "job_title": instance.job.title,
+                    "company_name": instance.job.company_user.company_name,
+                    "job_description": instance.job.description,
+                    "application_status": instance.application_status
+                }
+            )
 # Get all the applications
 class AllApplicationsListView(generics.ListAPIView):
     serializer_class = ApplicationListItemSerializer
@@ -321,7 +349,7 @@ class ScheduleInterviewView(generics.UpdateAPIView):
         send_email(
                 to_email=email,
                 subject="Interview Scheduled",
-                template_name="Job_status.html",
+                template_name="Interview_schedule.html",
                 context={
                     "user": instance.user,
                     "job": instance.job.title,

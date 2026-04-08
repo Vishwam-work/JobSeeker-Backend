@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Interview Scheduled</title>
+
+    <style>
+      body,
+      table,
+      td {
+        margin: 0;
+        padding: 0;
+        border: 0;
+        -webkit-text-size-adjust: 100%;
+        -ms-text-size-adjust: 100%;
+      }
+      table {
+        border-collapse: collapse !important;
+      }
+
+      body {
+        width: 100% !important;
+        background: #f1f5f9;
+        font-family:
+          "Segoe UI",
+          system-ui,
+          -apple-system,
+          sans-serif;
+      }
+
+      .wrapper {
+        width: 100%;
+        padding: 40px 0;
+      }
+
+      .email-container {
+        max-width: 620px;
+        margin: 0 auto;
+        background: #ffffff;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+      }
+
+      /* Header */
+      .header {
+       background: linear-gradient(90deg, #6a11cb 0%, #1a3769 100%)
+        color: #fff;
+        text-align: center;
+        padding: 30px 20px;
+      }
+      .logo {
+        font-size: 34px;
+        letter-spacing: 6px;
+        font-weight: 300;
+      }
+      .tagline {
+        font-size: 14px;
+        opacity: 0.9;
+        margin-top: 6px;
+      }
+
+      /* Content */
+      .main-content {
+        padding: 50px 40px;
+        text-align: center;
+      }
+      .title {
+        font-size: 26px;
+        font-weight: 700;
+        color: #0f172a;
+        margin-bottom: 16px;
+      }
+      .message {
+        font-size: 15px;
+        color: #64748b;
+        margin-bottom: 20px;
+      }
+
+      /* Info Box */
+      .info-box {
+        background: #f8fafc;
+        border-radius: 12px;
+        padding: 20px;
+        border: 1px solid #e2e8f0;
+        text-align: left;
+        margin-top: 20px;
+      }
+      .info-row {
+        margin-bottom: 10px;
+        font-size: 14px;
+        color: #334155;
+      }
+      .label {
+        font-weight: 600;
+        color: #0f172a;
+      }
+
+      /* Button */
+      .button {
+        display: inline-block;
+        padding: 14px 28px;
+        font-size: 15px;
+        font-weight: 600;
+        color: #ffffff !important;
+         background: linear-gradient(90deg, #6a11cb 0%, #1a3769 100%)
+        border-radius: 10px;
+        text-decoration: none;
+        margin: 25px 0;
+      }
+      .button:hover {
+        opacity: 0.9;
+      }
+
+      /* Footer */
+      .footer {
+        background: #f8fafc;
+        padding: 28px 20px;
+        text-align: center;
+        font-size: 13px;
+        color: #64748b;
+        border-top: 1px solid #e2e8f0;
+      }
+
+      @media screen and (max-width: 600px) {
+        .main-content {
+          padding: 35px 20px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="wrapper">
+      <div class="email-container">
+        <!-- Header -->
+        <div class="header">
+          <div class="logo">JOBSEEKER</div>
+          <span
+            style="
+              font-size: 12px;
+              background-color: #bbf7d0;
+              color: #065f46;
+              padding: 4px 10px;
+              border-radius: 9999px;
+              font-weight: 500;
+              display: inline-block;
+            "
+            >Interview Scheduled</span
+          >
+          <div class="tagline">Your Next Step Starts Here 🚀</div>
+        </div>
+
+        <!-- Content -->
+        <div class="main-content">
+          <h1 class="title">Interview Scheduled 🎉</h1>
+
+          <p class="message">
+            Hello <strong>{{ user.first_name }}</strong>,<br /><br />
+            Your interview for the position of <strong>{{ job }}</strong> has
+            been successfully scheduled.
+          </p>
+
+          <!-- Interview Details -->
+          <div class="info-box">
+            <div class="info-row">
+              <span class="label">Date:</span> {{ date }}
+            </div>
+            <div class="info-row">
+              <span class="label">Time:</span> {{ time }}
+            </div>
+            <div class="info-row">
+              <span class="label">Mode:</span> {{ mode }}
+            </div>
+
+            {% if notes %}
+            <div class="info-row">
+              <span class="label">Notes:</span> {{ notes }}
+            </div>
+            {% endif %}
+          </div>
+
+          {% if link %}
+          <!-- Join Button -->
+          <a href="{{ link }}" class="button">Join Interview</a>
+          {% endif %}
+
+          <p class="message">
+            Please be available on time and ensure a stable internet connection.
+            We wish you the best of luck! 💼✨
+          </p>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+          © 2026 NV Global Tech<br /><br />
+
+          Block C-501, Ashtavinayak Icon,<br />
+          K.P. Heights, Viratnagar 100ft Road,<br />
+          Nikol, Ahmedabad – 382350, Gujarat, India<br /><br />
+
+          This is an automated email. Please do not reply.
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

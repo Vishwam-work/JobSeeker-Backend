@@ -108,8 +108,8 @@ class Application(models.Model):
     application_status = models.CharField(max_length=20, choices=[
         ('shortlisted', 'shortlisted'),
         ('rejected', 'rejected'),
-        ('interview_sch', 'Interview Scheduled'),
-        ('under_review', 'Under Review')
+        ('Interview Scheduled', 'Interview Scheduled'),
+        ('Under Review', 'Under Review')
     ], default='Under Review')
     interview_date = models.DateField(null=True, blank=True)
     interview_time = models.CharField(max_length=20, null=True, blank=True)  
