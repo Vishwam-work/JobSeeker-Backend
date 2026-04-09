@@ -296,6 +296,7 @@ class InterviewScheduleSerializer(serializers.ModelSerializer):
             "meet_link",
             "notes",
             "application_status",
+            "timezone"
         ]
 
 from rest_framework import serializers
