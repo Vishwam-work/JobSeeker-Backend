@@ -116,6 +116,12 @@ class Application(models.Model):
     interview_mode = models.CharField(max_length=20, null=True, blank=True)  
     meet_link = models.CharField(max_length=255, null=True, blank=True)     
     notes = models.TextField(null=True, blank=True)  
+    timezone = models.CharField(max_length=50, null=True, blank=True ,choices=[
+        ("UTC","UTC"),
+        ("EST","EST"),
+        ("CST","CST"),
+        ("PST","PST"),
+    ])
     class Meta:
         unique_together = ('user', 'job')
 
