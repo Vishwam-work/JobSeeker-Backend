@@ -342,7 +342,6 @@ class ScheduleInterviewView(generics.UpdateAPIView):
     queryset = Application.objects.all()
     serializer_class = InterviewScheduleSerializer
     permission_classes = [IsAuthenticated]
-    interview_date = serializers.DateField(format="%d/%m/%Y", input_formats=["%d/%m/%Y"], required=False, allow_null=True)
     def perform_update(self, serializer):
         instance = serializer.save(application_status="Interview Scheduled")
         email = instance.user.email

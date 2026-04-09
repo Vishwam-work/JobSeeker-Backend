@@ -286,6 +286,7 @@ class ApplicationUpdateSerializer(serializers.ModelSerializer):
         fields = ['id','application_status']
 
 class InterviewScheduleSerializer(serializers.ModelSerializer):
+    interview_date = serializers.DateField(format="%d/%m/%Y", input_formats=["%d/%m/%Y"], required=False, allow_null=True)
     class Meta:
         model = Application
         fields = [
