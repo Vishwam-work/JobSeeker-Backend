@@ -117,6 +117,7 @@ class Application(models.Model):
     meet_link = models.CharField(max_length=255, null=True, blank=True)     
     notes = models.TextField(null=True, blank=True)  
     timezone = models.CharField(max_length=50, null=True, blank=True ,choices=[
+        ("IST","IST"),
         ("UTC","UTC"),
         ("EST","EST"),
         ("CST","CST"),
