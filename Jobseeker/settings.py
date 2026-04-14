@@ -66,7 +66,7 @@ CORS_ALLOWED_ORIGINS = [
     "https://jobseeker-backend-jy1y.onrender.com",
     "https://jobseeker-backend-jy1y.onrender.com",
     "https://ngblobaltestingserver50.vercel.app",
-    "http://192.168.1.2:3000"
+    "http://192.168.1.9:3000"
 ]
 
 # CSRF Trusted Origins for production
@@ -75,7 +75,7 @@ CSRF_TRUSTED_ORIGINS = [
     "http://localhost:3000",
     "https://jobseeker-backend-jy1y.onrender.com",
     "https://ngblobaltestingserver50.vercel.app",
-    "http://192.168.1.2:3000"
+    "http://192.168.1.9:3000"
 ]
 
 ROOT_URLCONF = 'Jobseeker.urls'
