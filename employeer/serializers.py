@@ -238,6 +238,7 @@ class ApplicationListItemSerializer(serializers.ModelSerializer):
             'phone': profile.phone,
             'phone_code': profile.phone_code,
             'experience': profile.experience,
+            'gender': profile.gender,
             'resume': profile.resume.url if profile.resume else None,
             'country': getattr(profile.country, 'name', None),
             'state': getattr(profile.state, 'name', None),
