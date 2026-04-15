@@ -13,7 +13,7 @@ from job_app.models import CustomUser
 from master.models import Country, State, City
 from rest_framework import generics,status, viewsets, permissions, serializers
 from rest_framework.pagination import PageNumberPagination
-from django.db.models import F
+from django.db.models import F,Q
 from utils.utils import generate_otp, send_email
 from job_app.models import EmailOTP, Profile
 from django.utils import timezone
@@ -39,6 +39,11 @@ def hash_otp(otp: str) -> str:
 
 class JobPagination(PageNumberPagination):
     page_size = 3
+    page_size_query_param = 'page_size'
+    max_page_size = 50
+
+class CandidatePagination(PageNumberPagination):
+    page_size = 5
     page_size_query_param = 'page_size'
     max_page_size = 50
 
@@ -270,14 +275,60 @@ class ApplicationSubmitView(generics.CreateAPIView):
 class EmployerApplicationsListView(generics.ListAPIView):
     serializer_class = ApplicationListItemSerializer
     permission_classes = [permissions.IsAuthenticated]
+    pagination_class = CandidatePagination
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['profile__full_name', 'profile__gender', 'job__title', 'profile__skills']
     def get_queryset(self):
         # List applications for jobs belonging to the current employer
         try:
             company_user = CompanyUser.objects.get(user=self.request.user)
         except CompanyUser.DoesNotExist:
             return Application.objects.none()
+
         jobs = JobPosting.objects.filter(company_user=company_user)
-        return Application.objects.filter(job__in=jobs).order_by('-applied_at')
+
+        queryset = Application.objects.filter(job__in=jobs).order_by('-applied_at')
+        status = self.request.query_params.get('status')
+        if status and status != "All":
+            queryset = queryset.filter(application_status__iexact=status)
+
+        gender = self.request.query_params.get('gender')
+        if gender and gender != "All":
+            queryset = queryset.filter(profile__gender__iexact=gender)
+
+        job_title = self.request.query_params.get('job_title')
+        if job_title and job_title != "All":
+            queryset = queryset.filter(job__title__icontains=job_title)
+
+        location = self.request.query_params.get('location')
+        if location and location != "All":
+            queryset = queryset.filter(
+                Q(profile__city__icontains=location) |
+                Q(profile__state__icontains=location) |
+                Q(profile__country__icontains=location)
+            )
+
+        experience = self.request.query_params.get('experience')
+        if experience and experience != "All":
+            if experience == "Fresher":
+                queryset = queryset.filter(profile__experience__icontains="0")
+            elif experience == "1-3":
+                queryset = queryset.filter(profile__experience__regex=r'^[1-3]')
+            elif experience == "3-5":
+                queryset = queryset.filter(profile__experience__regex=r'^[3-5]')
+            elif experience == "5+":
+                queryset = queryset.filter(profile__experience__regex=r'^[5-9]')
+
+        salary = self.request.query_params.get('salary_range')
+        if salary and salary != "All":
+            if salary == "Below 20000":
+                queryset = queryset.filter(profile__expected_salary__lt=20000)
+            elif salary == "20000-50000":
+                queryset = queryset.filter(profile__expected_salary__gte=20000, profile__expected_salary__lte=50000)
+            elif salary == "Above 50000":
+                queryset = queryset.filter(profile__expected_salary__gt=50000)
+
+        return queryset
 
 # View to get the list of candidates for a specific job
 class CandidateListView(generics.ListAPIView):
