@@ -3,7 +3,7 @@ import profile
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny,IsAuthenticated
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework import status, filters
 from django.shortcuts import get_object_or_404
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import get_user_model, authenticate
@@ -36,6 +36,11 @@ MAX_OTP_ATTEMPTS = 3
 def hash_otp(otp: str) -> str:
     secret = settings.SECRET_KEY
     return hashlib.sha256((otp + secret).encode()).hexdigest()
+
+class JobPagination(PageNumberPagination):
+    page_size = 3
+    page_size_query_param = 'page_size'
+    max_page_size = 50
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
@@ -145,10 +150,31 @@ class JobPostingDetailView(generics.RetrieveAPIView):
 class JobPostingListView(generics.ListAPIView):
     serializer_class = JobPostingSerializer
     permission_classes = [permissions.IsAuthenticated]
+    pagination_class = JobPagination
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['title', 'company', 'location']
 
     def get_queryset(self):
         company_user = CompanyUser.objects.get(user=self.request.user)
-        return JobPosting.objects.filter(company_user=company_user).order_by('-created_at')
+        queryset = JobPosting.objects.filter(company_user=company_user).order_by('-created_at')
+
+        status = self.request.query_params.get('status')
+        if status and status != 'all':
+            queryset = queryset.filter(status__iexact=status)
+
+        date_filter = self.request.query_params.get('date_filter')
+        now = timezone.now()
+        if date_filter == 'today':
+            queryset = queryset.filter(created_at__date=now.date())
+        elif date_filter == 'week':
+            queryset = queryset.filter(created_at__gte=now - timedelta(days=7))
+        elif date_filter == 'month':
+            queryset = queryset.filter(created_at__gte=now - timedelta(days=30))
+        elif date_filter == 'year':
+            queryset = queryset.filter(created_at__gte=now - timedelta(days=365))
+        print(queryset)
+        return queryset
+        # return JobPosting.objects.filter(company_user=company_user).order_by('-created_at')
 
 class AllJobsListView(generics.ListAPIView):
     """
@@ -161,7 +187,7 @@ class AllJobsListView(generics.ListAPIView):
     queryset = JobPosting.objects.filter(status='active').order_by('-created_at')
 
     def get_queryset(self):
-        self.pagination_class.page_size = 5
+        self.pagination_class.page_size = 3
         queryset = JobPosting.objects.filter(status='active').order_by('-created_at')
         job_type = self.request.query_params.get('job_type', None)
         work_mode = self.request.query_params.get('work_mode', None)

@@ -247,6 +247,7 @@ class ApplicationListItemSerializer(serializers.ModelSerializer):
             'experiences': experiences,
             'educations': educations,
             'certifications': certifications,
+            'professional_summary': profile.professional_summary,
         }
 
 
