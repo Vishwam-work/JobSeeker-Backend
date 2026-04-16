@@ -248,6 +248,7 @@ class ApplicationListItemSerializer(serializers.ModelSerializer):
             'educations': educations,
             'certifications': certifications,
             'professional_summary': profile.professional_summary,
+            'profile_image': profile.profile_image.url if profile.profile_image else None,
         }
 
 
