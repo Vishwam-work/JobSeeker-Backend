@@ -277,7 +277,7 @@ class EmployerApplicationsListView(generics.ListAPIView):
     permission_classes = [permissions.IsAuthenticated]
     pagination_class = CandidatePagination
     filter_backends = [filters.SearchFilter]
-    search_fields = ['profile__full_name', 'profile__gender', 'job__title', 'profile__skills']
+    search_fields = ['user__full_name', 'job__title']
     def get_queryset(self):
         # List applications for jobs belonging to the current employer
         try:
@@ -294,7 +294,7 @@ class EmployerApplicationsListView(generics.ListAPIView):
 
         gender = self.request.query_params.get('gender')
         if gender and gender != "All":
-            queryset = queryset.filter(profile__gender__iexact=gender)
+            queryset = queryset.filter(user__profile__gender=gender)
 
         job_title = self.request.query_params.get('job_title')
         if job_title and job_title != "All":
@@ -303,30 +303,14 @@ class EmployerApplicationsListView(generics.ListAPIView):
         location = self.request.query_params.get('location')
         if location and location != "All":
             queryset = queryset.filter(
-                Q(profile__city__icontains=location) |
-                Q(profile__state__icontains=location) |
-                Q(profile__country__icontains=location)
+                Q(user__profile__city__icontains=location) |
+                Q(user__profile__state__icontains=location) |
+                Q(user__profile__country__icontains=location)
             )
 
         experience = self.request.query_params.get('experience')
         if experience and experience != "All":
-            if experience == "Fresher":
-                queryset = queryset.filter(profile__experience__icontains="0")
-            elif experience == "1-3":
-                queryset = queryset.filter(profile__experience__regex=r'^[1-3]')
-            elif experience == "3-5":
-                queryset = queryset.filter(profile__experience__regex=r'^[3-5]')
-            elif experience == "5+":
-                queryset = queryset.filter(profile__experience__regex=r'^[5-9]')
-
-        salary = self.request.query_params.get('salary_range')
-        if salary and salary != "All":
-            if salary == "Below 20000":
-                queryset = queryset.filter(profile__expected_salary__lt=20000)
-            elif salary == "20000-50000":
-                queryset = queryset.filter(profile__expected_salary__gte=20000, profile__expected_salary__lte=50000)
-            elif salary == "Above 50000":
-                queryset = queryset.filter(profile__expected_salary__gt=50000)
+            queryset = queryset.filter(user__profile__experience__icontains=experience)
 
         return queryset
 
