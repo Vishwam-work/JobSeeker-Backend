@@ -63,6 +63,7 @@ MIDDLEWARE = [
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
+    "http://localhost:3005",
     "https://jobseeker-backend-jy1y.onrender.com",
     "https://jobseeker-backend-jy1y.onrender.com",
     "https://ngblobaltestingserver50.vercel.app",
@@ -73,6 +74,7 @@ CORS_ALLOWED_ORIGINS = [
 CSRF_TRUSTED_ORIGINS = [
     "http://127.0.0.1:8010",
     "http://localhost:3000",
+    "http://localhost:3005",
     "https://jobseeker-backend-jy1y.onrender.com",
     "https://ngblobaltestingserver50.vercel.app",
     "http://192.168.1.9:3000"
