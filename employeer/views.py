@@ -302,11 +302,7 @@ class EmployerApplicationsListView(generics.ListAPIView):
 
         location = self.request.query_params.get('location')
         if location and location != "All":
-            queryset = queryset.filter(
-                Q(user__profile__city__icontains=location) |
-                Q(user__profile__state__icontains=location) |
-                Q(user__profile__country__icontains=location)
-            )
+            queryset = queryset.filter(user__profile__state__name__icontains=location)
 
         experience = self.request.query_params.get('experience')
         if experience and experience != "All":
