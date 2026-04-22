@@ -272,12 +272,7 @@ class CompanyDetailSerializer(serializers.ModelSerializer):
     city = serializers.CharField(source='city.name', read_only=True)
     class Meta:
         model = CompanyUser
-        fields = [
-            'id', 'company_name', 'company_type', 'industry',
-            'company_size', 'website', 'description', 'address',
-            'country', 'state', 'city', 'pincode', 'phone',
-            'contact_person_name', 'designation', 'job_postings'
-        ]
+        fields = "__all__"
 
 class ApplicationUpdateSerializer(serializers.ModelSerializer):
     class Meta:
