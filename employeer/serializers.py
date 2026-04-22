@@ -43,7 +43,7 @@ class CompanyUserUpdateSerializer(serializers.ModelSerializer):
 
 
 class JobPostingSerializer(serializers.ModelSerializer):
-    company_user = serializers.ReadOnlyField(source='company_user.id')
+    company_user = CompanyUserSerializer(read_only=True)
     currency = CurrencySerializer(read_only=True)
     questions = serializers.JSONField(required=False)
     currency_id = serializers.IntegerField(write_only=True, required=False, allow_null=True)
@@ -260,15 +260,11 @@ class CompanyListSerializer(serializers.ModelSerializer):
     city = serializers.CharField(source='city.name', read_only=True)
     class Meta:
         model = CompanyUser
-        fields = [
-            'id', 'company_name', 'company_type', 'industry',
-            'company_size', 'website', 'description',
-            'country', 'state', 'city', 'job_count'
-        ]
+        fields = '__all__'
 
     def get_job_count(self, obj):
         return obj.job_postings.filter(status='active').count()
-        
+
 class CompanyDetailSerializer(serializers.ModelSerializer):
     job_postings = JobPostingSerializer(many=True, read_only=True)
     country = serializers.CharField(source='country.name', read_only=True)
