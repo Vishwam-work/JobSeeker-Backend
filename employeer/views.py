@@ -194,18 +194,38 @@ class AllJobsListView(generics.ListAPIView):
     def get_queryset(self):
         self.pagination_class.page_size = 3
         queryset = JobPosting.objects.filter(status='active').order_by('-created_at')
-        job_type = self.request.query_params.get('job_type', None)
-        work_mode = self.request.query_params.get('work_mode', None)
+        job_type = self.request.query_params.getlist('job_type', None)
+        work_mode = self.request.query_params.getlist('work_mode', None)
         location = self.request.query_params.get('location', None)
         company = self.request.query_params.get('company', None)
+        search = self.request.query_params.get('search', None)
+        salary_min = self.request.query_params.get('salary_min', None)
+        salary_max = self.request.query_params.get('salary_max', None)
         if job_type:
-            queryset = queryset.filter(job_type=job_type)
+            queryset = [
+                job for job in queryset
+                if any(jt in (job.job_type or []) for jt in job_type)
+            ]
         if work_mode:
-            queryset = queryset.filter(work_mode=work_mode)
+            print(work_mode)
+            queryset = [
+                job for job in queryset
+                if any(wm in (job.work_mode or []) for wm in work_mode)
+            ]
         if location:
-            queryset = queryset.filter(location__name__icontains=location)
+            queryset = queryset.filter(location=location)
         if company:
             queryset = queryset.filter(company__icontains=company)
+        if search:
+            queryset = queryset.filter(
+                Q(title__icontains=search) |
+                Q(company__icontains=search) |
+                Q(location__icontains=search)
+            )
+        if salary_min is not None:
+            queryset = queryset.filter(salary__gte=salary_min)
+        if salary_max is not None:
+            queryset = queryset.filter(salary__lte=salary_max)
         return queryset
 
 class JobPostingUpdateView(generics.UpdateAPIView):

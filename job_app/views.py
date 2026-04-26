@@ -27,6 +27,17 @@ from django.utils.http import urlsafe_base64_decode
 from django.utils.encoding import force_str
 from google.oauth2 import id_token
 from google.auth.transport import requests as google_requests
+from rest_framework.pagination import PageNumberPagination
+
+class AppliedJobPagination(PageNumberPagination):
+    page_size = 5
+    page_size_query_param = 'page_size'
+    max_page_size = 50
+
+class SavedJobPagination(PageNumberPagination):
+    page_size = 3
+    page_size_query_param = 'page_size'
+    max_page_size = 50
 
 User = get_user_model()
 OTP_EXPIRY_MINUTES = 1
@@ -165,6 +176,7 @@ class SavedJobListCreateView(generics.ListCreateAPIView):
 class SavedJobListView(generics.ListAPIView):
     serializer_class = SavedJobListSerializer
     permission_classes = [permissions.IsAuthenticated]
+    pagination_class = SavedJobPagination
 
     def get_queryset(self):
         return SavedJob.objects.filter(user=self.request.user)
@@ -268,13 +280,13 @@ def send_otp(request):
     actual_response = {"message":"OTP Sent Successfully"}
     return Response(actual_response, status=200)
 
-class MyAppliedJobsView(APIView):
+class MyAppliedJobsView(generics.ListAPIView):
+    serializer_class = AppliedJobSerializer
     permission_classes = [permissions.IsAuthenticated]
+    pagination_class = AppliedJobPagination
 
-    def get(self, request):
-        applications = Application.objects.filter(user=request.user)
-        serializer = AppliedJobSerializer(applications, many=True)
-        return Response(serializer.data)
+    def get_queryset(self):
+        return Application.objects.filter(user=self.request.user)
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
