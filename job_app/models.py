@@ -64,6 +64,8 @@ class Experience(models.Model):
     category = models.CharField(max_length=255, blank=True, null=True)
     location = models.CharField(max_length=255, blank=True, null=True)
     description = models.TextField(blank=True)
+    class Meta:
+        ordering = ["-start_date"]
     def __str__(self):
         return f"{self.profile.user.full_name}'s Experience"
 
@@ -91,6 +93,8 @@ class Education(models.Model):
         choices=COURSE_TYPES,
         default="full_time"
     )
+    class  Meta:
+        ordering = ["-start_year"]
     def __str__(self):
         return f"{self.profile.user.full_name}'s Education"
 
@@ -99,6 +103,9 @@ class Certificate(models.Model):
     name = models.CharField(max_length=255)
     issuer = models.CharField(max_length=255)
     year = models.CharField(max_length=10)
+
+    class Meta:
+        ordering = ["-year"]
     def __str__(self):
         return f"{self.profile.user.full_name}'s Certificate"
 

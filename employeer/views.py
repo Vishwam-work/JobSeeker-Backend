@@ -199,6 +199,7 @@ class AllJobsListView(generics.ListAPIView):
         location = self.request.query_params.get('location', None)
         company = self.request.query_params.get('company', None)
         search = self.request.query_params.get('search', None)
+        experience = self.request.query_params.getlist('experience', None)
         salary_min = self.request.query_params.get('salary_min', None)
         salary_max = self.request.query_params.get('salary_max', None)
         if job_type:
@@ -226,6 +227,8 @@ class AllJobsListView(generics.ListAPIView):
             queryset = queryset.filter(salary__gte=salary_min)
         if salary_max is not None:
             queryset = queryset.filter(salary__lte=salary_max)
+        if experience:
+            queryset = queryset.filter(experience__in=experience)
         return queryset
 
 class JobPostingUpdateView(generics.UpdateAPIView):
