@@ -25,6 +25,8 @@ import hashlib
 from django.conf import settings
 from django.db import transaction,IntegrityError
 from django.utils.crypto import constant_time_compare
+from django.db.models import IntegerField
+from django.db.models.functions import Cast
 
 User = get_user_model()
 
@@ -200,8 +202,7 @@ class AllJobsListView(generics.ListAPIView):
         company = self.request.query_params.get('company', None)
         search = self.request.query_params.get('search', None)
         experience = self.request.query_params.getlist('experience', None)
-        salary_min = self.request.query_params.get('salary_min', None)
-        salary_max = self.request.query_params.get('salary_max', None)
+        salary_ranges = self.request.query_params.getlist('salary_range', None)
         if job_type:
             queryset = [
                 job for job in queryset
@@ -223,10 +224,27 @@ class AllJobsListView(generics.ListAPIView):
                 Q(company__icontains=search) |
                 Q(location__icontains=search)
             )
-        if salary_min is not None:
-            queryset = queryset.filter(salary__gte=salary_min)
-        if salary_max is not None:
-            queryset = queryset.filter(salary__lte=salary_max)
+        if salary_ranges:
+            queryset = queryset.annotate(
+                salary_int=Cast('salary', IntegerField()),
+                salary_max_int=Cast('salary_max', IntegerField())
+            )
+
+            salary_query = Q()
+
+            for sr in salary_ranges:
+                if "+" in sr:
+                    min_salary = int(sr.replace("+", "")) * 100000
+                    salary_query |= Q(salary_int__gte=min_salary) | Q(salary_max_int__gte=min_salary)
+
+                elif "-" in sr:
+                    min_salary, max_salary = sr.split('-')
+                    min_salary = int(min_salary) * 100000
+                    max_salary = int(max_salary) * 100000
+
+                    salary_query |= Q(salary_int__gte=min_salary) & Q(salary_int__lte=max_salary) | Q(salary_max_int__gte=min_salary) & Q(salary_max_int__lte=max_salary)
+
+            queryset = queryset.filter(salary_query)
         if experience:
             queryset = queryset.filter(experience__in=experience)
         return queryset
