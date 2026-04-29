@@ -94,7 +94,34 @@ def login_company_user(request):
     user_role = CustomUser.objects.get(email=request.data.get("email")).role
     if user_role == 'job_seeker':
         return Response({"error": "User Not Found Please Register"}, status=status.HTTP_400_BAD_REQUEST)
-    
+    if user_role == 'admin':
+        serializer = CompanyLoginSerializer(data=request.data)
+        if serializer.is_valid():
+            email = serializer.validated_data['email']
+            password = serializer.validated_data['password']
+            try:
+                user = User.objects.get(email=email)
+                user = authenticate(username=user.username, password=password)
+                if user:
+                    refresh = RefreshToken.for_user(user)
+                    return Response({
+                        'message': 'Login successful',
+                        'user_id': user.id,
+                        'email': user.email,
+                        'access': str(refresh.access_token),
+                        'refresh': str(refresh),
+                        'user_role': user.role
+                    }, status=status.HTTP_200_OK)
+                else:
+                    return Response(
+                        {'error': 'Invalid credentials'},
+                        status=status.HTTP_401_UNAUTHORIZED
+                    )
+            except User.DoesNotExist:
+                return Response(
+                    {'error': 'User with this email does not exist'},
+                    status=status.HTTP_404_NOT_FOUND
+                )
     serializer = CompanyLoginSerializer(data=request.data)
     if serializer.is_valid():
         email = serializer.validated_data['email']

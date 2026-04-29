@@ -91,7 +91,7 @@ def register(request):
 @permission_classes([AllowAny])
 def login(request):
     user_role = CustomUser.objects.get(email=request.data.get("email")).role
-    if user_role == 'employer':
+    if user_role == 'employer' or user_role == 'admin':
         return Response({"error": "User Not Found Please Registerd"}, status=status.HTTP_400_BAD_REQUEST)
     
     serializer = UserLoginSerializer(data=request.data)
@@ -114,6 +114,7 @@ def login(request):
                     'full_name': user.full_name,
                     'access': str(refresh.access_token),
                     'refresh': str(refresh),
+                    'user_role': user.role
                 }, status=status.HTTP_200_OK)
             else:
                 return Response(

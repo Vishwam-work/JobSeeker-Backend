@@ -8,12 +8,13 @@ class CustomUser(AbstractUser):
     WORK_STATUS_CHOICES = [
         ('fresher', 'Fresher'),
         ('experienced', 'Experienced'),
-
+        ('working', 'Working Professional'),
     ]
 
     ROLE_CHOICES = [
         ('employer', 'Employer'),
         ('job_seeker', 'Job Seeker'),
+        ('admin', 'Admin'),
     ]
 
     full_name = models.CharField(max_length=255)
