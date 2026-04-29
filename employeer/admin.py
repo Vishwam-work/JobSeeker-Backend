@@ -21,11 +21,11 @@ class CompanyUserAdmin(admin.ModelAdmin):
         'company_type',
         'industry',
     )
-    readonly_fields = ('user',)
+    # readonly_fields = ('user',)
 
     fieldsets = (
         ('User Info', {
-            'fields': ('user',)
+            'fields': ('user', 'is_verified')
         }),
         ('Company Info', {
             'fields': ('company_name', 'company_type', 'industry', 'company_size', 'website', 'description')
