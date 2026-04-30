@@ -225,7 +225,7 @@ class AllJobsListView(generics.ListAPIView):
         job_type = self.request.query_params.getlist('job_type', None)
         work_mode = self.request.query_params.getlist('work_mode', None)
         location = self.request.query_params.get('location', None)
-        company = self.request.query_params.get('company', None)
+        company = self.request.query_params.getlist('company', None)
         search = self.request.query_params.get('search', None)
         experience = self.request.query_params.getlist('experience', None)
         salary_ranges = self.request.query_params.getlist('salary_range', None)
@@ -243,7 +243,10 @@ class AllJobsListView(generics.ListAPIView):
         if location:
             queryset = queryset.filter(location=location)
         if company:
-            queryset = queryset.filter(company__icontains=company)
+            queryset = [
+                comp for comp in queryset
+                if any(wm in (comp.company or []) for wm in company)
+            ]
         if search:
             queryset = queryset.filter(
                 Q(title__icontains=search) |
