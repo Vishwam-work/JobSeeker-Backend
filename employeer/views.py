@@ -167,8 +167,7 @@ class JobPostingCreateView(generics.CreateAPIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
         serializer.save(
-            company_user=company_user,
-            company=company_user.company_name
+            company_user=company_user
         )
 
 # Add the view for the view details
