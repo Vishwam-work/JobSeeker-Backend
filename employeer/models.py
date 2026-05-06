@@ -142,3 +142,14 @@ class JobClickEvent(models.Model):
                 name="unique_job_click_event"
             )
         ]
+
+class SaveProf(models.Model):
+    user = models.ForeignKey(CompanyUser,on_delete=models.CASCADE,related_name='saved_profiles')
+    profile = models.ForeignKey(job_app.Profile,on_delete=models.CASCADE)
+    saved_at = models.DateTimeField(auto_now_add=True,blank=True, null=True)
+
+    class Meta:
+        unique_together = ('user','profile')
+
+    def __str__(self):
+        return f"{self.user.username} saved {self.profile.full_name}"
