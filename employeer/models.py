@@ -154,16 +154,12 @@ class SaveProf(models.Model):
 
     def __str__(self):
         return f"{self.user.username} saved {self.profile.full_name}"
-    
+
 
 class ViewdProfile(models.Model):
     user = models.ForeignKey(CompanyUser,on_delete=models.CASCADE)
-    profile =  models.ForeignKey(job_app.Profile,on_delete=models.CASCADE,related_name='viewd_profile')
+    profile_ids = models.JSONField(default=list, null=True,blank=True)
     viwed_at = models.DateTimeField(auto_now_add=True,blank=True,null=True)
 
-    
-    class Meta:
-        unique_together = ('user','profile')
-
     def __str__(self):
-        return f"{self.profile}"
+        return f"{self.profile_ids} viewed by {self.user.username}"

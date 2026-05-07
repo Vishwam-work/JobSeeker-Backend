@@ -349,12 +349,14 @@ class ViewdprofileSerializer(serializers.ModelSerializer):
     def validate_profile(self,value):
         if not Profile.objects.filter(id=value.id).exists():
             raise serializers.ValidationError("Profile deos not exist")
-        
     def create(self, validated_data):
         user = self.context["request"].user
-        profile = validated_data["profile"]
-        viewed_profile ,created = ViewdProfile.objects.get_or_create(user=user,profile=profile)
+        profile_ids = validated_data["profile_ids"]
+        viewd, created = ViewdProfile.objects.get_or_create(user=user, profile_ids=profile_ids)
 
-        
+        if not created:
+            raise serializers.ValidationError("Profile already viewed.")
+        return viewd
+
 
 

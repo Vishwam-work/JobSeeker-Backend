@@ -62,5 +62,5 @@ class SaveProf(admin.ModelAdmin):
 
 @admin.register(ViewdProfile)
 class ViewdProfile(admin.ModelAdmin):
-    raw_id_fields  = ['user', 'profile']
-    list_display = ( 'user', 'profile', 'viwed_at')
+    raw_id_fields  = ['user']
+    list_display = ( 'user', 'viwed_at')
