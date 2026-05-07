@@ -29,5 +29,5 @@ path('api/company/<int:pk>/', views.CompanyUserDetail.as_view(), name='company-d
 path('api/company/<int:pk>/update/', views.CompanyUserUpdateView.as_view(), name='company-update'),
 path('api/company/upload-company-logo/', views.logo_upload, name='upload-company-logo'),
 path('api/saved-profile/', views.SavedProfileListCreateView.as_view(), name='saved-profile-list-create'),
-
+path("api/view-profile/",views.ViewedProfileAPIView.as_view(),name="view-profile"),
 ] 

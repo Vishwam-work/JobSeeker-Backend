@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import CompanyUser, JobPosting, Application, Answer, SaveProf
+from .models import CompanyUser, JobPosting, Application, Answer, SaveProf,ViewdProfile
 
 @admin.register(CompanyUser)
 class CompanyUserAdmin(admin.ModelAdmin):
@@ -59,3 +59,8 @@ class Answer(admin.ModelAdmin):
 class SaveProf(admin.ModelAdmin):
     raw_id_fields  = ['user', 'profile']
     list_display = ( 'user', 'profile', 'saved_at')
+
+@admin.register(ViewdProfile)
+class ViewdProfile(admin.ModelAdmin):
+    raw_id_fields  = ['user', 'profile']
+    list_display = ( 'user', 'profile', 'viwed_at')

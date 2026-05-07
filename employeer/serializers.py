@@ -7,7 +7,7 @@ from job_app.models import Profile
 from master.serializers import CountrySerializer,JobCategorySerializer,CurrencySerializer
 from master.models import JobCategory,Country,Currency
 from rest_framework import serializers
-from .models import JobPosting,SaveProf
+from .models import JobPosting,SaveProf,ViewdProfile
 
 User = get_user_model()
 class CompanyUserSerializer(serializers.ModelSerializer):
@@ -338,6 +338,23 @@ class SavedProfileSerializer(serializers.ModelSerializer):
         if not created:
             raise serializers.ValidationError("Profile already saved.")
         return saved
+    
+
+class ViewdprofileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ViewdProfile
+        fields = '__all__'
+        read_only_fields = ["user","viwed_at"]
+
+    def validate_profile(self,value):
+        if not Profile.objects.filter(id=value.id).exists():
+            raise serializers.ValidationError("Profile deos not exist")
+        
+    def create(self, validated_data):
+        user = self.context["request"].user
+        profile = validated_data["profile"]
+        viewed_profile ,created = ViewdProfile.objects.get_or_create(user=user,profile=profile)
+
         
 
 
