@@ -27,6 +27,7 @@ path("api/<int:job_id>/click/", views.increment_job_click),
 path('api/profile-all/', views.ProfileListAPIView.as_view(), name='profile-detail'),
 path('api/company/<int:pk>/', views.CompanyUserDetail.as_view(), name='company-detail'),
 path('api/company/<int:pk>/update/', views.CompanyUserUpdateView.as_view(), name='company-update'),
-path('api/company/upload-company-logo/', views.logo_upload, name='upload-company-logo')
-
+path('api/company/upload-company-logo/', views.logo_upload, name='upload-company-logo'),
+path('api/saved-profile/', views.SavedProfileListCreateView.as_view(), name='saved-profile-list-create'),
+path("api/view-profile/",views.ViewedProfileAPIView.as_view(),name="view-profile"),
 ] 

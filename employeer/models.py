@@ -2,6 +2,7 @@ from django.conf import settings
 from django.db import models
 from master import models as master
 from job_app import models as job_app
+from job_app.models import CustomUser
 import uuid
 
 STATUS_CHOICES = [
@@ -142,3 +143,27 @@ class JobClickEvent(models.Model):
                 name="unique_job_click_event"
             )
         ]
+
+class SaveProf(models.Model):
+    user = models.ForeignKey(CompanyUser,on_delete=models.CASCADE,related_name='saved_profiles')
+    profile = models.ForeignKey(job_app.Profile,on_delete=models.CASCADE)
+    saved_at = models.DateTimeField(auto_now_add=True,blank=True, null=True)
+
+    class Meta:
+        unique_together = ('user','profile')
+
+    def __str__(self):
+        return f"{self.user.username} saved {self.profile.full_name}"
+    
+
+class ViewdProfile(models.Model):
+    user = models.ForeignKey(CompanyUser,on_delete=models.CASCADE)
+    profile =  models.ForeignKey(job_app.Profile,on_delete=models.CASCADE,related_name='viewd_profile')
+    viwed_at = models.DateTimeField(auto_now_add=True,blank=True,null=True)
+
+    
+    class Meta:
+        unique_together = ('user','profile')
+
+    def __str__(self):
+        return f"{self.profile}"

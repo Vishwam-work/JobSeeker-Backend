@@ -7,8 +7,8 @@ from rest_framework import status, filters
 from django.shortcuts import get_object_or_404
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import get_user_model, authenticate
-from .serializers import CompanyUserSerializer, CompanyLoginSerializer, JobPostingSerializer,AnswerSerializer, ApplicationSubmitSerializer, ApplicationListItemSerializer,CompanyListSerializer, CompanyDetailSerializer, JobPostingSerializer,ApplicationUpdateSerializer,InterviewScheduleSerializer,CompanyUserUpdateSerializer
-from .models import CompanyUser, JobPosting,Answer, Application, JobClickEvent
+from .serializers import CompanyUserSerializer, CompanyLoginSerializer, JobPostingSerializer,AnswerSerializer, ApplicationSubmitSerializer, ApplicationListItemSerializer,CompanyListSerializer, CompanyDetailSerializer, JobPostingSerializer,ApplicationUpdateSerializer,InterviewScheduleSerializer,CompanyUserUpdateSerializer,SavedProfileSerializer,ViewdprofileSerializer
+from .models import CompanyUser, JobPosting,Answer, Application, JobClickEvent,SaveProf
 from job_app.models import CustomUser
 from master.models import Country, State, City
 from rest_framework import generics,status, viewsets, permissions, serializers
@@ -649,3 +649,30 @@ def logo_upload(request):
     company.save()
 
     return Response({"company_logo_url": company.company_logo.url, "message": "Logo uploaded successfully."}, status=200)
+
+
+class SavedProfileListCreateView(generics.ListCreateAPIView):
+    serializer_class = SavedProfileSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return SaveProf.object.filter(user=self.request.user)
+    
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+
+class ViewedProfileAPIView(APIView):
+
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        
+        serializer = ViewdprofileSerializer(data=request.data,context={"request": request})
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"message": "Profile viewed successfully"},status=status.HTTP_201_CREATED)
+        return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+
+
