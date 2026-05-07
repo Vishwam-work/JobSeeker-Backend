@@ -29,7 +29,9 @@ SECRET_KEY = 'django-insecure-ai@+ami^x*)h-=kd_p-#ceyuqv-gk7%9rp+s7qx!pz4^w&j(@2
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = ['*', 'jobseeker-backend-jy1y.onrender.com']
+ALLOWED_HOSTS = ['*', 'jobseeker-backend-jy1y.onrender.com',"192.168.1.4",
+    "127.0.0.1",
+    "localhost",]
 
 
 # Application definition

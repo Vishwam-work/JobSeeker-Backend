@@ -157,3 +157,4 @@ class SavedJobListSerializer(serializers.ModelSerializer):
         model = SavedJob
         fields = ["id", "job", "job_title", "saved_at"]
         read_only_fields = ["job", "job_title", "saved_at"]
+3

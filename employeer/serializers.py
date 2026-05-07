@@ -317,46 +317,53 @@ class AppliedJobSerializer(serializers.ModelSerializer):
         ]
 
 
-class SavedProfileSerializer(serializers.ModelSerializer):
-    profile_name = serializers.CharField( source='profile.full_name',read_only=True)
-
-    class Meta:
-        model = SaveProf
-        fields = '__all__'
-        read_only_fields = ["user", "saved_at"]
-
-    def validate_profile(self, value):
-        if not Profile.objects.filter(id=value.id).exists():
-            raise serializers.ValidationError("Profile does not exist.")
-        return value
     
-    def create(self, validated_data):
-        user = self.context["request"].user
-        profile = validated_data["profile"]
-        saved, created = SaveProf.objects.get_or_create(user=user,profile=profile)
 
-        if not created:
-            raise serializers.ValidationError("Profile already saved.")
-        return saved
-    
+# class ViewdprofileSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = ViewdProfile
+#         fields = '__all__'
+#         read_only_fields = ["user","viwed_at"]
+
+#     def validate_profile(self,value):
+#         if not Profile.objects.filter(id=value.id).exists():
+#             raise serializers.ValidationError("Profile deos not exist")
+#     def create(self, validated_data):
+#         user = self.context["request"].user
+#         profile_ids = validated_data["profile_ids"]
+#         viewd, created = ViewdProfile.objects.get_or_create(user=user, profile_ids=profile_ids)
+
+#         if not created:
+#             raise serializers.ValidationError("Profile already viewed.")
+#         return viewd
 
 class ViewdprofileSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = ViewdProfile
-        fields = '__all__'
-        read_only_fields = ["user","viwed_at"]
+        fields = "__all__"
+        read_only_fields = ["user", "viwed_at"]
 
-    def validate_profile(self,value):
-        if not Profile.objects.filter(id=value.id).exists():
-            raise serializers.ValidationError("Profile deos not exist")
     def create(self, validated_data):
         user = self.context["request"].user
-        profile_ids = validated_data["profile_ids"]
-        viewd, created = ViewdProfile.objects.get_or_create(user=user, profile_ids=profile_ids)
+        new_profile_id = validated_data.get("profile_ids")
 
+        # check profile exists
+        if not Profile.objects.filter(id=new_profile_id).exists():
+            raise serializers.ValidationError({"profile_ids": "Profile does not exist"})
+
+        # get existing viewed data
+        viewed_obj, created = ViewdProfile.objects.get_or_create(
+            user=user,
+            defaults={"profile_ids": [new_profile_id]})
+
+        # if already exists
         if not created:
-            raise serializers.ValidationError("Profile already viewed.")
-        return viewd
+            # avoid duplicate ids
+            if new_profile_id not in viewed_obj.profile_ids:
+                viewed_obj.profile_ids.append(new_profile_id)
+                viewed_obj.save()
+        return viewed_obj
 
 
 
