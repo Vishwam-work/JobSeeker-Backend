@@ -153,7 +153,7 @@ class SaveProf(models.Model):
         unique_together = ('user','profile')
 
     def __str__(self):
-        return f"{self.user.username} saved {self.profile.full_name}"
+        return f"{self.user} saved {self.profile.full_name}"
 
 
 class ViewdProfile(models.Model):
@@ -162,4 +162,4 @@ class ViewdProfile(models.Model):
     viwed_at = models.DateTimeField(auto_now_add=True,blank=True,null=True)
 
     def __str__(self):
-        return f"{self.profile_ids} viewed by {self.user.username}"
+        return f"{self.profile_ids} viewed by {self.user}"

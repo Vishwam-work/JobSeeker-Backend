@@ -7,8 +7,8 @@ from rest_framework import status, filters
 from django.shortcuts import get_object_or_404
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import get_user_model, authenticate
-from .serializers import CompanyUserSerializer, CompanyLoginSerializer, JobPostingSerializer,AnswerSerializer, ApplicationSubmitSerializer, ApplicationListItemSerializer,CompanyListSerializer, CompanyDetailSerializer, JobPostingSerializer,ApplicationUpdateSerializer,InterviewScheduleSerializer,CompanyUserUpdateSerializer,SavedProfileSerializer,ViewdprofileSerializer
-from .models import CompanyUser, JobPosting,Answer, Application, JobClickEvent,SaveProf
+from .serializers import CompanyUserSerializer, CompanyLoginSerializer, JobPostingSerializer,AnswerSerializer, ApplicationSubmitSerializer, ApplicationListItemSerializer,CompanyListSerializer, CompanyDetailSerializer, JobPostingSerializer,ApplicationUpdateSerializer,InterviewScheduleSerializer,CompanyUserUpdateSerializer,ViewdprofileSerializer,SavedProfileSerializer
+from .models import CompanyUser, JobPosting,Answer, Application, JobClickEvent,SaveProf,ViewdProfile
 from job_app.models import CustomUser
 from master.models import Country, State, City
 from rest_framework import generics,status, viewsets, permissions, serializers
@@ -27,8 +27,14 @@ from django.db import transaction,IntegrityError
 from django.utils.crypto import constant_time_compare
 from django.db.models import IntegerField
 from django.db.models.functions import Cast
+from rest_framework.pagination import PageNumberPagination
 
 User = get_user_model()
+
+class SavedProfPagination(PageNumberPagination):
+    page_size = 3
+    page_size_query_param = 'page_size'
+    max_page_size = 50
 
 OTP_EXPIRY_MINUTES = 1
 OTP_RESEND_COOLDOWN_SECONDS = 60
@@ -651,28 +657,83 @@ def logo_upload(request):
     return Response({"company_logo_url": company.company_logo.url, "message": "Logo uploaded successfully."}, status=200)
 
 
-class SavedProfileListCreateView(generics.ListCreateAPIView):
-    serializer_class = SavedProfileSerializer
-    permission_classes = [permissions.IsAuthenticated]
+class SavedProfileListCreateView(APIView):
 
-    def get_queryset(self):
-        return SaveProf.object.filter(user=self.request.user)
-    
-    def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+    def post(self, request):
+        profile_id = request.data.get("profile")
+
+        profile = Profile.objects.get(id=profile_id)
+
+        saved_profile = SaveProf.objects.create(
+            user=CompanyUser.objects.get(user=request.user),
+            profile=profile
+        )
+
+        return Response({
+            "message": "Profile saved successfully"
+        })
 
 
 class ViewedProfileAPIView(APIView):
-
     permission_classes = [IsAuthenticated]
+    def put(self, request):
+        user = request.user
+        profile_id = request.data.get("profile_ids")
+        # check profile exists
+        if not Profile.objects.filter(id=profile_id).exists():
+            return Response({"error": "Profile does not exist"},status=status.HTTP_400_BAD_REQUEST)
+        viewed_obj, created = ViewdProfile.objects.get_or_create(user=user,defaults={"profile_ids": [profile_id]})
+        if not created:
+            if profile_id not in viewed_obj.profile_ids:
+                viewed_obj.profile_ids.append(profile_id)
+                viewed_obj.save()
+        return Response(
+            {
+                "message": "Profile viewed successfully",
+                "profile_ids": viewed_obj.profile_ids
+            },
+            status=status.HTTP_200_OK
+        )
 
-    def post(self, request):
-        
-        serializer = ViewdprofileSerializer(data=request.data,context={"request": request})
+class SavedProfilesAllView(APIView):
+    permission_classes = [IsAuthenticated]
+    def get(self, request):
+        try:
+            company_user = CompanyUser.objects.get(user=request.user)
+            saved_profiles = SaveProf.objects.filter(
+                user=company_user
+            ).select_related("profile").order_by("-saved_at")
+            serializer = SavedProfileSerializer(saved_profiles, many=True)
 
-        if serializer.is_valid():
-            serializer.save()
-            return Response({"message": "Profile viewed successfully"},status=status.HTTP_201_CREATED)
-        return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+            return Response(serializer.data)
 
+        except CompanyUser.DoesNotExist:
+            return Response(
+                {"error": "Company user not found"},
+                status=404
+            )
 
+class RemoveSavedProfileView(APIView):
+    permission_classes = [IsAuthenticated]
+    def delete(self, request, id):
+        try:
+            company_user = CompanyUser.objects.get(user=request.user)
+            saved_profile = SaveProf.objects.get(
+                id=id,
+                user=company_user
+            )
+            saved_profile.delete()
+            return Response(
+                {"message": "Saved profile removed successfully"},
+                status=status.HTTP_200_OK
+            )
+        except CompanyUser.DoesNotExist:
+            return Response(
+                {"error": "Company user not found"},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        except SaveProf.DoesNotExist:
+            return Response(
+                {"error": "Saved profile not found"},
+                status=status.HTTP_404_NOT_FOUND
+            )
