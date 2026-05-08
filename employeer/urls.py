@@ -30,6 +30,6 @@ path('api/company/<int:pk>/update/', views.CompanyUserUpdateView.as_view(), name
 path('api/company/upload-company-logo/', views.logo_upload, name='upload-company-logo'),
 path('api/saved-profile/', views.SavedProfileListCreateView.as_view(), name='saved-profile-list-create'),
 path("api/view-profile/",views.ViewedProfileAPIView.as_view(),name="view-profile"),
-path('api/saved-profiles-all/',views.SavedProfListView.as_view(), name='saved-profile-list-all'),
-# path('api/saved-profiles/<int:pk>/', views.SavedProfDeleteView.as_view(), name='saved-profile-delete'),
-] 
+path('api/saved-profiles-all/',views.SavedProfilesAllView.as_view(), name='saved-profile-list-all'),
+path('api/saved-profiles/<int:id>/', views.RemoveSavedProfileView.as_view(), name='saved-profile-delete'),
+]

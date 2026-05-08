@@ -9,6 +9,7 @@ from master.models import JobCategory,Country,Currency
 from rest_framework import serializers
 from .models import JobPosting,SaveProf,ViewdProfile
 
+
 User = get_user_model()
 class CompanyUserSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(write_only=True)
@@ -51,7 +52,7 @@ class JobPostingSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = JobPosting
-        fields = '__all__'  
+        fields = '__all__'
         read_only_fields = ('company_user', 'created_at', 'updated_at')
 
 class AnswerSerializer(serializers.ModelSerializer):
@@ -293,8 +294,7 @@ class InterviewScheduleSerializer(serializers.ModelSerializer):
             "timezone"
         ]
 
-from rest_framework import serializers
-from .models import Application
+
 
 class AppliedJobSerializer(serializers.ModelSerializer):
     job_title = serializers.CharField(source='job.title', read_only=True)
@@ -336,6 +336,16 @@ class AppliedJobSerializer(serializers.ModelSerializer):
 #         if not created:
 #             raise serializers.ValidationError("Profile already viewed.")
 #         return viewd
+
+class SimpleprofileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Profile
+        fields = '__all__'
+class SavedProfileSerializer(serializers.ModelSerializer):
+    profile = SimpleprofileSerializer(read_only=True)
+    class Meta:
+        model = SaveProf
+        fields = ["id", "profile", "saved_at"]
 
 class ViewdprofileSerializer(serializers.ModelSerializer):
 

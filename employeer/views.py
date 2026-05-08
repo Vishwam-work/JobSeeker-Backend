@@ -7,7 +7,7 @@ from rest_framework import status, filters
 from django.shortcuts import get_object_or_404
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import get_user_model, authenticate
-from .serializers import CompanyUserSerializer, CompanyLoginSerializer, JobPostingSerializer,AnswerSerializer, ApplicationSubmitSerializer, ApplicationListItemSerializer,CompanyListSerializer, CompanyDetailSerializer, JobPostingSerializer,ApplicationUpdateSerializer,InterviewScheduleSerializer,CompanyUserUpdateSerializer,ViewdprofileSerializer
+from .serializers import CompanyUserSerializer, CompanyLoginSerializer, JobPostingSerializer,AnswerSerializer, ApplicationSubmitSerializer, ApplicationListItemSerializer,CompanyListSerializer, CompanyDetailSerializer, JobPostingSerializer,ApplicationUpdateSerializer,InterviewScheduleSerializer,CompanyUserUpdateSerializer,ViewdprofileSerializer,SavedProfileSerializer
 from .models import CompanyUser, JobPosting,Answer, Application, JobClickEvent,SaveProf,ViewdProfile
 from job_app.models import CustomUser
 from master.models import Country, State, City
@@ -675,24 +675,15 @@ class SavedProfileListCreateView(APIView):
 
 
 class ViewedProfileAPIView(APIView):
-
     permission_classes = [IsAuthenticated]
-
     def put(self, request):
-
         user = request.user
         profile_id = request.data.get("profile_ids")
-
         # check profile exists
         if not Profile.objects.filter(id=profile_id).exists():
             return Response({"error": "Profile does not exist"},status=status.HTTP_400_BAD_REQUEST)
-
-        # get existing object or create new one
         viewed_obj, created = ViewdProfile.objects.get_or_create(user=user,defaults={"profile_ids": [profile_id]})
-
-        # if object already exists
         if not created:
-            # avoid duplicate profile ids
             if profile_id not in viewed_obj.profile_ids:
                 viewed_obj.profile_ids.append(profile_id)
                 viewed_obj.save()
@@ -704,33 +695,45 @@ class ViewedProfileAPIView(APIView):
             status=status.HTTP_200_OK
         )
 
-
-class SavedProfListView(APIView):
-
+class SavedProfilesAllView(APIView):
     permission_classes = [IsAuthenticated]
-
     def get(self, request):
+        try:
+            company_user = CompanyUser.objects.get(user=request.user)
+            saved_profiles = SaveProf.objects.filter(
+                user=company_user
+            ).select_related("profile").order_by("-saved_at")
+            serializer = SavedProfileSerializer(saved_profiles, many=True)
 
-        saved_profiles = SaveProf.objects.filter(user=CompanyUser.objects.get(user=request.user))
-        print(saved_profiles)
-        data = []
-        for profile in saved_profiles:
-            data.append({
+            return Response(serializer.data)
 
-                "id": profile.id,
-                "profile_id": profile.profile.id,
-                "profile_name": profile.profile.full_name,
-                "saved_at": profile.saved_at,
-            })
+        except CompanyUser.DoesNotExist:
+            return Response(
+                {"error": "Company user not found"},
+                status=404
+            )
 
-        return Response(data, status=status.HTTP_200_OK)
-    
-    
-
-# class SavedProfDeleteView(generics.DestroyAPIView):
-#     serializer_class = SavedProfileListSerializer
-#     permission_classes = [permissions.IsAuthenticated]
-
-#     def get_queryset(self):
-#         return SaveProf.objects.filter(user=self.request.user)
-    
+class RemoveSavedProfileView(APIView):
+    permission_classes = [IsAuthenticated]
+    def delete(self, request, id):
+        try:
+            company_user = CompanyUser.objects.get(user=request.user)
+            saved_profile = SaveProf.objects.get(
+                id=id,
+                user=company_user
+            )
+            saved_profile.delete()
+            return Response(
+                {"message": "Saved profile removed successfully"},
+                status=status.HTTP_200_OK
+            )
+        except CompanyUser.DoesNotExist:
+            return Response(
+                {"error": "Company user not found"},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        except SaveProf.DoesNotExist:
+            return Response(
+                {"error": "Saved profile not found"},
+                status=status.HTTP_404_NOT_FOUND
+            )
