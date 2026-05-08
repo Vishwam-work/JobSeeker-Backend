@@ -157,7 +157,7 @@ class SaveProf(models.Model):
 
 
 class ViewdProfile(models.Model):
-    user = models.ForeignKey(CompanyUser,on_delete=models.CASCADE)
+    user = models.OneToOneField(CompanyUser,on_delete=models.CASCADE)
     profile_ids = models.JSONField(default=list, null=True,blank=True)
     viwed_at = models.DateTimeField(auto_now_add=True,blank=True,null=True)
 

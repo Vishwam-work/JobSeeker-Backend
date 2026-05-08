@@ -55,6 +55,11 @@ class CandidatePagination(PageNumberPagination):
     page_size_query_param = 'page_size'
     max_page_size = 50
 
+class ProfilePagination(PageNumberPagination):
+    page_size = 1
+    page_size_query_param = 'page_size'
+    max_page_size = 50
+
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def register_company_user(request):
@@ -602,10 +607,18 @@ def increment_job_click(request, job_id):
     #                 },status=200)
 # All the Candidate Profile Views
 class ProfileListAPIView(APIView):
-    def get(self, request):
-        profiles = Profile.objects.all()
-        serializer = ProfileSerializer(profiles, many=True)
-        return Response(serializer.data)
+        pagignation_class = ProfilePagination
+        def get(self, request): 
+            final_list = []
+            profiles = Profile.objects.all()
+            for p in profiles:
+                if p.user.role == 'job_seeker':
+                    final_list.append(p)
+            paginator = self.pagignation_class()
+            paginated_profiles = paginator.paginate_queryset(final_list,request)
+            print(paginated_profiles)
+            serializer = ProfileSerializer(paginated_profiles, many=True)
+            return Response(serializer.data)
 
 class CompanyUserDetail(APIView):
     permission_classes = [permissions.IsAuthenticated]
@@ -674,26 +687,129 @@ class SavedProfileListCreateView(APIView):
         })
 
 
+# class ViewedProfileAPIView(APIView):
+#     permission_classes = [IsAuthenticated]
+#     def put(self, request):
+#         user = CompanyUser.objects.get(user=request.user)   
+#         profile_id = request.data.get("profile_ids")
+#         viwed = False
+#         # check profile exists
+#         if not Profile.objects.filter(id=profile_id).exists():
+#             return Response({"error": "Profile does not exist"},status=status.HTTP_400_BAD_REQUEST)
+#         viewed_obj, created = ViewdProfile.objects.get_or_create(user=user,defaults={"profile_ids": [profile_id]})
+#         if not created:
+#             if profile_id not in viewed_obj.profile_ids:
+#                 viewed_obj.profile_ids.append(profile_id)
+#                 viwed = True
+#                 viewed_obj.save()
+#         return Response(
+#             {
+#                 "message": "Profile viewed successfully",
+#                 "profile_ids": viewed_obj.profile_ids
+#             },
+#             status=status.HTTP_200_OK
+#         )
+
 class ViewedProfileAPIView(APIView):
     permission_classes = [IsAuthenticated]
-    def put(self, request):
-        user = request.user
-        profile_id = request.data.get("profile_ids")
-        # check profile exists
-        if not Profile.objects.filter(id=profile_id).exists():
-            return Response({"error": "Profile does not exist"},status=status.HTTP_400_BAD_REQUEST)
-        viewed_obj, created = ViewdProfile.objects.get_or_create(user=user,defaults={"profile_ids": [profile_id]})
-        if not created:
-            if profile_id not in viewed_obj.profile_ids:
-                viewed_obj.profile_ids.append(profile_id)
-                viewed_obj.save()
+
+    # GET viewed profiles
+    def get(self, request):
+        user = CompanyUser.objects.get(user=request.user)
+
+        viewed_obj = ViewdProfile.objects.filter(user=user).first()
+
+        if not viewed_obj:
+            return Response(
+                {
+                    "profile_ids": []
+                },
+                status=status.HTTP_200_OK
+            )
+
         return Response(
             {
-                "message": "Profile viewed successfully",
                 "profile_ids": viewed_obj.profile_ids
             },
             status=status.HTTP_200_OK
         )
+
+    # STORE viewed profile
+    def post(self, request):
+        user = CompanyUser.objects.get(user=request.user)
+
+        profile_id = request.data.get("profile")
+
+        viewed = False
+
+        # check profile exists
+        if not Profile.objects.filter(id=profile_id).exists():
+            return Response(
+                {"error": "Profile does not exist"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # get or create viewed object
+        viewed_obj, created = ViewdProfile.objects.get_or_create(
+            user=user,
+            defaults={"profile_ids": [profile_id]}
+        )
+
+        # append new profile id
+        if not created:
+            if profile_id not in viewed_obj.profile_ids:
+                viewed_obj.profile_ids.append(profile_id)
+                viewed_obj.save()
+                viewed = True
+
+        return Response(
+            {
+                "message": "Profile viewed successfully",
+                "profile_ids": viewed_obj.profile_ids,
+                "new_viewed": viewed
+            },
+            status=status.HTTP_200_OK
+        )
+# from django.views.decorators.http import require_http_methods
+
+# @require_http_methods(['PUT', 'POST'])
+# class ViewedProfileAPIView(APIView):
+#     permission_classes = [IsAuthenticated]
+
+#     def put(self, request):
+#         user = CompanyUser.objects.get(user=request.user)   
+#         profile_id = request.data.get("profile_ids")
+#         viewed = False
+#         # check profile exists
+#         if not Profile.objects.filter(id=profile_id).exists():
+#             return Response({"error": "Profile does not exist"},status=status.HTTP_400_BAD_REQUEST)
+#         viewed_obj, created = ViewdProfile.objects.get_or_create(user=user,defaults={"profile_ids": [profile_id]})
+#         if not created:
+#             if profile_id not in viewed_obj.profile_ids:
+#                 viewed_obj.profile_ids.append(profile_id)
+#                 viewed = True
+#                 viewed_obj.save()
+#         return Response(
+#             {
+#                 "message": "Profile viewed successfully",
+#                 "profile_ids": viewed_obj.profile_ids
+#             },
+#             status=status.HTTP_200_OK
+#         )
+
+#     def post(self, request):
+#         # Your code for handling the "POST" method here
+#         # For example, you can create a new ViewdProfile object
+#         profile_id = request.data.get("profile_id")
+#         user = CompanyUser.objects.get(user=request.user)
+#         viewed_obj, created = ViewdProfile.objects.get_or_create(user=user, defaults={"profile_ids": [profile_id]})
+#         return Response(
+#             {
+#                 "message": "Profile saved successfully",
+#                 "profile_ids": viewed_obj.profile_ids
+#             },
+#             status=status.HTTP_201_CREATED
+#         )
 
 class SavedProfilesAllView(APIView):
     permission_classes = [IsAuthenticated]
