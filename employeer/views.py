@@ -15,7 +15,7 @@ from rest_framework import generics,status, viewsets, permissions, serializers
 from rest_framework.pagination import PageNumberPagination
 from django.db.models import F,Q
 from utils.utils import generate_otp, send_email
-from job_app.models import EmailOTP, Profile
+from job_app.models import EmailOTP, Profile,Experience
 from django.utils import timezone
 from datetime import timedelta
 from job_app.serializers import ProfileSerializer
@@ -56,7 +56,7 @@ class CandidatePagination(PageNumberPagination):
     max_page_size = 50
 
 class ProfilePagination(PageNumberPagination):
-    page_size = 1
+    page_size = 2
     page_size_query_param = 'page_size'
     max_page_size = 50
 
@@ -240,6 +240,7 @@ class AllJobsListView(generics.ListAPIView):
         search = self.request.query_params.get('search', None)
         experience = self.request.query_params.getlist('experience', None)
         salary_ranges = self.request.query_params.getlist('salary_range', None)
+        
         if job_type:
             queryset = [
                 job for job in queryset
@@ -607,18 +608,78 @@ def increment_job_click(request, job_id):
     #                 },status=200)
 # All the Candidate Profile Views
 class ProfileListAPIView(APIView):
-        pagignation_class = ProfilePagination
+        pagination_class = ProfilePagination
+        permission_classes = [AllowAny]
+
         def get(self, request): 
             final_list = []
             profiles = Profile.objects.all()
             for p in profiles:
                 if p.user.role == 'job_seeker':
                     final_list.append(p)
-            paginator = self.pagignation_class()
+            paginator = self.pagination_class()
             paginated_profiles = paginator.paginate_queryset(final_list,request)
-            print(paginated_profiles)
+            # print(paginated_profiles)
             serializer = ProfileSerializer(paginated_profiles, many=True)
-            return Response(serializer.data)
+            # return Response(serializer.data)
+            return paginator.get_paginated_response(serializer.data)
+        
+
+        def get_queryset(self):
+            queryset = Profile.objects.filter(user__role='job_seeker')
+            keywords = self.request.query_params.getlist('keywords',None)
+            location = self.request.query_params.get('location', None)
+            current_company = self.request.query_params.get('current_company', None)
+            experience = self.request.query_params.getlist('experience', None)
+            salary_ranges = self.request.query_params.getlist('salary_range', None)  
+            category = self.request.query_params.getlist('category', None)
+            gender = self.request.query_params.get('gender', None)
+            degree_course = self.request.query_params.getlist('degree_course', None)
+
+            if keywords:
+                queryset = queryset.filter(
+                    Q(title__icontains=keywords) |
+                    Q(company__icontains=keywords) |
+                    Q(location__icontains=keywords)
+                )
+            if location:
+                queryset = queryset.filter(state__name__icontains=location)
+            
+            if current_company:
+                queryset = queryset.filter(Experience__company__icontains=current_company)
+            
+            if experience:
+                queryset = queryset.filter(experience__in=experience)
+            
+            if salary_ranges:
+                salary_query = Q()
+                for sr in salary_ranges:
+
+                    if "+" in sr:
+                        min_salary = int(sr.replace("+", "")) * 100000
+                        salary_query |= Q(expected_salary__gte=min_salary)
+                    elif "-" in sr:
+                        min_salary, max_salary = sr.split('-')
+                        min_salary = int(min_salary) * 100000
+                        max_salary = int(max_salary) * 100000
+
+                        salary_query |= Q(
+                            expected_salary__gte=min_salary,
+                            expected_salary__lte=max_salary
+                        )
+
+                queryset = queryset.filter(salary_query)
+
+            if category:
+                queryset = queryset.filter(experiences__category__in=category)
+            
+            if gender:
+                queryset = queryset.filter(gender__icontains=gender)
+            
+            if degree_course:
+                queryset = queryset.filter(educations__course__name__in=degree_course)
+            
+            return queryset
 
 class CompanyUserDetail(APIView):
     permission_classes = [permissions.IsAuthenticated]
@@ -686,30 +747,6 @@ class SavedProfileListCreateView(APIView):
             "message": "Profile saved successfully"
         })
 
-
-# class ViewedProfileAPIView(APIView):
-#     permission_classes = [IsAuthenticated]
-#     def put(self, request):
-#         user = CompanyUser.objects.get(user=request.user)   
-#         profile_id = request.data.get("profile_ids")
-#         viwed = False
-#         # check profile exists
-#         if not Profile.objects.filter(id=profile_id).exists():
-#             return Response({"error": "Profile does not exist"},status=status.HTTP_400_BAD_REQUEST)
-#         viewed_obj, created = ViewdProfile.objects.get_or_create(user=user,defaults={"profile_ids": [profile_id]})
-#         if not created:
-#             if profile_id not in viewed_obj.profile_ids:
-#                 viewed_obj.profile_ids.append(profile_id)
-#                 viwed = True
-#                 viewed_obj.save()
-#         return Response(
-#             {
-#                 "message": "Profile viewed successfully",
-#                 "profile_ids": viewed_obj.profile_ids
-#             },
-#             status=status.HTTP_200_OK
-#         )
-
 class ViewedProfileAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -770,46 +807,6 @@ class ViewedProfileAPIView(APIView):
             },
             status=status.HTTP_200_OK
         )
-# from django.views.decorators.http import require_http_methods
-
-# @require_http_methods(['PUT', 'POST'])
-# class ViewedProfileAPIView(APIView):
-#     permission_classes = [IsAuthenticated]
-
-#     def put(self, request):
-#         user = CompanyUser.objects.get(user=request.user)   
-#         profile_id = request.data.get("profile_ids")
-#         viewed = False
-#         # check profile exists
-#         if not Profile.objects.filter(id=profile_id).exists():
-#             return Response({"error": "Profile does not exist"},status=status.HTTP_400_BAD_REQUEST)
-#         viewed_obj, created = ViewdProfile.objects.get_or_create(user=user,defaults={"profile_ids": [profile_id]})
-#         if not created:
-#             if profile_id not in viewed_obj.profile_ids:
-#                 viewed_obj.profile_ids.append(profile_id)
-#                 viewed = True
-#                 viewed_obj.save()
-#         return Response(
-#             {
-#                 "message": "Profile viewed successfully",
-#                 "profile_ids": viewed_obj.profile_ids
-#             },
-#             status=status.HTTP_200_OK
-#         )
-
-#     def post(self, request):
-#         # Your code for handling the "POST" method here
-#         # For example, you can create a new ViewdProfile object
-#         profile_id = request.data.get("profile_id")
-#         user = CompanyUser.objects.get(user=request.user)
-#         viewed_obj, created = ViewdProfile.objects.get_or_create(user=user, defaults={"profile_ids": [profile_id]})
-#         return Response(
-#             {
-#                 "message": "Profile saved successfully",
-#                 "profile_ids": viewed_obj.profile_ids
-#             },
-#             status=status.HTTP_201_CREATED
-#         )
 
 class SavedProfilesAllView(APIView):
     permission_classes = [IsAuthenticated]
@@ -853,3 +850,5 @@ class RemoveSavedProfileView(APIView):
                 {"error": "Saved profile not found"},
                 status=status.HTTP_404_NOT_FOUND
             )
+
+
