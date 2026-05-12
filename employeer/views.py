@@ -13,9 +13,9 @@ from job_app.models import CustomUser
 from master.models import Country, State, City
 from rest_framework import generics,status, viewsets, permissions, serializers
 from rest_framework.pagination import PageNumberPagination
-from django.db.models import F,Q
-from utils.utils import generate_otp, send_email
-from job_app.models import EmailOTP, Profile
+from django.db.models import F,Q,Value ,IntegerField
+from utils.utils import generate_otp, send_email,password_reset_token
+from job_app.models import EmailOTP, Profile,Experience
 from django.utils import timezone
 from datetime import timedelta
 from job_app.serializers import ProfileSerializer
@@ -26,8 +26,11 @@ from django.conf import settings
 from django.db import transaction,IntegrityError
 from django.utils.crypto import constant_time_compare
 from django.db.models import IntegerField
-from django.db.models.functions import Cast
+from django.db.models.functions import Cast,Replace
 from rest_framework.pagination import PageNumberPagination
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes
+from django.utils.http import urlsafe_base64_decode
 
 User = get_user_model()
 
@@ -52,6 +55,11 @@ class JobPagination(PageNumberPagination):
 
 class CandidatePagination(PageNumberPagination):
     page_size = 5
+    page_size_query_param = 'page_size'
+    max_page_size = 50
+
+class ProfilePagination(PageNumberPagination):
+    page_size = 2
     page_size_query_param = 'page_size'
     max_page_size = 50
 
@@ -159,6 +167,33 @@ def login_company_user(request):
 
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def forgot_password(request):
+    email = request.data.get("email")
+
+    try:
+        user = CompanyUser.objects.get(email=email)
+        if not user:
+            return Response({"error": "User not found"}, status=404)
+        uid = urlsafe_base64_encode(force_bytes(user.id))
+        token = password_reset_token.make_token(user)
+
+        reset_link = f"http://localhost:3005/reset-password/{uid}/{token}/"
+
+        # 🔥 Send email using SendGrid
+        send_email(
+            to_email=email,
+            subject="Reset Your Password",
+            template_name="Forget_password.html",
+            context={"reset_link": reset_link}
+        )
+
+        return Response({"message": "Reset link sent to email"})
+
+    except CompanyUser.DoesNotExist:
+        return Response({"error": "User not found"}, status=404)
+
 class JobPostingCreateView(generics.CreateAPIView):
     queryset = JobPosting.objects.all()
     serializer_class = JobPostingSerializer
@@ -235,6 +270,7 @@ class AllJobsListView(generics.ListAPIView):
         search = self.request.query_params.get('search', None)
         experience = self.request.query_params.getlist('experience', None)
         salary_ranges = self.request.query_params.getlist('salary_range', None)
+        
         if job_type:
             queryset = [
                 job for job in queryset
@@ -601,12 +637,217 @@ def increment_job_click(request, job_id):
     #                   "request_id":request_id,
     #                 },status=200)
 # All the Candidate Profile Views
-class ProfileListAPIView(APIView):
-    def get(self, request):
-        profiles = Profile.objects.all()
-        serializer = ProfileSerializer(profiles, many=True)
-        return Response(serializer.data)
+# class ProfileListAPIView(APIView):
+#         pagination_class = ProfilePagination
+#         permission_classes = [AllowAny]
 
+#         def get(self, request): 
+#             final_list = []
+#             profiles = Profile.objects.all()
+#             for p in profiles:
+#                 if p.user.role == 'job_seeker':
+#                     final_list.append(p)
+#             paginator = self.pagination_class()
+#             paginated_profiles = paginator.paginate_queryset(final_list,request)
+#             # print(paginated_profiles)
+#             serializer = ProfileSerializer(paginated_profiles, many=True)
+#             # return Response(serializer.data)
+#             return paginator.get_paginated_response(serializer.data)
+        
+
+#         def get_queryset(self):
+#             queryset = Profile.objects.filter(user__role='job_seeker')
+#             keywords = self.request.query_params.getlist('keywords',None)
+#             location = self.request.query_params.get('location', None)
+#             current_company = self.request.query_params.get('current_company', None)
+#             experience = self.request.query_params.getlist('experience', None)
+#             salary_ranges = self.request.query_params.getlist('salary_range', None)  
+#             category = self.request.query_params.getlist('category', None)
+#             gender = self.request.query_params.get('gender', None)
+#             degree_course = self.request.query_params.getlist('degree_course', None)
+
+#             if keywords:
+#                 queryset = queryset.filter(
+#                     Q(title__icontains=keywords) |
+#                     Q(company__icontains=keywords) |
+#                     Q(location__icontains=keywords)
+#                 )
+#             if location:
+#                 queryset = queryset.filter(state__name__icontains=location)
+            
+#             if current_company:
+#                 queryset = queryset.filter(Experience__company__icontains=current_company)
+            
+#             if experience:
+#                 queryset = queryset.filter(experience__in=experience)
+            
+#             if salary_ranges:
+#                 salary_query = Q()
+#                 for sr in salary_ranges:
+
+#                     if "+" in sr:
+#                         min_salary = int(sr.replace("+", "")) * 100000
+#                         salary_query |= Q(expected_salary__gte=min_salary)
+#                     elif "-" in sr:
+#                         min_salary, max_salary = sr.split('-')
+#                         min_salary = int(min_salary) * 100000
+#                         max_salary = int(max_salary) * 100000
+
+#                         salary_query |= Q(
+#                             expected_salary__gte=min_salary,
+#                             expected_salary__lte=max_salary
+#                         )
+
+#                 queryset = queryset.filter(salary_query)
+
+#             if category:
+#                 queryset = queryset.filter(experiences__category__in=category)
+            
+#             if gender:
+#                 queryset = queryset.filter(gender__icontains=gender)
+            
+#             if degree_course:
+#                 queryset = queryset.filter(educations__course__name__in=degree_course)
+            
+#             return queryset
+
+class ProfileListAPIView(APIView):
+
+    pagination_class = ProfilePagination
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+
+        queryset = self.get_queryset()
+
+        paginator = self.pagination_class()
+        paginated_profiles = paginator.paginate_queryset(queryset, request)
+
+        serializer = ProfileSerializer(paginated_profiles, many=True)
+
+        return paginator.get_paginated_response(serializer.data)
+
+    def get_queryset(self):
+
+        queryset = Profile.objects.filter(user__role='job_seeker')
+
+        keywords = self.request.query_params.get('keywords')
+        location = self.request.query_params.get('location')
+        current_company = self.request.query_params.get('current_company')
+        experience = self.request.query_params.getlist('experience')
+        salary_ranges = self.request.query_params.getlist('salary_range')
+        category = self.request.query_params.getlist('category')
+        gender = self.request.query_params.get('gender')
+        degree_course = self.request.query_params.getlist('degree_course')
+
+        if keywords:
+            queryset = queryset.filter(
+                Q(full_name__icontains=keywords) |
+                Q(experience__icontains=keywords) |
+                Q(city__name__icontains=keywords) |
+                Q(state__name__icontains=keywords) |
+                Q(country__name__icontains=keywords) |
+                Q(experiences__company__icontains=keywords) |
+                Q(experiences__job_title__icontains=keywords) |
+                Q(educations__institution__icontains=keywords) |
+                Q(notice_period__icontains=keywords) |
+                Q(skills__name__icontains=keywords)
+            ).distinct()
+
+        if location:
+            queryset = queryset.filter(state__name__icontains=location)
+
+        if current_company:
+            queryset = queryset.filter(
+                experiences__company__icontains=current_company
+            )
+
+        if experience:
+
+            queryset = queryset.annotate(
+                experience_int=Cast(
+                    Replace('experience', Value(' years'), Value('')),
+                    IntegerField()
+                )
+            )
+
+            experience_query = Q()
+
+            for exp in experience:
+
+                if "+" in exp:
+
+                    min_exp = int(exp.replace("+", "").strip())
+
+                    experience_query |= Q(
+                        experience_int__gte=min_exp
+                    )
+
+                elif "-" in exp:
+
+                    min_exp, max_exp = exp.split("-")
+
+                    min_exp = int(min_exp.strip())
+                    max_exp = int(max_exp.strip())
+
+                    print(min_exp, max_exp)
+
+                    # Convert "7 years" -> 7
+                    # Then compare range
+
+                    experience_query |= Q(
+                        experience_int__gte=min_exp,
+                        experience_int__lte=max_exp
+                    )
+
+                    print(experience_query)
+
+                queryset = queryset.filter(experience_query)
+                print(queryset)
+
+        if salary_ranges:
+
+            salary_query = Q()
+
+            for sr in salary_ranges:
+
+                sr = sr.replace("LPA", "").strip()
+
+                if "+" in sr:
+
+                    min_salary = int(sr.replace("+", "").strip()) * 100000
+
+                    salary_query |= Q(expected_salary__gte=min_salary)
+
+                elif "-" in sr:
+
+                    min_salary, max_salary = sr.split('-')
+
+                    min_salary = int(min_salary.strip()) * 100000
+                    max_salary = int(max_salary.strip()) * 100000
+
+                    salary_query |= Q(
+                        expected_salary__gte=min_salary,
+                        expected_salary__lte=max_salary
+                    )
+
+            queryset = queryset.filter(salary_query)
+
+        if category:
+            queryset = queryset.filter(
+                experiences__category__in=category
+            )
+
+        if gender:
+            queryset = queryset.filter(gender__icontains=gender)
+
+        if degree_course:
+                queryset = queryset.filter(
+                    educations__education__isnull=False,
+                    educations__education__name__in=degree_course
+                )
+        return queryset.distinct() 
+    
 class CompanyUserDetail(APIView):
     permission_classes = [permissions.IsAuthenticated]
     def get(self, request, *args, **kwargs):
@@ -673,24 +914,63 @@ class SavedProfileListCreateView(APIView):
             "message": "Profile saved successfully"
         })
 
-
 class ViewedProfileAPIView(APIView):
     permission_classes = [IsAuthenticated]
-    def put(self, request):
-        user = request.user
-        profile_id = request.data.get("profile_ids")
+
+    # GET viewed profiles
+    def get(self, request):
+        user = CompanyUser.objects.get(user=request.user)
+
+        viewed_obj = ViewdProfile.objects.filter(user=user).first()
+
+        if not viewed_obj:
+            return Response(
+                {
+                    "profile_ids": []
+                },
+                status=status.HTTP_200_OK
+            )
+
+        return Response(
+            {
+                "profile_ids": viewed_obj.profile_ids
+            },
+            status=status.HTTP_200_OK
+        )
+
+    # STORE viewed profile
+    def post(self, request):
+        user = CompanyUser.objects.get(user=request.user)
+
+        profile_id = request.data.get("profile")
+
+        viewed = False
+
         # check profile exists
         if not Profile.objects.filter(id=profile_id).exists():
-            return Response({"error": "Profile does not exist"},status=status.HTTP_400_BAD_REQUEST)
-        viewed_obj, created = ViewdProfile.objects.get_or_create(user=user,defaults={"profile_ids": [profile_id]})
+            return Response(
+                {"error": "Profile does not exist"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # get or create viewed object
+        viewed_obj, created = ViewdProfile.objects.get_or_create(
+            user=user,
+            defaults={"profile_ids": [profile_id]}
+        )
+
+        # append new profile id
         if not created:
             if profile_id not in viewed_obj.profile_ids:
                 viewed_obj.profile_ids.append(profile_id)
                 viewed_obj.save()
+                viewed = True
+
         return Response(
             {
                 "message": "Profile viewed successfully",
-                "profile_ids": viewed_obj.profile_ids
+                "profile_ids": viewed_obj.profile_ids,
+                "new_viewed": viewed
             },
             status=status.HTTP_200_OK
         )

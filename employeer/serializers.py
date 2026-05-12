@@ -338,14 +338,18 @@ class AppliedJobSerializer(serializers.ModelSerializer):
 #         return viewd
 
 class SimpleprofileSerializer(serializers.ModelSerializer):
+    country = serializers.CharField(source='country.name', read_only=True)
+    state = serializers.CharField(source='state.name', read_only=True)
+    city = serializers.CharField(source='city.name', read_only=True)
     class Meta:
         model = Profile
         fields = '__all__'
 class SavedProfileSerializer(serializers.ModelSerializer):
     profile = SimpleprofileSerializer(read_only=True)
+    
     class Meta:
         model = SaveProf
-        fields = ["id", "profile", "saved_at"]
+        fields = '__all__'
 
 class ViewdprofileSerializer(serializers.ModelSerializer):
 
