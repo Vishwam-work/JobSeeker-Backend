@@ -70,7 +70,8 @@ CORS_ALLOWED_ORIGINS = [
     "https://ngblobaltestingserver60.vercel.app",
     "http://10.194.205.163:3005",
     "http://10.194.205.163:3000",
-    "https://nvglobaltechtestingserver70.vercel.app"
+    "https://nvglobaltechtestingserver70.vercel.app",
+    "https://nvglobaltechtestserver90.vercel.app"
 ]
 
 # CSRF Trusted Origins for production
@@ -82,7 +83,8 @@ CSRF_TRUSTED_ORIGINS = [
     "https://ngblobaltestingserver60.vercel.app",
     "http://10.194.205.163:3005",
     "http://10.194.205.163:3000",
-    "https://nvglobaltechtestingserver70.vercel.app"
+    "https://nvglobaltechtestingserver70.vercel.app",
+    "https://nvglobaltechtestserver90.vercel.app"
 ]
 
 ROOT_URLCONF = 'Jobseeker.urls'
