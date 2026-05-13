@@ -301,7 +301,7 @@ def forgot_password(request):
         uid = urlsafe_base64_encode(force_bytes(user.id))
         token = password_reset_token.make_token(user)
 
-        reset_link = f"http://localhost:3000/reset-password/{uid}/{token}/"
+        reset_link = f"http://jobseeker-backend-jy1y.onrender.com/reset-password/{uid}/{token}/"
 
         # 🔥 Send email using SendGrid
         send_email(
