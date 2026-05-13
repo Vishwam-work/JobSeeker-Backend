@@ -31,6 +31,7 @@ from rest_framework.pagination import PageNumberPagination
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_decode
+from django.utils.encoding import force_str
 
 User = get_user_model()
 
@@ -173,7 +174,7 @@ def forgot_password(request):
     email = request.data.get("email")
 
     try:
-        user = CompanyUser.objects.get(email=email)
+        user = User.objects.get(email=email)
         if not user:
             return Response({"error": "User not found"}, status=404)
         uid = urlsafe_base64_encode(force_bytes(user.id))
@@ -191,8 +192,29 @@ def forgot_password(request):
 
         return Response({"message": "Reset link sent to email"})
 
-    except CompanyUser.DoesNotExist:
+    except User.DoesNotExist:
         return Response({"error": "User not found"}, status=404)
+    
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def reset_password(request):
+    uid = request.data.get("uid")
+    token = request.data.get("token")
+    password = request.data.get("password")
+
+    try:
+        id = force_str(urlsafe_base64_decode(uid))
+        user = User.objects.get(id=id)
+
+        if password_reset_token.check_token(user, token):
+            user.set_password(password)
+            user.save()
+            return Response({"message": "Password reset successful"})
+        else:
+            return Response({"error": "Invalid or expired token"}, status=400)
+
+    except Exception:
+        return Response({"error": "Invalid request"}, status=400)
 
 class JobPostingCreateView(generics.CreateAPIView):
     queryset = JobPosting.objects.all()
@@ -273,8 +295,12 @@ class AllJobsListView(generics.ListAPIView):
         
         if job_type:
             queryset = [
-                job for job in queryset
-                if any(jt in (job.job_type or []) for jt in job_type)
+            job for job in queryset
+            if any(
+                jt.replace("-", " ").lower() in
+                [(j.replace("-", " ").lower()) for j in (job.job_type or [])]
+                for jt in job_type
+            )
             ]
         if work_mode:
             print(work_mode)
