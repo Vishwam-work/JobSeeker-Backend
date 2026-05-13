@@ -67,41 +67,99 @@ class ProfilePagination(PageNumberPagination):
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def register_company_user(request):
+
     email = request.data.get("email")
 
+    # CHECK EMAIL
     if not email:
-        return Response({"error": "Email is required"}, status=400)
-    otp_verified = EmailOTP.objects.filter(email=email, is_used=True).exists()
+        return Response(
+            {"error": "Email is required"},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    # CHECK OTP VERIFIED
+    otp_verified = EmailOTP.objects.filter(email=email,is_used=True).exists()
+
     if not otp_verified:
         return Response({"error": "Please verify OTP first"},status=status.HTTP_400_BAD_REQUEST)
+    
+    # CHECK USER EXISTS
+    if User.objects.filter(email=email).exists():
+        return Response({'error': 'User with this email already exists'},status=status.HTTP_400_BAD_REQUEST)
 
+    # SERIALIZER
     serializer = CompanyUserSerializer(data=request.data)
 
     if serializer.is_valid():
-        email = serializer.validated_data['email']
-        if User.objects.filter(email=email).exists():
-            return Response(
-                {'error': 'User with this email already exists'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-
+        # SAVE DATA
         company_user = serializer.save()
+       
+        # UPDATE USER
         company_user.is_verified = True
-        company_user.is_active = True
         company_user.user.role = 'employer'
+
         company_user.user.save()
         company_user.save()
+
+        # JWT TOKEN
         refresh = RefreshToken.for_user(company_user.user)
+
+
+        # RESPONSE
         return Response({
-            'message': 'Company user registered successfully',
+            'message': 'Company registered successfully',
             'user_id': company_user.user.id,
             'email': company_user.user.email,
-            'company_name': company_user.company_name,
+            'company_id': company_user.company.id,
+            'company_name': company_user.company.company_name,
+            'role': company_user.role,
             'access': str(refresh.access_token),
             'refresh': str(refresh)
         }, status=status.HTTP_201_CREATED)
 
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    return Response(
+        serializer.errors,
+        status=status.HTTP_400_BAD_REQUEST
+    )
+
+# @api_view(['POST'])
+# @permission_classes([AllowAny])
+# def register_company_user(request):
+#     email = request.data.get("email")
+
+#     if not email:
+#         return Response({"error": "Email is required"}, status=400)
+#     otp_verified = EmailOTP.objects.filter(email=email, is_used=True).exists()
+#     if not otp_verified:
+#         return Response({"error": "Please verify OTP first"},status=status.HTTP_400_BAD_REQUEST)
+
+#     serializer = CompanyUserSerializer(data=request.data)
+
+#     if serializer.is_valid():
+#         email = serializer.validated_data['email']
+#         if User.objects.filter(email=email).exists():
+#             return Response(
+#                 {'error': 'User with this email already exists'},
+#                 status=status.HTTP_400_BAD_REQUEST
+#             )
+
+#         company_user = serializer.save()
+#         company_user.is_verified = True
+#         company_user.is_active = True
+#         company_user.user.role = 'employer'
+#         company_user.user.save()
+#         company_user.save()
+#         refresh = RefreshToken.for_user(company_user.user)
+#         return Response({
+#             'message': 'Company user registered successfully',
+#             'user_id': company_user.user.id,
+#             'email': company_user.user.email,
+#             'company_name': company_user.company_name,
+#             'access': str(refresh.access_token),
+#             'refresh': str(refresh)
+#         }, status=status.HTTP_201_CREATED)
+
+#     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
@@ -151,7 +209,7 @@ def login_company_user(request):
                     'message': 'Login successful',
                     'user_id': user.id,
                     'email': user.email,
-                    'company_name': user.companyuser.company_name,
+                    # 'company_name': user.company_name,
                     'access': str(refresh.access_token),
                     'refresh': str(refresh)
                 }, status=status.HTTP_200_OK)

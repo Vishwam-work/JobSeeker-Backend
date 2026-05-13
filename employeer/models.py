@@ -16,23 +16,15 @@ APPLICATION_CHOICES=[
     ('Under Review', 'Under Review'),
 ]
 
-class CompanyUser(models.Model):
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+class Company(models.Model):
 
-    # Company Info
-    
     company_name = models.CharField(max_length=255)
     company_type = models.CharField(max_length=100)
     industry = models.CharField(max_length=100)
     company_size = models.CharField(max_length=100)
     website = models.CharField(blank=True)
     description = models.TextField(blank=True)
-
-    # Contact Info
-    contact_person_name = models.CharField(max_length=100)
-    designation = models.CharField(max_length=100)
-    phone = models.CharField(max_length=15)
-    phone_code = models.CharField(max_length=10, blank=True, null=True)
+    company_logo = models.ImageField(upload_to='company_logos/', blank=True, null=True)
 
     # Address
     address = models.TextField()
@@ -44,6 +36,26 @@ class CompanyUser(models.Model):
     # Agreements
     agree_marketing = models.BooleanField(default=False)
     agree_terms = models.BooleanField(default=False)
+    
+    def __str__(self):
+        return f"{self.user.email} - {self.company.company_name}"
+
+class CompanyUser(models.Model):
+    ROLE_CHOICES = [
+        ('admin', 'Admin'),
+        ('employer', 'Employer'),
+        ('promoter', 'Promoter'),
+    ]
+     
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name="members",blank=True, null=True)
+    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='employeer')
+
+    # Contact Info
+    contact_person_name = models.CharField(max_length=100)
+    designation = models.CharField(max_length=100)
+    phone = models.CharField(max_length=15)
+    phone_code = models.CharField(max_length=10, blank=True, null=True)
 
     #email verification
     is_verified = models.BooleanField()
@@ -51,7 +63,46 @@ class CompanyUser(models.Model):
     
 
     def __str__(self):
-        return self.company_name
+        company_name = self.company.company_name if self.company else "No Company"
+        return f"{self.user.email} - {company_name}"    
+    
+
+# class CompanyUser(models.Model):
+#     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+
+#     # Company Info
+    
+#     company_name = models.CharField(max_length=255)
+#     company_type = models.CharField(max_length=100)
+#     industry = models.CharField(max_length=100)
+#     company_size = models.CharField(max_length=100)
+#     website = models.CharField(blank=True)
+#     description = models.TextField(blank=True)
+
+#     # Contact Info
+#     contact_person_name = models.CharField(max_length=100)
+#     designation = models.CharField(max_length=100)
+#     phone = models.CharField(max_length=15)
+#     phone_code = models.CharField(max_length=10, blank=True, null=True)
+
+#     # Address
+#     address = models.TextField()
+#     country = models.ForeignKey(master.Country, on_delete=models.SET_NULL, blank=True, null=True)
+#     state = models.ForeignKey(master.State, on_delete=models.SET_NULL, blank=True, null=True)
+#     city = models.ForeignKey(master.City, on_delete=models.SET_NULL, blank=True, null=True)
+#     pincode = models.CharField(max_length=20)
+
+#     # Agreements
+#     agree_marketing = models.BooleanField(default=False)
+#     agree_terms = models.BooleanField(default=False)
+
+#     #email verification
+#     is_verified = models.BooleanField()
+#     company_logo = models.ImageField(upload_to='company_logos/', blank=True, null=True)
+    
+
+#     def __str__(self):
+#         return self.company_name
 
 class JobPosting(models.Model):
     company_user = models.ForeignKey(CompanyUser, on_delete=models.CASCADE, related_name='job_postings')

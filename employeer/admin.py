@@ -1,45 +1,126 @@
 from django.contrib import admin
-from .models import CompanyUser, JobPosting, Application, Answer, SaveProf,ViewdProfile
+from .models import CompanyUser, JobPosting, Application, Answer, SaveProf,ViewdProfile,Company
 
-@admin.register(CompanyUser)
-class CompanyUserAdmin(admin.ModelAdmin):
-    raw_id_fields = ['user', 'country', 'state', 'city']
+@admin.register(Company)
+class CompanyAdmin(admin.ModelAdmin):
+    raw_id_fields = ['country', 'state', 'city']
+
     list_display = (
         'company_name',
-        'contact_person_name',
-        'phone',
         'company_type',
         'industry',
+        'company_size',
     )
+
     search_fields = (
         'company_name',
-        'contact_person_name',
-        'phone',
-        'email'
+        'website',
     )
+
     list_filter = (
         'company_type',
         'industry',
     )
-    # readonly_fields = ('user',)
 
     fieldsets = (
-        ('User Info', {
-            'fields': ('user', 'is_verified')
-        }),
         ('Company Info', {
-            'fields': ('company_name', 'company_type', 'industry', 'company_size', 'website', 'description')
+            'fields': (
+                'company_name',
+                'company_type',
+                'industry',
+                'company_size',
+                'website',
+                'description',
+                'company_logo',
+            )
         }),
-        ('Contact Info', {
-            'fields': ('contact_person_name', 'designation', 'phone',)
-        }),
+
         ('Address', {
-            'fields': ('address', 'country', 'state', 'city', 'pincode')
+            'fields': (
+                'address',
+                'country',
+                'state',
+                'city',
+                'pincode',
+            )
         }),
+
         ('Agreements', {
-            'fields': ('agree_marketing', 'agree_terms')
+            'fields': (
+                'agree_marketing',
+                'agree_terms',
+            )
         }),
     )
+
+@admin.register(CompanyUser)
+class CompanyUserAdmin(admin.ModelAdmin):
+    raw_id_fields = ['company', 'user']
+
+    list_display = (
+        'get_company_name',
+        'contact_person_name',
+        'phone',
+        'role',
+        'designation',
+    )
+
+    search_fields = (
+        'contact_person_name',
+        'user__email',
+        'company__company_name',
+    )
+
+    list_filter = (
+        'role',
+        'designation',
+    )
+
+    def get_company_name(self, obj):
+        return obj.company.company_name if obj.company else "No Company"
+
+    get_company_name.short_description = "Company Name"
+
+
+# @admin.register(CompanyUser)
+# class CompanyUserAdmin(admin.ModelAdmin):
+#     raw_id_fields = ['user', 'country', 'state', 'city']
+#     list_display = (
+#         'company_name',
+#         'contact_person_name',
+#         'phone',
+#         'company_type',
+#         'industry',
+#     )
+#     search_fields = (
+#         'company_name',
+#         'contact_person_name',
+#         'phone',
+#         'email'
+#     )
+#     list_filter = (
+#         'company_type',
+#         'industry',
+#     )
+#     # readonly_fields = ('user',)
+
+#     fieldsets = (
+#         ('User Info', {
+#             'fields': ('user', 'is_verified')
+#         }),
+#         ('Company Info', {
+#             'fields': ('company_name', 'company_type', 'industry', 'company_size', 'website', 'description')
+#         }),
+#         ('Contact Info', {
+#             'fields': ('contact_person_name', 'designation', 'phone',)
+#         }),
+#         ('Address', {
+#             'fields': ('address', 'country', 'state', 'city', 'pincode')
+#         }),
+#         ('Agreements', {
+#             'fields': ('agree_marketing', 'agree_terms')
+#         }),
+#     )
 @admin.register(JobPosting)
 class JobPostingAdmin(admin.ModelAdmin):
     raw_id_fields = ['company_user' ,'currency']

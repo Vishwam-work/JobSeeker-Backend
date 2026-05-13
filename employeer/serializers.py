@@ -7,32 +7,124 @@ from job_app.models import Profile
 from master.serializers import CountrySerializer,JobCategorySerializer,CurrencySerializer
 from master.models import JobCategory,Country,Currency
 from rest_framework import serializers
-from .models import JobPosting,SaveProf,ViewdProfile
+from .models import JobPosting,SaveProf,ViewdProfile,Company
+from master import models as master
 
 
 User = get_user_model()
+class CompanySerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Company
+        fields = '__all__'
+
+class CompanyLoginSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    password = serializers.CharField()
+
 class CompanyUserSerializer(serializers.ModelSerializer):
+
+    # USER FIELDS
     email = serializers.EmailField(write_only=True)
     password = serializers.CharField(write_only=True)
     confirm_password = serializers.CharField(write_only=True)
 
+    # COMPANY FIELDS
+    company_name = serializers.CharField(write_only=True)
+    company_type = serializers.CharField(write_only=True)
+    industry = serializers.CharField(write_only=True)
+    company_size = serializers.CharField(write_only=True)
+
+    website = serializers.CharField( write_only=True,required=False,allow_blank=True)
+    description = serializers.CharField(write_only=True,required=False,allow_blank=True)
+    address = serializers.CharField(write_only=True)
+    country = serializers.PrimaryKeyRelatedField(queryset=master.Country.objects.all())
+    state = serializers.PrimaryKeyRelatedField(queryset=master.State.objects.all())
+    city = serializers.PrimaryKeyRelatedField(queryset=master.City.objects.all())
+    pincode = serializers.CharField(write_only=True)
+
+    agree_marketing = serializers.BooleanField(default=False)
+    agree_terms = serializers.BooleanField(default=False)
+
     class Meta:
         model = CompanyUser
-        exclude = ['user']
 
+        exclude = ['user', 'company']
+
+    # VALIDATION
     def validate(self, data):
+
         if data['password'] != data['confirm_password']:
-            raise serializers.ValidationError("Passwords do not match")
+            raise serializers.ValidationError(
+                {"password": "Passwords do not match"}
+            )
+
         return data
 
+    # CREATE
     def create(self, validated_data):
+
+        # USER DATA
         email = validated_data.pop('email')
         password = validated_data.pop('password')
         validated_data.pop('confirm_password')
 
-        user = User.objects.create_user(username=email, email=email, password=password)
-        company_user = CompanyUser.objects.create(user=user, **validated_data)
+        # COMPANY DATA
+        company_data = {
+            'company_name': validated_data.pop('company_name'),
+            'company_type': validated_data.pop('company_type'),
+            'industry': validated_data.pop('industry'),
+            'company_size': validated_data.pop('company_size'),
+            'website': validated_data.pop('website', ''),
+            'description': validated_data.pop('description', ''),
+            'address': validated_data.pop('address'),
+            'country': validated_data.pop('country'),
+            'state': validated_data.pop('state'),
+            'city': validated_data.pop('city'),
+            'pincode': validated_data.pop('pincode'),
+            'agree_marketing': validated_data.pop('agree_marketing', False),
+            'agree_terms': validated_data.pop('agree_terms', False),
+        }
+
+        # CREATE USER
+        user = User.objects.create_user(
+            username=email,
+            email=email,
+            password=password
+        )
+
+
+        # CREATE COMPANY
+        company = Company.objects.create(**company_data)
+
+        # CREATE COMPANY USER
+        company_user = CompanyUser.objects.create(user=user,company=company,role='employer',**validated_data)
+
         return company_user
+
+# class CompanyUserSerializer(serializers.ModelSerializer):
+#     email = serializers.EmailField(write_only=True)
+#     password = serializers.CharField(write_only=True)
+#     confirm_password = serializers.CharField(write_only=True)
+
+#     class Meta:
+#         model = CompanyUser
+#         exclude = ['user']
+
+#     def validate(self, data):
+#         if data['password'] != data['confirm_password']:
+#             raise serializers.ValidationError("Passwords do not match")
+#         return data
+
+#     def create(self, validated_data):
+#         email = validated_data.pop('email')
+#         password = validated_data.pop('password')
+#         validated_data.pop('confirm_password')
+
+#         user = User.objects.create_user(username=email, email=email, password=password)
+#         company_user = CompanyUser.objects.create(user=user, **validated_data)
+#         return company_user
+    
 class CompanyLoginSerializer(serializers.Serializer):
     email = serializers.EmailField()
     password = serializers.CharField()
