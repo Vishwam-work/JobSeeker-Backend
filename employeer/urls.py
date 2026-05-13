@@ -32,4 +32,6 @@ path('api/saved-profile/', views.SavedProfileListCreateView.as_view(), name='sav
 path("api/view-profile/",views.ViewedProfileAPIView.as_view(),name="view-profile"),
 path('api/saved-profiles-all/',views.SavedProfilesAllView.as_view(), name='saved-profile-list-all'),
 path('api/saved-profiles/<int:id>/', views.RemoveSavedProfileView.as_view(), name='saved-profile-delete'),
+path('api/forgot-password/', views.forgot_password, name='forgot-password'),
+path('api/reset-password/', views.reset_password, name='request-password-reset'),
 ]
