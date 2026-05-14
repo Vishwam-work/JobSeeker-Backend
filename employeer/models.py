@@ -38,7 +38,7 @@ class Company(models.Model):
     agree_terms = models.BooleanField(default=False)
     
     def __str__(self):
-        return f"{self.user.email} - {self.company.company_name}"
+        return self.company_name
 
 class CompanyUser(models.Model):
     ROLE_CHOICES = [
@@ -49,7 +49,7 @@ class CompanyUser(models.Model):
      
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name="members",blank=True, null=True)
-    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='employeer')
+    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='employer')
 
     # Contact Info
     contact_person_name = models.CharField(max_length=100)
@@ -58,13 +58,13 @@ class CompanyUser(models.Model):
     phone_code = models.CharField(max_length=10, blank=True, null=True)
 
     #email verification
-    is_verified = models.BooleanField()
-    company_logo = models.ImageField(upload_to='company_logos/', blank=True, null=True)
+    is_verified = models.BooleanField(default=False)
+    # company_logo = models.ImageField(upload_to='company_logos/', blank=True, null=True)
     
-
     def __str__(self):
-        company_name = self.company.company_name if self.company else "No Company"
-        return f"{self.user.email} - {company_name}"    
+        if self.company:
+            return f"{self.user.email} - {self.company.company_name}"
+        return self.user.email
     
 
 # class CompanyUser(models.Model):

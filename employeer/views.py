@@ -7,7 +7,7 @@ from rest_framework import status, filters
 from django.shortcuts import get_object_or_404
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import get_user_model, authenticate
-from .serializers import CompanyUserSerializer, CompanyLoginSerializer, JobPostingSerializer,AnswerSerializer, ApplicationSubmitSerializer, ApplicationListItemSerializer,CompanyListSerializer, CompanyDetailSerializer, JobPostingSerializer,ApplicationUpdateSerializer,InterviewScheduleSerializer,CompanyUserUpdateSerializer,ViewdprofileSerializer,SavedProfileSerializer
+from .serializers import CompanyUserSerializer, CompanyLoginSerializer, JobPostingSerializer,AnswerSerializer, ApplicationSubmitSerializer, ApplicationListItemSerializer,CompanyListSerializer, CompanyDetailSerializer, JobPostingSerializer,ApplicationUpdateSerializer,InterviewScheduleSerializer,CompanyUserUpdateSerializer,ViewdprofileSerializer,SavedProfileSerializer,SubUserSerializer
 from .models import CompanyUser, JobPosting,Answer, Application, JobClickEvent,SaveProf,ViewdProfile
 from job_app.models import CustomUser
 from master.models import Country, State, City
@@ -122,6 +122,71 @@ def register_company_user(request):
         status=status.HTTP_400_BAD_REQUEST
     )
 
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def login_company_user(request):
+
+    serializer = CompanyLoginSerializer(data=request.data)
+
+    if serializer.is_valid():
+
+        email = serializer.validated_data['email']
+        password = serializer.validated_data['password']
+
+        # CHECK USER EXISTS
+        user = User.objects.filter(email=email).first()
+
+        if not user:
+            return Response({'error': 'User with this email does not exist'},status=status.HTTP_404_NOT_FOUND)
+
+        # CHECK ROLE
+        if user.role == 'job_seeker':
+            return Response({"error": "User Not Found Please Register"},status=status.HTTP_400_BAD_REQUEST)
+
+        # AUTHENTICATE USER
+        authenticated_user = authenticate(
+            username=user.username,
+            password=password
+        )
+
+        if not authenticated_user:
+            return Response({'error': 'Invalid credentials'},status=status.HTTP_401_UNAUTHORIZED)
+
+        # JWT TOKEN
+        refresh = RefreshToken.for_user(authenticated_user)
+
+
+        # ADMIN LOGIN
+        if authenticated_user.role == 'admin':
+            return Response({
+                'message': 'Admin login successful',
+                'user_id': authenticated_user.id,
+                'email': authenticated_user.email,
+                'user_role': authenticated_user.role,
+                'access': str(refresh.access_token),
+                'refresh': str(refresh)
+            }, status=status.HTTP_200_OK)
+
+        # COMPANY USER LOGIN
+        try:
+            company_user = authenticated_user.companyuser
+        except CompanyUser.DoesNotExist:
+            return Response({'error': 'Company profile not found'},status=status.HTTP_404_NOT_FOUND)
+
+        return Response({
+            'message': 'Login successful',
+            'user_id': authenticated_user.id,
+            'email': authenticated_user.email,
+            'company_id': company_user.company.id,
+            'company_name': company_user.company.company_name,
+            'role': company_user.role,
+            'contact_person_name': company_user.contact_person_name,
+            'access': str(refresh.access_token),
+            'refresh': str(refresh)
+        }, status=status.HTTP_200_OK)
+
+    return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+
 # @api_view(['POST'])
 # @permission_classes([AllowAny])
 # def register_company_user(request):
@@ -161,70 +226,70 @@ def register_company_user(request):
 
 #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-@api_view(['POST'])
-@permission_classes([AllowAny])
-def login_company_user(request):
-    user_role = CustomUser.objects.get(email=request.data.get("email")).role
-    if user_role == 'job_seeker':
-        return Response({"error": "User Not Found Please Register"}, status=status.HTTP_400_BAD_REQUEST)
-    if user_role == 'admin':
-        serializer = CompanyLoginSerializer(data=request.data)
-        if serializer.is_valid():
-            email = serializer.validated_data['email']
-            password = serializer.validated_data['password']
-            try:
-                user = User.objects.get(email=email)
-                user = authenticate(username=user.username, password=password)
-                if user:
-                    refresh = RefreshToken.for_user(user)
-                    return Response({
-                        'message': 'Login successful',
-                        'user_id': user.id,
-                        'email': user.email,
-                        'access': str(refresh.access_token),
-                        'refresh': str(refresh),
-                        'user_role': user.role
-                    }, status=status.HTTP_200_OK)
-                else:
-                    return Response(
-                        {'error': 'Invalid credentials'},
-                        status=status.HTTP_401_UNAUTHORIZED
-                    )
-            except User.DoesNotExist:
-                return Response(
-                    {'error': 'User with this email does not exist'},
-                    status=status.HTTP_404_NOT_FOUND
-                )
-    serializer = CompanyLoginSerializer(data=request.data)
-    if serializer.is_valid():
-        email = serializer.validated_data['email']
-        password = serializer.validated_data['password']
+# @api_view(['POST'])
+# @permission_classes([AllowAny])
+# def login_company_user(request):
+#     user_role = CustomUser.objects.get(email=request.data.get("email")).role
+#     if user_role == 'job_seeker':
+#         return Response({"error": "User Not Found Please Register"}, status=status.HTTP_400_BAD_REQUEST)
+#     if user_role == 'admin':
+#         serializer = CompanyLoginSerializer(data=request.data)
+#         if serializer.is_valid():
+#             email = serializer.validated_data['email']
+#             password = serializer.validated_data['password']
+#             try:
+#                 user = User.objects.get(email=email)
+#                 user = authenticate(username=user.username, password=password)
+#                 if user:
+#                     refresh = RefreshToken.for_user(user)
+#                     return Response({
+#                         'message': 'Login successful',
+#                         'user_id': user.id,
+#                         'email': user.email,
+#                         'access': str(refresh.access_token),
+#                         'refresh': str(refresh),
+#                         'user_role': user.role
+#                     }, status=status.HTTP_200_OK)
+#                 else:
+#                     return Response(
+#                         {'error': 'Invalid credentials'},
+#                         status=status.HTTP_401_UNAUTHORIZED
+#                     )
+#             except User.DoesNotExist:
+#                 return Response(
+#                     {'error': 'User with this email does not exist'},
+#                     status=status.HTTP_404_NOT_FOUND
+#                 )
+#     serializer = CompanyLoginSerializer(data=request.data)
+#     if serializer.is_valid():
+#         email = serializer.validated_data['email']
+#         password = serializer.validated_data['password']
 
-        try:
-            user = User.objects.get(email=email)
-            user = authenticate(username=user.username, password=password)
-            if user:
-                refresh = RefreshToken.for_user(user)
-                return Response({
-                    'message': 'Login successful',
-                    'user_id': user.id,
-                    'email': user.email,
-                    # 'company_name': user.company_name,
-                    'access': str(refresh.access_token),
-                    'refresh': str(refresh)
-                }, status=status.HTTP_200_OK)
-            else:
-                return Response(
-                    {'error': 'Invalid credentials'},
-                    status=status.HTTP_401_UNAUTHORIZED
-                )
-        except User.DoesNotExist:
-            return Response(
-                {'error': 'User with this email does not exist'},
-                status=status.HTTP_404_NOT_FOUND
-            )
+#         try:
+#             user = User.objects.get(email=email)
+#             user = authenticate(username=user.username, password=password)
+#             if user:
+#                 refresh = RefreshToken.for_user(user)
+#                 return Response({
+#                     'message': 'Login successful',
+#                     'user_id': user.id,
+#                     'email': user.email,
+#                     # 'company_name': user.company_name,
+#                     'access': str(refresh.access_token),
+#                     'refresh': str(refresh)
+#                 }, status=status.HTTP_200_OK)
+#             else:
+#                 return Response(
+#                     {'error': 'Invalid credentials'},
+#                     status=status.HTTP_401_UNAUTHORIZED
+#                 )
+#         except User.DoesNotExist:
+#             return Response(
+#                 {'error': 'User with this email does not exist'},
+#                 status=status.HTTP_404_NOT_FOUND
+#             )
 
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+#     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
@@ -968,18 +1033,25 @@ class CompanyUserUpdateView(APIView):
 @api_view(['PATCH'])
 @permission_classes([permissions.IsAuthenticated])
 def logo_upload(request):
+
     try:
-        company = CompanyUser.objects.get(user=request.user)
+        company_user = CompanyUser.objects.get(user=request.user)
+        company = company_user.company
+
     except CompanyUser.DoesNotExist:
-        return Response({"error": "Company not found."}, status=404)
+        return Response({"error": "Company not found."},status=404)
 
+    # CHECK FILE
     if 'company_logo' not in request.FILES:
-        return Response({"error": "No company logo file found in the request."}, status=400)
+        return Response({"error": "No company logo file found in the request."},status=400)
 
+    # SAVE LOGO
     company.company_logo = request.FILES['company_logo']
     company.save()
 
-    return Response({"company_logo_url": company.company_logo.url, "message": "Logo uploaded successfully."}, status=200)
+    return Response({
+        "company_logo_url": company.company_logo.url,
+        "message": "Logo uploaded successfully."}, status=200)
 
 
 class SavedProfileListCreateView(APIView):
@@ -1101,3 +1173,55 @@ class RemoveSavedProfileView(APIView):
                 {"error": "Saved profile not found"},
                 status=status.HTTP_404_NOT_FOUND
             )
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def add_sub_user(request):
+
+    try:
+        current_company_user = request.user.companyuser
+    except CompanyUser.DoesNotExist:
+        return Response(
+            {"error": "Company profile not found"},
+            status=status.HTTP_404_NOT_FOUND
+        )
+
+
+    # ONLY ADMIN CAN ADD SUB USERS
+    if current_company_user.role != 'employer':
+        return Response(
+            {"error": "Only admin can add sub users"},
+            status=status.HTTP_403_FORBIDDEN
+        )
+
+    # CHECK EMAIL EXISTS
+    email = request.data.get('email')
+    if User.objects.filter(email=email).exists():
+        return Response(
+            {"error": "Email already exists"},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    # SERIALIZER
+    serializer = SubUserSerializer(
+        data=request.data,
+        context={
+            'company': current_company_user.company
+        }
+    )
+
+    if serializer.is_valid():
+        sub_user = serializer.save()
+        return Response({
+            "message": "Sub user created successfully",
+            "user_id": sub_user.user.id,
+            "email": sub_user.user.email,
+            "company_name": sub_user.company.company_name,
+            "role": sub_user.role,
+            "contact_person_name": sub_user.contact_person_name
+        }, status=status.HTTP_201_CREATED)
+    return Response(
+        serializer.errors,
+        status=status.HTTP_400_BAD_REQUEST
+    )

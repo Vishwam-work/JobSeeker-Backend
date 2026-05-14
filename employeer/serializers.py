@@ -23,33 +23,19 @@ class CompanyLoginSerializer(serializers.Serializer):
     password = serializers.CharField()
 
 class CompanyUserSerializer(serializers.ModelSerializer):
-
-    # USER FIELDS
-    email = serializers.EmailField(write_only=True)
-    password = serializers.CharField(write_only=True)
-    confirm_password = serializers.CharField(write_only=True)
-
-    # COMPANY FIELDS
-    company_name = serializers.CharField(write_only=True)
-    company_type = serializers.CharField(write_only=True)
-    industry = serializers.CharField(write_only=True)
-    company_size = serializers.CharField(write_only=True)
-
-    website = serializers.CharField( write_only=True,required=False,allow_blank=True)
-    description = serializers.CharField(write_only=True,required=False,allow_blank=True)
-    address = serializers.CharField(write_only=True)
-    country = serializers.PrimaryKeyRelatedField(queryset=master.Country.objects.all())
-    state = serializers.PrimaryKeyRelatedField(queryset=master.State.objects.all())
-    city = serializers.PrimaryKeyRelatedField(queryset=master.City.objects.all())
-    pincode = serializers.CharField(write_only=True)
-
-    agree_marketing = serializers.BooleanField(default=False)
-    agree_terms = serializers.BooleanField(default=False)
+    company = CompanySerializer(read_only=True)
 
     class Meta:
         model = CompanyUser
-
-        exclude = ['user', 'company']
+        fields = [
+            'role',
+            'contact_person_name',
+            'designation',
+            'phone',
+            'phone_code',
+            'is_verified',
+            'company',
+        ]
 
     # VALIDATION
     def validate(self, data):
@@ -473,3 +459,48 @@ class ViewdprofileSerializer(serializers.ModelSerializer):
 
 
 
+class SubUserSerializer(serializers.ModelSerializer):
+
+    email = serializers.EmailField(write_only=True)
+    password = serializers.CharField(write_only=True)
+
+    class Meta:
+        model = CompanyUser
+
+        fields = [
+            'email',
+            'password',
+            'role',
+            'contact_person_name',
+            'designation',
+            'phone',
+            'phone_code',
+        ]
+
+    def create(self, validated_data):
+
+        email = validated_data.pop('email')
+        password = validated_data.pop('password')
+
+        # company passed from view
+        company = self.context.get('company')
+
+        # create auth user
+        user = User.objects.create_user(
+            username=email,
+            email=email,
+            password=password
+        )
+
+        user.role = 'admin'
+        user.save()
+
+        # create company sub user
+        company_user = CompanyUser.objects.create(
+            user=user,
+            company=company,
+            role='admin',
+            **validated_data
+        )
+
+        return company_user
