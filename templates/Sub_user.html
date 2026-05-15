@@ -1,0 +1,316 @@
+``` html id="d1s3bz"
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Sub User Account</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    background:#f1f5f9;
+    font-family:'Segoe UI',system-ui,-apple-system,sans-serif;
+    padding:20px;
+}
+
+/* Main Container */
+
+.email-wrapper{
+    width:100%;
+}
+
+.email-container{
+    max-width:620px;
+    margin:0 auto;
+    background:#ffffff;
+    border-radius:18px;
+    overflow:hidden;
+    box-shadow:0 10px 30px rgba(0,0,0,0.08);
+}
+
+/* Header */
+
+.header{
+    background:linear-gradient(135deg,#0f172a,#1e3a8a);
+    padding:40px 20px;
+    text-align:center;
+    color:white;
+}
+
+.logo{
+    font-size:34px;
+    font-weight:300;
+    letter-spacing:6px;
+}
+
+.badge{
+    display:inline-block;
+    margin-top:14px;
+    background:#dcfce7;
+    color:#15803d;
+    padding:6px 14px;
+    border-radius:999px;
+    font-size:12px;
+    font-weight:600;
+}
+
+.tagline{
+    margin-top:14px;
+    font-size:14px;
+    opacity:0.9;
+}
+
+/* Content */
+
+.content{
+    padding:50px 40px;
+}
+
+.title{
+    font-size:28px;
+    font-weight:700;
+    color:#0f172a;
+    text-align:center;
+    margin-bottom:18px;
+}
+
+.description{
+    font-size:15px;
+    color:#64748b;
+    line-height:1.8;
+    text-align:center;
+    margin-bottom:36px;
+}
+
+/* Credentials Box */
+
+.credentials-box{
+    background:#f8fafc;
+    border:2px dashed #dbe4ee;
+    border-radius:18px;
+    padding:30px;
+    margin-bottom:30px;
+}
+
+.label{
+    font-size:13px;
+    color:#64748b;
+    font-weight:600;
+    margin-bottom:8px;
+}
+
+.value{
+    font-size:18px;
+    font-weight:700;
+    color:#0f172a;
+    margin-bottom:22px;
+    word-break:break-word;
+}
+
+.role-badge{
+    display:inline-block;
+    background:#dbeafe;
+    color:#1d4ed8;
+    padding:8px 16px;
+    border-radius:999px;
+    font-size:13px;
+    font-weight:600;
+}
+
+/* Security */
+
+.security-box{
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    border-radius:14px;
+    padding:18px;
+    font-size:14px;
+    color:#64748b;
+    line-height:1.7;
+}
+
+/* Footer */
+
+.footer{
+    background:#f8fafc;
+    border-top:1px solid #e2e8f0;
+    padding:30px 20px;
+    text-align:center;
+    font-size:13px;
+    color:#64748b;
+    line-height:1.8;
+}
+
+.button{
+    display:inline-block;
+    background:linear-gradient(135deg,#2563eb,#1d4ed8);
+    color:#ffffff !important;
+    text-decoration:none;
+    padding:14px 34px;
+    border-radius:12px;
+    font-size:15px;
+    font-weight:600;
+    margin-top:30px;
+    transition:all 0.3s ease;
+}
+
+.button:hover{
+    background:linear-gradient(135deg,#1d4ed8,#1e40af);
+}
+/* Responsive */
+
+@media only screen and (max-width:600px){
+
+    body{
+        padding:10px;
+    }
+
+    .content{
+        padding:35px 20px;
+    }
+
+    .logo{
+        font-size:28px;
+        letter-spacing:4px;
+    }
+
+    .title{
+        font-size:24px;
+    }
+
+    .credentials-box{
+        padding:22px;
+    }
+
+    .value{
+        font-size:16px;
+    }
+
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="email-wrapper">
+
+<div class="email-container">
+
+    <!-- Header -->
+
+    <div class="header">
+
+        <div class="logo">
+            JOBSEEKER
+        </div>
+
+        <div class="badge">
+            Employer Team Access
+        </div>
+
+        <div class="tagline">
+            Manage hiring with your organization team
+        </div>
+
+    </div>
+
+    <!-- Content -->
+
+    <div class="content">
+
+        <h1 class="title">
+            Your Account Has Been Created
+        </h1>
+
+        <p class="description">
+            You have been added as a sub user in the JobSeeker Employer Portal.
+            Use the credentials below to securely access your account.
+        </p>
+
+        <!-- Credentials -->
+
+        <div class="credentials-box">
+
+            <div class="label">
+                Company Name
+            </div>
+
+            <div class="value">
+                {{ company_name }}
+            </div>
+
+            <div class="label">
+                Email Address
+            </div>
+
+            <div class="value">
+                {{ email }}
+            </div>
+
+            <div class="label">
+                Temporary Password
+            </div>
+
+            <div class="value">
+                {{ password }}
+            </div>
+
+             <div class="label">
+                Login Link
+            </div>
+            
+            <a href="{{ login_link }}" class="button">Login</a>
+
+            <!-- <div class="label">
+                Assigned Role
+            </div> -->
+
+            <!-- <div style="margin-top:8px;">
+
+                <span class="role-badge">
+                    {{ role }}
+                </span>
+
+            </div> -->
+
+        </div>
+
+        <!-- Security -->
+
+        <div class="security-box">
+
+            For security purposes, please change your password immediately after your first login.
+            Never share your login credentials with anyone.
+
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+
+    <div class="footer">
+
+        © 2026 NV Global Tech<br><br>
+
+        Block C-501, Ashtavinayak Icon,<br>
+        K.P. Heights, Viratnagar 100ft Road,<br>
+        Nikol, Ahmedabad – 382350, Gujarat, India
+
+    </div>
+
+</div>
+</div>
+
+</body>
+</html>
+```

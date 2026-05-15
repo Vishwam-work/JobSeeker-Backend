@@ -21,72 +21,258 @@ class CompanySerializer(serializers.ModelSerializer):
 class CompanyLoginSerializer(serializers.Serializer):
     email = serializers.EmailField()
     password = serializers.CharField()
+    
 
 class CompanyUserSerializer(serializers.ModelSerializer):
+
+    # USER FIELDS
+    email = serializers.EmailField(write_only=True)
+    password = serializers.CharField(write_only=True)
+    confirm_password = serializers.CharField(write_only=True)
+
+    # COMPANY FIELDS
+    company_name = serializers.CharField(write_only=True)
+    company_type = serializers.CharField(write_only=True)
+    industry = serializers.CharField(write_only=True)
+    company_size = serializers.CharField(write_only=True)
+
+    website = serializers.CharField(
+        write_only=True,
+        required=False,
+        allow_blank=True
+    )
+
+    description = serializers.CharField(
+        write_only=True,
+        required=False,
+        allow_blank=True
+    )
+
+    address = serializers.CharField(write_only=True)
+
+    country = serializers.PrimaryKeyRelatedField(
+        queryset=master.Country.objects.all(),
+        write_only=True
+    )
+
+    state = serializers.PrimaryKeyRelatedField(
+        queryset=master.State.objects.all(),
+        write_only=True
+    )
+
+    city = serializers.PrimaryKeyRelatedField(
+        queryset=master.City.objects.all(),
+        write_only=True
+    )
+
+    pincode = serializers.CharField(write_only=True)
+
+    agree_marketing = serializers.BooleanField(default=False)
+    agree_terms = serializers.BooleanField(default=False)
+
+    # RESPONSE COMPANY DATA
     company = CompanySerializer(read_only=True)
 
     class Meta:
         model = CompanyUser
+
         fields = [
+            # USER
+            'id',
+            'email',
+            'password',
+            'confirm_password',
+
+            # COMPANY
+            'company_name',
+            'company_type',
+            'industry',
+            'company_size',
+            'website',
+            'description',
+            'address',
+            'country',
+            'state',
+            'city',
+            'pincode',
+            'agree_marketing',
+            'agree_terms',
+
+            # COMPANY USER
             'role',
             'contact_person_name',
             'designation',
             'phone',
             'phone_code',
             'is_verified',
+
+            # RESPONSE
             'company',
         ]
 
-    # VALIDATION
+        extra_kwargs = {
+            'password': {'write_only': True},
+            'confirm_password': {'write_only': True},
+        }
+
+    # VALIDATE PASSWORD
     def validate(self, data):
 
         if data['password'] != data['confirm_password']:
-            raise serializers.ValidationError(
-                {"password": "Passwords do not match"}
-            )
+            raise serializers.ValidationError({
+                "password": "Passwords do not match"
+            })
 
         return data
 
     # CREATE
     def create(self, validated_data):
 
+        # -------------------------
         # USER DATA
+        # -------------------------
+
         email = validated_data.pop('email')
         password = validated_data.pop('password')
+
         validated_data.pop('confirm_password')
 
+        # -------------------------
         # COMPANY DATA
+        # -------------------------
+
         company_data = {
+
             'company_name': validated_data.pop('company_name'),
             'company_type': validated_data.pop('company_type'),
             'industry': validated_data.pop('industry'),
             'company_size': validated_data.pop('company_size'),
+
             'website': validated_data.pop('website', ''),
             'description': validated_data.pop('description', ''),
+
             'address': validated_data.pop('address'),
+
             'country': validated_data.pop('country'),
             'state': validated_data.pop('state'),
             'city': validated_data.pop('city'),
+
             'pincode': validated_data.pop('pincode'),
-            'agree_marketing': validated_data.pop('agree_marketing', False),
-            'agree_terms': validated_data.pop('agree_terms', False),
+
+            'agree_marketing': validated_data.pop(
+                'agree_marketing',
+                False
+            ),
+
+            'agree_terms': validated_data.pop(
+                'agree_terms',
+                False
+            ),
         }
 
-        # CREATE USER
+        # -------------------------
+        # CREATE AUTH USER
+        # -------------------------
+
         user = User.objects.create_user(
             username=email,
             email=email,
             password=password
         )
 
+        user.role = 'employer'
+        user.save()
 
+        # -------------------------
         # CREATE COMPANY
+        # -------------------------
+
         company = Company.objects.create(**company_data)
 
+        # -------------------------
         # CREATE COMPANY USER
-        company_user = CompanyUser.objects.create(user=user,company=company,role='employer',**validated_data)
+        # -------------------------
+
+        company_user = CompanyUser.objects.create(
+            user=user,
+            company=company,
+            role='employer',
+            **validated_data
+        )
 
         return company_user
+# class CompanyUserSerializer(serializers.ModelSerializer):
+#     company = CompanySerializer(read_only=True)
+#     email = serializers.EmailField()
+#     password = serializers.CharField()
+#     confirm_password = serializers.CharField()
+
+#     class Meta:
+#         model = CompanyUser
+#         fields = [
+#             'user',
+#             'email',
+#             'password',
+#             'confirm_password',
+#             'role',
+#             'contact_person_name',
+#             'designation',
+#             'phone',
+#             'phone_code',
+#             'is_verified',
+#             'company',
+#         ]
+
+#     # VALIDATION
+#     def validate(self, data):
+#         print(data)
+#         if data['password'] != data['confirm_password']:
+#             raise serializers.ValidationError(
+#                 {"password": "Passwords do not match"}
+#             )
+
+#         return data
+
+#     # CREATE
+#     def create(self, validated_data):
+
+#         # USER DATA
+#         email = validated_data.pop('email')
+#         password = validated_data.pop('password')
+#         validated_data.pop('confirm_password')
+
+#         # COMPANY DATA
+#         company_data = {
+#             'company_name': validated_data.pop('company_name'),
+#             'company_type': validated_data.pop('company_type'),
+#             'industry': validated_data.pop('industry'),
+#             'company_size': validated_data.pop('company_size'),
+#             'website': validated_data.pop('website', ''),
+#             'description': validated_data.pop('description', ''),
+#             'address': validated_data.pop('address'),
+#             'country': validated_data.pop('country'),
+#             'state': validated_data.pop('state'),
+#             'city': validated_data.pop('city'),
+#             'pincode': validated_data.pop('pincode'),
+#             'agree_marketing': validated_data.pop('agree_marketing', False),
+#             'agree_terms': validated_data.pop('agree_terms', False),
+#         }
+
+#         # CREATE USER
+#         user = User.objects.create_user(
+#             username=email,
+#             email=email,
+#             password=password
+#         )
+
+
+#         # CREATE COMPANY
+#         company = Company.objects.create(**company_data)
+
+#         # CREATE COMPANY USER
+#         company_user = CompanyUser.objects.create(user=user,company=company,role='employer',**validated_data)
+
+#         return company_user
 
 # class CompanyUserSerializer(serializers.ModelSerializer):
 #     email = serializers.EmailField(write_only=True)
@@ -504,3 +690,22 @@ class SubUserSerializer(serializers.ModelSerializer):
         )
 
         return company_user
+    
+class SubUserListSerializer(serializers.ModelSerializer):
+
+    email = serializers.CharField(source='user.email', read_only=True)
+    company_name = serializers.CharField(source='company.company_name',read_only=True)
+
+    class Meta:
+        model = CompanyUser
+        fields = [
+            'id',
+            'email',
+            'company_name',
+            'role',
+            'contact_person_name',
+            'designation',
+            'phone',
+            'phone_code',
+            'is_verified',
+        ]

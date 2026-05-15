@@ -7,7 +7,7 @@ from rest_framework import status, filters
 from django.shortcuts import get_object_or_404
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import get_user_model, authenticate
-from .serializers import CompanyUserSerializer, CompanyLoginSerializer, JobPostingSerializer,AnswerSerializer, ApplicationSubmitSerializer, ApplicationListItemSerializer,CompanyListSerializer, CompanyDetailSerializer, JobPostingSerializer,ApplicationUpdateSerializer,InterviewScheduleSerializer,CompanyUserUpdateSerializer,ViewdprofileSerializer,SavedProfileSerializer,SubUserSerializer
+from .serializers import CompanyUserSerializer, CompanyLoginSerializer, JobPostingSerializer,AnswerSerializer, ApplicationSubmitSerializer, ApplicationListItemSerializer,CompanyListSerializer, CompanyDetailSerializer, JobPostingSerializer,ApplicationUpdateSerializer,InterviewScheduleSerializer,CompanyUserUpdateSerializer,ViewdprofileSerializer,SavedProfileSerializer,SubUserSerializer,SubUserListSerializer
 from .models import CompanyUser, JobPosting,Answer, Application, JobClickEvent,SaveProf,ViewdProfile
 from job_app.models import CustomUser
 from master.models import Country, State, City
@@ -86,7 +86,7 @@ def register_company_user(request):
     # CHECK USER EXISTS
     if User.objects.filter(email=email).exists():
         return Response({'error': 'User with this email already exists'},status=status.HTTP_400_BAD_REQUEST)
-
+    print(request.data)
     # SERIALIZER
     serializer = CompanyUserSerializer(data=request.data)
 
@@ -375,7 +375,7 @@ class JobPostingListView(generics.ListAPIView):
 
     def get_queryset(self):
         company_user = CompanyUser.objects.get(user=self.request.user)
-        queryset = JobPosting.objects.filter(company_user=company_user).order_by('-created_at')
+        queryset = JobPosting.objects.filter(company_user__company=company_user.company).order_by('-created_at')
 
         status = self.request.query_params.get('status')
         if status and status != 'all':
@@ -1211,17 +1211,94 @@ def add_sub_user(request):
         }
     )
 
+    login_link = "http://localhost:3005/login/"
+
     if serializer.is_valid():
         sub_user = serializer.save()
+        send_email(
+            to_email=sub_user.user.email,
+            subject="Your JobSeeker Employer Portal Account",
+            template_name="Sub_user.html",
+            context={
+                "company_name": sub_user.company.company_name,
+                "email": sub_user.user.email,
+                "password": request.data.get("password"),
+                "login_link": login_link     
+                }
+        )
+
+        # return Response({"message": "Reset link sent to email"})
+
         return Response({
             "message": "Sub user created successfully",
             "user_id": sub_user.user.id,
             "email": sub_user.user.email,
             "company_name": sub_user.company.company_name,
             "role": sub_user.role,
-            "contact_person_name": sub_user.contact_person_name
+            "contact_person_name": sub_user.contact_person_name,
+            "phone_code": sub_user.phone_code
         }, status=status.HTTP_201_CREATED)
     return Response(
         serializer.errors,
         status=status.HTTP_400_BAD_REQUEST
     )
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def sub_user_list(request):
+
+    try:
+        current_company_user = CompanyUser.objects.get(user=request.user)
+    except CompanyUser.DoesNotExist:
+        return Response({"error": "Company profile not found"},status=status.HTTP_404_NOT_FOUND)
+
+    sub_users = CompanyUser.objects.filter(company=current_company_user.company,role='admin')
+
+    serializer = SubUserListSerializer(sub_users,many=True)
+
+    return Response(serializer.data)
+
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def delete_sub_user(request,pk):
+    try:
+        current_company_user = request.user.companyuser
+    except CompanyUser.DoesNotExist:
+        return Response(
+            {"error": "Company profile not found"},
+            status=status.HTTP_404_NOT_FOUND
+        )
+    
+    if current_company_user.role != 'employer':
+        return Response(
+            {"error": "Only employer can delete sub users"},
+            status=status.HTTP_403_FORBIDDEN
+        )
+    
+    try:
+        sub_user = CompanyUser.objects.get(id=pk)
+    except CompanyUser.DoesNotExist:
+        return Response(
+            {"error": "Sub user not found"},
+            status=status.HTTP_404_NOT_FOUND
+        )
+    
+    if sub_user.company != current_company_user.company:
+        return Response(
+            {"error": "You cannot delete users from another company"},
+            status=status.HTTP_403_FORBIDDEN
+        )
+    
+    if sub_user.user == request.user:
+        return Response(
+            {"error": "employer cannot delete himself"},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    
+    sub_user.user.delete()
+
+    return Response({
+
+        "message": "Sub user deleted successfully"
+
+    }, status=status.HTTP_200_OK)

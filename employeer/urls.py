@@ -35,4 +35,6 @@ path('api/saved-profiles/<int:id>/', views.RemoveSavedProfileView.as_view(), nam
 path('api/forgot-password/', views.forgot_password, name='forgot-password'),
 path('api/reset-password/', views.reset_password, name='request-password-reset'),
 path('api/add-sub-user/',views.add_sub_user,name='add-sub-user'),
+path('api/sub-users/',views.sub_user_list,name='sub-user-list'),
+path('api/sub-users/<int:pk>/delete/',views.delete_sub_user,name='delete-sub-user'),
 ]
