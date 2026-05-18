@@ -14,7 +14,7 @@ from master.models import Country, State, City
 from rest_framework import generics,status, viewsets, permissions, serializers
 from rest_framework.pagination import PageNumberPagination
 from django.db.models import F,Q,Value ,IntegerField
-from utils.utils import generate_otp, send_email,password_reset_token
+from utils.utils import generate_otp, send_email,password_reset_token,default_token_generator
 from job_app.models import EmailOTP, Profile,Experience
 from django.utils import timezone
 from datetime import timedelta
@@ -40,7 +40,8 @@ class SavedProfPagination(PageNumberPagination):
     page_size_query_param = 'page_size'
     max_page_size = 50
 
-OTP_EXPIRY_MINUTES = 1
+OTP_EXPIRY_MINUTES = 10
+OTP_EXPIRY_SECONDS = 10
 OTP_RESEND_COOLDOWN_SECONDS = 60
 MAX_OTP_ATTEMPTS = 3
 
@@ -158,6 +159,16 @@ def login_company_user(request):
 
         # ADMIN LOGIN
         if authenticated_user.role == 'admin':
+            try:
+                company_user = authenticated_user.companyuser
+                # CHECK VERIFIED
+                if company_user.is_verified == False:
+                    return Response(
+                        {"error": "Please verify your email first"},
+                        status=status.HTTP_403_FORBIDDEN
+                    )
+            except CompanyUser.DoesNotExist:
+                return Response({'error': 'Company profile not found'},status=status.HTTP_404_NOT_FOUND)
             return Response({
                 'message': 'Admin login successful',
                 'user_id': authenticated_user.id,
@@ -170,6 +181,12 @@ def login_company_user(request):
         # COMPANY USER LOGIN
         try:
             company_user = authenticated_user.companyuser
+            # CHECK VERIFIED
+            if company_user.is_verified == False:
+                return Response(
+                    {"error": "Please verify your email first"},
+                    status=status.HTTP_403_FORBIDDEN
+                )
         except CompanyUser.DoesNotExist:
             return Response({'error': 'Company profile not found'},status=status.HTTP_404_NOT_FOUND)
 
@@ -679,6 +696,12 @@ class ScheduleInterviewView(generics.UpdateAPIView):
                 }
         )
 
+from django.db import transaction
+from django.db.models import F
+from django.utils import timezone
+from django.utils.crypto import constant_time_compare
+from datetime import timedelta
+
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def verify_otp(request):
@@ -1174,11 +1197,10 @@ class RemoveSavedProfileView(APIView):
                 status=status.HTTP_404_NOT_FOUND
             )
 
-
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def add_sub_user(request):
-
+    request.session['password'] = request.data.get('password')
     try:
         current_company_user = request.user.companyuser
     except CompanyUser.DoesNotExist:
@@ -1188,7 +1210,7 @@ def add_sub_user(request):
         )
 
 
-    # ONLY ADMIN CAN ADD SUB USERS
+    # ONLY EMPLOYER CAN ADD SUB USERS
     if current_company_user.role != 'employer':
         return Response(
             {"error": "Only admin can add sub users"},
@@ -1211,37 +1233,120 @@ def add_sub_user(request):
         }
     )
 
-    login_link = "http://localhost:3005/login/"
-
+    # CREATE SUB USER
     if serializer.is_valid():
+        # SAVE USER
         sub_user = serializer.save()
-        send_email(
-            to_email=sub_user.user.email,
-            subject="Your JobSeeker Employer Portal Account",
-            template_name="Sub_user.html",
-            context={
-                "company_name": sub_user.company.company_name,
-                "email": sub_user.user.email,
-                "password": request.data.get("password"),
-                "login_link": login_link     
-                }
+        sub_user.is_verified = False
+        sub_user.save()
+
+        # GENERATE OTP
+        otp = generate_otp()
+
+        # SAVE OTP
+        EmailOTP.objects.create(
+            email=email,
+            otp_hash=hash_otp(otp)
         )
 
-        # return Response({"message": "Reset link sent to email"})
+        uid = urlsafe_base64_encode(force_bytes(email))
+        token = default_token_generator.make_token(current_company_user.user)
 
+        verify_link = (
+            f"http://localhost:3005/"
+            f"confirm-otp/{uid}/{token}/"
+        )
+
+        # SEND EMAIL
+        send_email(
+            to_email=email,
+            subject="Verify your email",
+            template_name="Verify_email.html",
+            context={
+                "verify_link": verify_link,
+                "otp": otp,
+                "company_name":
+                current_company_user.company.company_name
+            }
+        )
         return Response({
-            "message": "Sub user created successfully",
-            "user_id": sub_user.user.id,
-            "email": sub_user.user.email,
-            "company_name": sub_user.company.company_name,
-            "role": sub_user.role,
-            "contact_person_name": sub_user.contact_person_name,
-            "phone_code": sub_user.phone_code
-        }, status=status.HTTP_201_CREATED)
+            "message":
+            "Verification email sent successfully",
+            "email": email
+        }, status=status.HTTP_200_OK)
+    
     return Response(
         serializer.errors,
         status=status.HTTP_400_BAD_REQUEST
     )
+
+# @api_view(['POST'])
+# @permission_classes([IsAuthenticated])
+# def add_sub_user(request):
+
+#     try:
+#         current_company_user = request.user.companyuser
+#     except CompanyUser.DoesNotExist:
+#         return Response(
+#             {"error": "Company profile not found"},
+#             status=status.HTTP_404_NOT_FOUND
+#         )
+
+
+#     # ONLY ADMIN CAN ADD SUB USERS
+#     if current_company_user.role != 'employer':
+#         return Response(
+#             {"error": "Only admin can add sub users"},
+#             status=status.HTTP_403_FORBIDDEN
+#         )
+
+#     # CHECK EMAIL EXISTS
+#     email = request.data.get('email')
+#     if User.objects.filter(email=email).exists():
+#         return Response(
+#             {"error": "Email already exists"},
+#             status=status.HTTP_400_BAD_REQUEST
+#         )
+
+#     # SERIALIZER
+#     serializer = SubUserSerializer(
+#         data=request.data,
+#         context={
+#             'company': current_company_user.company
+#         }
+#     )
+
+#     login_link = "http://localhost:3005/login/"
+
+#     if serializer.is_valid():
+#         sub_user = serializer.save()
+#         send_email(
+#             to_email=sub_user.user.email,
+#             subject="Your JobSeeker Employer Portal Account",
+#             template_name="Sub_user.html",
+#             context={
+#                 "company_name": sub_user.company.company_name,
+#                 "email": sub_user.user.email,
+#                 "password": request.data.get("password"),
+#                 "login_link": login_link     
+#                 }
+#         )
+
+#         # return Response({"message": "Reset link sent to email"})
+
+#         return Response({
+#             "message": "Sub user created successfully",
+#             "user_id": sub_user.user.id,
+#             "email": sub_user.user.email,
+#             "company_name": sub_user.company.company_name,
+#             "role": sub_user.role,
+#             "contact_person_name": sub_user.contact_person_name,
+#             "phone_code": sub_user.phone_code
+#         }, status=status.HTTP_201_CREATED)
+#     return Response(
+#         serializer.errors,
+#         status=status.HTTP_400_BAD_REQUEST
+#     )
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -1302,3 +1407,109 @@ def delete_sub_user(request,pk):
         "message": "Sub user deleted successfully"
 
     }, status=status.HTTP_200_OK)
+
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def verify_sub_user_otp(request):
+
+    otp = request.data.get("otp")
+
+    # CHECK OTP
+    if not otp:
+        return Response(
+            {"error": "OTP required"},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    # HASH OTP
+    otp_hash = hash_otp(otp)
+
+    # VALID TIME
+    valid_time = timezone.now() - timedelta(
+        minutes=OTP_EXPIRY_MINUTES
+    )
+
+    with transaction.atomic():
+        # FIND OTP
+        otp_obj = EmailOTP.objects.select_for_update().filter(
+            otp_hash=otp_hash,
+            is_used=False,
+            created_at__gte=valid_time
+        ).order_by('-created_at').first()
+
+        # INVALID OTP
+        if not otp_obj:
+            return Response(
+                {"error": "Invalid or expired OTP"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # OTP VERIFIED
+        otp_obj.is_used = True
+        otp_obj.save(update_fields=["is_used"])
+
+        # GET EMAIL FROM OTP TABLE
+        email = otp_obj.email
+
+        # GET USER
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+
+            return Response(
+                {"error": "User not found"},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        # GET SUB USER
+        try:
+            sub_user = CompanyUser.objects.get(user=user)
+        except CompanyUser.DoesNotExist:
+            return Response(
+                {"error": "Sub user not found"},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        # EMPLOYER NOT ALLOWED
+        if sub_user.role == 'employer':
+
+            return Response(
+                {"error": "Employer cannot verify here"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # VERIFY USER
+        sub_user.is_verified = True
+        sub_user.save()
+
+        # LOGIN LINK
+        login_link = "http://localhost:3005/login/"
+
+        raw_password = request.session.get(
+            "password", None
+        )
+
+
+        # SEND MAIL
+        send_email(
+            to_email=email,
+            subject="Account Verified Successfully",
+            template_name="Sub_user.html",
+            context={
+                "company_name":
+                sub_user.company.company_name,
+                "email": email,
+                "login_link": login_link,
+                "password" : raw_password
+            }
+        )
+
+        request.session.pop(f"sub_user_password_{email}", None)
+
+    return Response(
+        {
+            "message": "Sub user verified successfully"
+        },
+        status=status.HTTP_200_OK
+    )

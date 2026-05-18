@@ -58,7 +58,7 @@ class CompanyUser(models.Model):
     phone_code = models.CharField(max_length=10, blank=True, null=True)
 
     #email verification
-    is_verified = models.BooleanField(default=True)
+    is_verified = models.BooleanField(default=False)
     # company_logo = models.ImageField(upload_to='company_logos/', blank=True, null=True)
     
     def __str__(self):
