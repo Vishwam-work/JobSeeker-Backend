@@ -6,7 +6,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Verify Your Account</title>
+<title>Your Resend OTP</title>
 
 <style>
 
@@ -18,8 +18,17 @@
 
 body{
     background:#f1f5f9;
-    font-family:'Segoe UI',system-ui,-apple-system,sans-serif;
+    font-family:'Segoe UI',Arial,sans-serif;
     padding:20px;
+    -webkit-text-size-adjust:none;
+}
+
+table{
+    border-spacing:0;
+}
+
+img{
+    border:0;
 }
 
 .email-wrapper{
@@ -41,7 +50,7 @@ body{
     background:linear-gradient(135deg,#0f172a,#1e3a8a);
     padding:40px 20px;
     text-align:center;
-    color:white;
+    color:#ffffff;
 }
 
 .logo{
@@ -55,7 +64,7 @@ body{
     margin-top:14px;
     background:#dcfce7;
     color:#15803d;
-    padding:6px 14px;
+    padding:7px 16px;
     border-radius:999px;
     font-size:12px;
     font-weight:600;
@@ -65,53 +74,29 @@ body{
     margin-top:14px;
     font-size:14px;
     opacity:0.9;
+    line-height:1.6;
 }
 
 /* Content */
 
 .content{
     padding:50px 40px;
+    text-align:center;
 }
 
 .title{
-    font-size:28px;
+    font-size:30px;
     font-weight:700;
     color:#0f172a;
-    text-align:center;
     margin-bottom:18px;
+    line-height:1.3;
 }
 
 .description{
     font-size:15px;
     color:#64748b;
-    line-height:1.8;
-    text-align:center;
+    line-height:1.9;
     margin-bottom:36px;
-}
-
-/* Credentials */
-
-.credentials-box{
-    background:#f8fafc;
-    border:2px dashed #dbe4ee;
-    border-radius:18px;
-    padding:30px;
-    margin-bottom:30px;
-}
-
-.label{
-    font-size:13px;
-    color:#64748b;
-    font-weight:600;
-    margin-bottom:8px;
-}
-
-.value{
-    font-size:18px;
-    font-weight:700;
-    color:#0f172a;
-    margin-bottom:22px;
-    word-break:break-word;
 }
 
 /* OTP */
@@ -120,29 +105,30 @@ body{
     background:#eff6ff;
     border:1px solid #bfdbfe;
     border-radius:18px;
-    padding:28px;
-    text-align:center;
+    padding:35px 20px;
     margin-bottom:30px;
 }
 
-.otp-title{
+.otp-label{
     font-size:15px;
-    color:#1e3a8a;
     font-weight:600;
-    margin-bottom:14px;
+    color:#1e3a8a;
+    margin-bottom:16px;
 }
 
 .otp{
-    font-size:38px;
+    font-size:42px;
     font-weight:700;
-    letter-spacing:8px;
+    letter-spacing:10px;
     color:#0f172a;
+    word-break:break-word;
+    line-height:1.4;
 }
 
 /* Button */
 
 .button-wrapper{
-    text-align:center;
+    margin-top:10px;
 }
 
 .button{
@@ -154,7 +140,7 @@ body{
     border-radius:12px;
     font-size:15px;
     font-weight:600;
-    margin-top:10px;
+    line-height:1.4;
 }
 
 /* Security */
@@ -166,7 +152,7 @@ body{
     padding:18px;
     font-size:14px;
     color:#64748b;
-    line-height:1.7;
+    line-height:1.8;
     margin-top:30px;
 }
 
@@ -190,8 +176,12 @@ body{
         padding:10px;
     }
 
-    .content{
-        padding:35px 20px;
+    .email-container{
+        border-radius:14px;
+    }
+
+    .header{
+        padding:32px 18px;
     }
 
     .logo{
@@ -199,21 +189,51 @@ body{
         letter-spacing:4px;
     }
 
+    .badge{
+        font-size:11px;
+        padding:6px 14px;
+    }
+
+    .tagline{
+        font-size:13px;
+    }
+
+    .content{
+        padding:35px 22px;
+    }
+
     .title{
         font-size:24px;
     }
 
-    .credentials-box{
-        padding:22px;
+    .description{
+        font-size:14px;
+        line-height:1.8;
     }
 
-    .value{
-        font-size:16px;
+    .otp-section{
+        padding:28px 16px;
     }
 
     .otp{
         font-size:30px;
-        letter-spacing:5px;
+        letter-spacing:6px;
+    }
+
+    .button{
+        width:100%;
+        padding:14px 20px;
+        font-size:15px;
+    }
+
+    .security-box{
+        font-size:13px;
+        padding:16px;
+    }
+
+    .footer{
+        font-size:12px;
+        line-height:1.7;
     }
 }
 
@@ -235,11 +255,11 @@ body{
         </div>
 
         <div class="badge">
-            Employer Team Access
+           Resend OTP
         </div>
 
         <div class="tagline">
-            Manage hiring with your organization team
+            Secure access to your employer account
         </div>
 
     </div>
@@ -249,54 +269,24 @@ body{
     <div class="content">
 
         <h1 class="title">
-            Verify Your Account
+            Verify Your Email
         </h1>
 
         <p class="description">
 
-            You have been added as a sub user in
-            <strong>{{ company_name }}</strong>.
+            Your verification OTP for accessing
+            <strong>{{ company_name }}</strong>
+            is provided below.
 
-            Use the credentials below and verify your email
-            to access your employer dashboard.
+            Please use this OTP to complete your verification process.
 
         </p>
 
-        <!-- Credentials -->
-
-        <div class="credentials-box">
-
-            <div class="label">
-                Company Name
-            </div>
-
-            <div class="value">
-                {{ company_name }}
-            </div>
-
-            <div class="label">
-                Email Address
-            </div>
-
-            <div class="value">
-                {{ email }}
-            </div>
-
-            <div class="label">
-                Password
-            </div>
-
-            <div class="value">
-                {{ password }}
-            </div>
-
-        </div>
-
-        <!-- OTP -->
+        <!-- OTP Section -->
 
         <div class="otp-section">
 
-            <div class="otp-title">
+            <div class="otp-label">
                 Your Verification OTP
             </div>
 
@@ -306,8 +296,6 @@ body{
 
         </div>
 
-        <!-- Button -->
-
         <div class="button-wrapper">
 
             <a href="{{ verify_link }}" class="button">
@@ -316,15 +304,15 @@ body{
 
         </div>
 
+
         <!-- Security -->
 
         <div class="security-box">
 
             This OTP will expire in 30 minutes.<br><br>
 
-            For security purposes, please change your password
-            immediately after your first login and never share
-            your credentials with anyone.
+            If you did not request this verification,
+            please ignore this email.
 
         </div>
 

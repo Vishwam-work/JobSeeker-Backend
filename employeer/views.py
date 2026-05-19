@@ -40,10 +40,10 @@ class SavedProfPagination(PageNumberPagination):
     page_size_query_param = 'page_size'
     max_page_size = 50
 
-OTP_EXPIRY_MINUTES = 10
-OTP_EXPIRY_SECONDS = 10
+OTP_EXPIRY_MINUTES = 1
 OTP_RESEND_COOLDOWN_SECONDS = 60
 MAX_OTP_ATTEMPTS = 3
+SUBUSER_EXPIRY_MINUTES = 1
 
 
 def hash_otp(otp: str) -> str:
@@ -601,7 +601,7 @@ class CandidateListView(generics.ListAPIView):
 @permission_classes([AllowAny])
 def company_list(request):
     """List all companies"""
-    companies = CompanyUser.objects.select_related('country', 'state', 'city')
+    companies = CompanyUser.objects.select_related('company__country', 'company__state', 'company__city')
     serializer = CompanyListSerializer(companies, many=True)
     return Response(serializer.data)
 
@@ -1200,7 +1200,6 @@ class RemoveSavedProfileView(APIView):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def add_sub_user(request):
-    request.session['password'] = request.data.get('password')
     try:
         current_company_user = request.user.companyuser
     except CompanyUser.DoesNotExist:
@@ -1219,6 +1218,8 @@ def add_sub_user(request):
 
     # CHECK EMAIL EXISTS
     email = request.data.get('email')
+    password = request.data.get('password')
+    
     if User.objects.filter(email=email).exists():
         return Response(
             {"error": "Email already exists"},
@@ -1261,12 +1262,13 @@ def add_sub_user(request):
         send_email(
             to_email=email,
             subject="Verify your email",
-            template_name="Verify_email.html",
+            template_name="Sub_user.html",
             context={
                 "verify_link": verify_link,
                 "otp": otp,
-                "company_name":
-                current_company_user.company.company_name
+                "company_name":current_company_user.company.company_name,
+                "email": email,
+                "password": password
             }
         )
         return Response({
@@ -1279,74 +1281,6 @@ def add_sub_user(request):
         serializer.errors,
         status=status.HTTP_400_BAD_REQUEST
     )
-
-# @api_view(['POST'])
-# @permission_classes([IsAuthenticated])
-# def add_sub_user(request):
-
-#     try:
-#         current_company_user = request.user.companyuser
-#     except CompanyUser.DoesNotExist:
-#         return Response(
-#             {"error": "Company profile not found"},
-#             status=status.HTTP_404_NOT_FOUND
-#         )
-
-
-#     # ONLY ADMIN CAN ADD SUB USERS
-#     if current_company_user.role != 'employer':
-#         return Response(
-#             {"error": "Only admin can add sub users"},
-#             status=status.HTTP_403_FORBIDDEN
-#         )
-
-#     # CHECK EMAIL EXISTS
-#     email = request.data.get('email')
-#     if User.objects.filter(email=email).exists():
-#         return Response(
-#             {"error": "Email already exists"},
-#             status=status.HTTP_400_BAD_REQUEST
-#         )
-
-#     # SERIALIZER
-#     serializer = SubUserSerializer(
-#         data=request.data,
-#         context={
-#             'company': current_company_user.company
-#         }
-#     )
-
-#     login_link = "http://localhost:3005/login/"
-
-#     if serializer.is_valid():
-#         sub_user = serializer.save()
-#         send_email(
-#             to_email=sub_user.user.email,
-#             subject="Your JobSeeker Employer Portal Account",
-#             template_name="Sub_user.html",
-#             context={
-#                 "company_name": sub_user.company.company_name,
-#                 "email": sub_user.user.email,
-#                 "password": request.data.get("password"),
-#                 "login_link": login_link     
-#                 }
-#         )
-
-#         # return Response({"message": "Reset link sent to email"})
-
-#         return Response({
-#             "message": "Sub user created successfully",
-#             "user_id": sub_user.user.id,
-#             "email": sub_user.user.email,
-#             "company_name": sub_user.company.company_name,
-#             "role": sub_user.role,
-#             "contact_person_name": sub_user.contact_person_name,
-#             "phone_code": sub_user.phone_code
-#         }, status=status.HTTP_201_CREATED)
-#     return Response(
-#         serializer.errors,
-#         status=status.HTTP_400_BAD_REQUEST
-#     )
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -1427,7 +1361,7 @@ def verify_sub_user_otp(request):
 
     # VALID TIME
     valid_time = timezone.now() - timedelta(
-        minutes=OTP_EXPIRY_MINUTES
+        minutes=SUBUSER_EXPIRY_MINUTES
     )
 
     with transaction.atomic():
@@ -1473,7 +1407,6 @@ def verify_sub_user_otp(request):
 
         # EMPLOYER NOT ALLOWED
         if sub_user.role == 'employer':
-
             return Response(
                 {"error": "Employer cannot verify here"},
                 status=status.HTTP_400_BAD_REQUEST
@@ -1483,33 +1416,105 @@ def verify_sub_user_otp(request):
         sub_user.is_verified = True
         sub_user.save()
 
-        # LOGIN LINK
-        login_link = "http://localhost:3005/login/"
-
-        raw_password = request.session.get(
-            "password", None
-        )
-
-
-        # SEND MAIL
-        send_email(
-            to_email=email,
-            subject="Account Verified Successfully",
-            template_name="Sub_user.html",
-            context={
-                "company_name":
-                sub_user.company.company_name,
-                "email": email,
-                "login_link": login_link,
-                "password" : raw_password
-            }
-        )
-
-        request.session.pop(f"sub_user_password_{email}", None)
-
     return Response(
         {
             "message": "Sub user verified successfully"
+        },
+        status=status.HTTP_200_OK
+    )
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def resend_otp(request):
+
+    # ONLY EMPLOYER CAN RESEND OTP
+    if request.user.role != 'employer':
+        return Response(
+            {"error": "Only employer can resend OTP"},
+            status=status.HTTP_403_FORBIDDEN
+        )
+
+    # GET USER ID
+    user_id = request.data.get("user_id")
+
+    if not user_id:
+        return Response(
+            {"error": "user_id is required"},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    # FIND COMPANY USER
+    try:
+        company_user = CompanyUser.objects.get(id=user_id)
+    except CompanyUser.DoesNotExist:
+        return Response(
+            {"error": "Sub user not found"},
+            status=status.HTTP_404_NOT_FOUND
+        )
+
+    # CHECK SAME COMPANY
+    if company_user.company != request.user.companyuser.company:
+        return Response(
+            {"error": "Unauthorized access"},
+            status=status.HTTP_403_FORBIDDEN
+        )
+
+    # CHECK ROLE
+    if company_user.role != 'admin':
+        return Response(
+            {"error": "Invalid sub user"},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    # CHECK VERIFIED STATUS
+    if company_user.is_verified:
+        return Response(
+            {"error": "User already verified"},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    # GET USER + EMAIL
+    user = company_user.user
+    email = user.email
+
+    # DELETE OLD OTP
+    EmailOTP.objects.filter(email=email).delete()
+
+    # GENERATE OTP
+    otp = generate_otp()
+
+    # SAVE OTP
+    EmailOTP.objects.create(
+        email=email,
+        otp_hash=hash_otp(otp)
+    )
+
+    # GENERATE VERIFY LINK
+    uid = urlsafe_base64_encode(force_bytes(email))
+    token = default_token_generator.make_token(user)
+
+    verify_link = (
+        f"http://localhost:3005/"
+        f"confirm-otp/{uid}/{token}/"
+    )
+
+
+    # SEND EMAIL
+    send_email(
+        to_email=email,
+        subject="Resend OTP Verification",
+        template_name="Resend_otp.html",
+        context={
+            "otp": otp,
+            "email": email,
+            "verify_link": verify_link,
+            "company_name": company_user.company.company_name,
+        }
+    )
+
+    return Response(
+        {
+            "message": "OTP resent successfully"
         },
         status=status.HTTP_200_OK
     )

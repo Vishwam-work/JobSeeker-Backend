@@ -520,12 +520,13 @@ class ApplicationListItemSerializer(serializers.ModelSerializer):
 
 class CompanyListSerializer(serializers.ModelSerializer):
     job_count = serializers.SerializerMethodField()
-    country = serializers.CharField(source='country.name', read_only=True)
-    state = serializers.CharField(source='state.name', read_only=True)
-    city = serializers.CharField(source='city.name', read_only=True)
+    country = serializers.CharField(source='members.country.name', read_only=True)
+    state = serializers.CharField(source='members.state.name', read_only=True)
+    city = serializers.CharField(source='members.city.name', read_only=True)
+    company = CompanySerializer(read_only=True)
     class Meta:
         model = CompanyUser
-        fields = '__all__'
+        fields = ['company','country','state','city','job_count']
 
     def get_job_count(self, obj):
         return obj.job_postings.filter(status='active').count()
@@ -643,8 +644,6 @@ class ViewdprofileSerializer(serializers.ModelSerializer):
                 viewed_obj.save()
         return viewed_obj
 
-
-
 class SubUserSerializer(serializers.ModelSerializer):
 
     email = serializers.EmailField(write_only=True)
@@ -652,7 +651,6 @@ class SubUserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CompanyUser
-
         fields = [
             'email',
             'password',
@@ -663,8 +661,8 @@ class SubUserSerializer(serializers.ModelSerializer):
             'phone_code',
         ]
 
-    def create(self, validated_data):
 
+    def create(self, validated_data):
         email = validated_data.pop('email')
         password = validated_data.pop('password')
 
@@ -675,7 +673,7 @@ class SubUserSerializer(serializers.ModelSerializer):
         user = User.objects.create_user(
             username=email,
             email=email,
-            password=password
+            password=password,
         )
 
         user.role = 'admin'

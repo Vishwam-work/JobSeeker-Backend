@@ -28,9 +28,9 @@ class Company(models.Model):
 
     # Address
     address = models.TextField()
-    country = models.ForeignKey(master.Country, on_delete=models.SET_NULL, blank=True, null=True)
-    state = models.ForeignKey(master.State, on_delete=models.SET_NULL, blank=True, null=True)
-    city = models.ForeignKey(master.City, on_delete=models.SET_NULL, blank=True, null=True)
+    country = models.ForeignKey(master.Country, on_delete=models.SET_NULL, blank=True, null=True,related_name="country")
+    state = models.ForeignKey(master.State, on_delete=models.SET_NULL, blank=True, null=True,related_name="state")
+    city = models.ForeignKey(master.City, on_delete=models.SET_NULL, blank=True, null=True,related_name="city")
     pincode = models.CharField(max_length=20)
 
     # Agreements

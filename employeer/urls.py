@@ -38,4 +38,5 @@ path('api/add-sub-user/',views.add_sub_user,name='add-sub-user'),
 path('api/sub-users/',views.sub_user_list,name='sub-user-list'),
 path('api/sub-users/<int:pk>/delete/',views.delete_sub_user,name='delete-sub-user'),
 path('api/verify-sub-user-otp/',views.verify_sub_user_otp,name='verify-sub-user-otp'),
+path('api/resend-otp/', views.resend_otp, name='resend_otp'),
 ]
