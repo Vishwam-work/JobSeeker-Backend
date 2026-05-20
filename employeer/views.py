@@ -381,7 +381,9 @@ class JobPostingDetailView(generics.RetrieveAPIView):
 
     def get_queryset(self):
         company_user = CompanyUser.objects.get(user=self.request.user)
-        return JobPosting.objects.filter(company_user=company_user)
+        return JobPosting.objects.filter(
+            company_user__company=company_user.company
+        )
 
 class JobPostingListView(generics.ListAPIView):
     serializer_class = JobPostingSerializer
@@ -494,7 +496,7 @@ class JobPostingUpdateView(generics.UpdateAPIView):
     def get_queryset(self):
         """Ensure that only the company user's jobs can be updated"""
         company_user = CompanyUser.objects.get(user=self.request.user)
-        return JobPosting.objects.filter(company_user=company_user)
+        return JobPosting.objects.filter(company_user__company=company_user.company)
 
 class JobPostingDeleteView(generics.DestroyAPIView):
     serializer_class = JobPostingSerializer
@@ -503,7 +505,7 @@ class JobPostingDeleteView(generics.DestroyAPIView):
     def get_queryset(self):
         """Limit the queryset so that a company user can only delete their own job postings."""
         company_user = CompanyUser.objects.get(user=self.request.user)
-        return JobPosting.objects.filter(company_user=company_user)
+        return JobPosting.objects.filter(company_user__company=company_user.company)
     
 class AnswerCreateView(generics.CreateAPIView):
     queryset = Answer.objects.all()
