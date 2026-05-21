@@ -603,7 +603,7 @@ class CandidateListView(generics.ListAPIView):
 @permission_classes([AllowAny])
 def company_list(request):
     """List all companies"""
-    companies = CompanyUser.objects.select_related('company__country', 'company__state', 'company__city')
+    companies = CompanyUser.objects.filter(role="employer")
     serializer = CompanyListSerializer(companies, many=True)
     return Response(serializer.data)
 

@@ -526,7 +526,7 @@ class CompanyListSerializer(serializers.ModelSerializer):
     company = CompanySerializer(read_only=True)
     class Meta:
         model = CompanyUser
-        fields = ['company','country','state','city','job_count']
+        fields = ['id','company','country','state','city','job_count']
 
     def get_job_count(self, obj):
         return obj.job_postings.filter(status='active').count()
