@@ -7,14 +7,14 @@ from rest_framework import status, filters
 from django.shortcuts import get_object_or_404
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import get_user_model, authenticate
-from .serializers import CompanyUserSerializer, CompanyLoginSerializer, JobPostingSerializer,AnswerSerializer, ApplicationSubmitSerializer, ApplicationListItemSerializer,CompanyListSerializer, CompanyDetailSerializer, JobPostingSerializer,ApplicationUpdateSerializer,InterviewScheduleSerializer,CompanyUserUpdateSerializer,ViewdprofileSerializer,SavedProfileSerializer
+from .serializers import CompanyUserSerializer, CompanyLoginSerializer, JobPostingSerializer,AnswerSerializer, ApplicationSubmitSerializer, ApplicationListItemSerializer,CompanyListSerializer, CompanyDetailSerializer, JobPostingSerializer,ApplicationUpdateSerializer,InterviewScheduleSerializer,CompanyUserUpdateSerializer,ViewdprofileSerializer,SavedProfileSerializer,SubUserSerializer,SubUserListSerializer
 from .models import CompanyUser, JobPosting,Answer, Application, JobClickEvent,SaveProf,ViewdProfile
 from job_app.models import CustomUser
 from master.models import Country, State, City
 from rest_framework import generics,status, viewsets, permissions, serializers
 from rest_framework.pagination import PageNumberPagination
 from django.db.models import F,Q,Value ,IntegerField
-from utils.utils import generate_otp, send_email,password_reset_token
+from utils.utils import generate_otp, send_email,password_reset_token,default_token_generator
 from job_app.models import EmailOTP, Profile,Experience
 from django.utils import timezone
 from datetime import timedelta
@@ -43,6 +43,7 @@ class SavedProfPagination(PageNumberPagination):
 OTP_EXPIRY_MINUTES = 1
 OTP_RESEND_COOLDOWN_SECONDS = 60
 MAX_OTP_ATTEMPTS = 3
+SUBUSER_EXPIRY_MINUTES = 1
 
 
 def hash_otp(otp: str) -> str:
@@ -67,106 +68,245 @@ class ProfilePagination(PageNumberPagination):
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def register_company_user(request):
+
     email = request.data.get("email")
 
+    # CHECK EMAIL
     if not email:
-        return Response({"error": "Email is required"}, status=400)
-    otp_verified = EmailOTP.objects.filter(email=email, is_used=True).exists()
+        return Response(
+            {"error": "Email is required"},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    # CHECK OTP VERIFIED
+    otp_verified = EmailOTP.objects.filter(email=email,is_used=True).exists()
+
     if not otp_verified:
         return Response({"error": "Please verify OTP first"},status=status.HTTP_400_BAD_REQUEST)
-
+    
+    # CHECK USER EXISTS
+    if User.objects.filter(email=email).exists():
+        return Response({'error': 'User with this email already exists'},status=status.HTTP_400_BAD_REQUEST)
+    print(request.data)
+    # SERIALIZER
     serializer = CompanyUserSerializer(data=request.data)
 
     if serializer.is_valid():
-        email = serializer.validated_data['email']
-        if User.objects.filter(email=email).exists():
-            return Response(
-                {'error': 'User with this email already exists'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-
+        # SAVE DATA
         company_user = serializer.save()
+       
+        # UPDATE USER
         company_user.is_verified = True
-        company_user.is_active = True
         company_user.user.role = 'employer'
+
         company_user.user.save()
         company_user.save()
+
+        # JWT TOKEN
         refresh = RefreshToken.for_user(company_user.user)
+
+
+        # RESPONSE
         return Response({
-            'message': 'Company user registered successfully',
+            'message': 'Company registered successfully',
             'user_id': company_user.user.id,
             'email': company_user.user.email,
-            'company_name': company_user.company_name,
+            'company_id': company_user.company.id,
+            'company_name': company_user.company.company_name,
+            'role': company_user.role,
             'access': str(refresh.access_token),
             'refresh': str(refresh)
         }, status=status.HTTP_201_CREATED)
 
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    return Response(
+        serializer.errors,
+        status=status.HTTP_400_BAD_REQUEST
+    )
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def login_company_user(request):
-    user_role = CustomUser.objects.get(email=request.data.get("email")).role
-    if user_role == 'job_seeker':
-        return Response({"error": "User Not Found Please Register"}, status=status.HTTP_400_BAD_REQUEST)
-    if user_role == 'admin':
-        serializer = CompanyLoginSerializer(data=request.data)
-        if serializer.is_valid():
-            email = serializer.validated_data['email']
-            password = serializer.validated_data['password']
-            try:
-                user = User.objects.get(email=email)
-                user = authenticate(username=user.username, password=password)
-                if user:
-                    refresh = RefreshToken.for_user(user)
-                    return Response({
-                        'message': 'Login successful',
-                        'user_id': user.id,
-                        'email': user.email,
-                        'access': str(refresh.access_token),
-                        'refresh': str(refresh),
-                        'user_role': user.role
-                    }, status=status.HTTP_200_OK)
-                else:
-                    return Response(
-                        {'error': 'Invalid credentials'},
-                        status=status.HTTP_401_UNAUTHORIZED
-                    )
-            except User.DoesNotExist:
-                return Response(
-                    {'error': 'User with this email does not exist'},
-                    status=status.HTTP_404_NOT_FOUND
-                )
+
     serializer = CompanyLoginSerializer(data=request.data)
+
     if serializer.is_valid():
+
         email = serializer.validated_data['email']
         password = serializer.validated_data['password']
 
-        try:
-            user = User.objects.get(email=email)
-            user = authenticate(username=user.username, password=password)
-            if user:
-                refresh = RefreshToken.for_user(user)
-                return Response({
-                    'message': 'Login successful',
-                    'user_id': user.id,
-                    'email': user.email,
-                    'company_name': user.companyuser.company_name,
-                    'access': str(refresh.access_token),
-                    'refresh': str(refresh)
-                }, status=status.HTTP_200_OK)
-            else:
-                return Response(
-                    {'error': 'Invalid credentials'},
-                    status=status.HTTP_401_UNAUTHORIZED
-                )
-        except User.DoesNotExist:
-            return Response(
-                {'error': 'User with this email does not exist'},
-                status=status.HTTP_404_NOT_FOUND
-            )
+        # CHECK USER EXISTS
+        user = User.objects.filter(email=email).first()
 
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        if not user:
+            return Response({'error': 'User with this email does not exist'},status=status.HTTP_404_NOT_FOUND)
+
+        # CHECK ROLE
+        if user.role == 'job_seeker':
+            return Response({"error": "User Not Found Please Register"},status=status.HTTP_400_BAD_REQUEST)
+
+        # AUTHENTICATE USER
+        authenticated_user = authenticate(
+            username=user.username,
+            password=password
+        )
+
+        if not authenticated_user:
+            return Response({'error': 'Invalid credentials'},status=status.HTTP_401_UNAUTHORIZED)
+
+        # JWT TOKEN
+        refresh = RefreshToken.for_user(authenticated_user)
+
+
+        # ADMIN LOGIN
+        if authenticated_user.role == 'admin':
+            try:
+                company_user = authenticated_user.companyuser
+                # CHECK VERIFIED
+                if company_user.is_verified == False:
+                    return Response(
+                        {"error": "Please verify your email first"},
+                        status=status.HTTP_403_FORBIDDEN
+                    )
+            except CompanyUser.DoesNotExist:
+                return Response({'error': 'Company profile not found'},status=status.HTTP_404_NOT_FOUND)
+            return Response({
+                'message': 'Admin login successful',
+                'user_id': authenticated_user.id,
+                'email': authenticated_user.email,
+                'user_role': authenticated_user.role,
+                'access': str(refresh.access_token),
+                'refresh': str(refresh)
+            }, status=status.HTTP_200_OK)
+
+        # COMPANY USER LOGIN
+        try:
+            company_user = authenticated_user.companyuser
+            # CHECK VERIFIED
+            if company_user.is_verified == False:
+                return Response(
+                    {"error": "Please verify your email first"},
+                    status=status.HTTP_403_FORBIDDEN
+                )
+        except CompanyUser.DoesNotExist:
+            return Response({'error': 'Company profile not found'},status=status.HTTP_404_NOT_FOUND)
+
+        return Response({
+            'message': 'Login successful',
+            'user_id': authenticated_user.id,
+            'email': authenticated_user.email,
+            'company_id': company_user.company.id,
+            'company_name': company_user.company.company_name,
+            'role': company_user.role,
+            'contact_person_name': company_user.contact_person_name,
+            'access': str(refresh.access_token),
+            'refresh': str(refresh)
+        }, status=status.HTTP_200_OK)
+
+    return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+
+# @api_view(['POST'])
+# @permission_classes([AllowAny])
+# def register_company_user(request):
+#     email = request.data.get("email")
+
+#     if not email:
+#         return Response({"error": "Email is required"}, status=400)
+#     otp_verified = EmailOTP.objects.filter(email=email, is_used=True).exists()
+#     if not otp_verified:
+#         return Response({"error": "Please verify OTP first"},status=status.HTTP_400_BAD_REQUEST)
+
+#     serializer = CompanyUserSerializer(data=request.data)
+
+#     if serializer.is_valid():
+#         email = serializer.validated_data['email']
+#         if User.objects.filter(email=email).exists():
+#             return Response(
+#                 {'error': 'User with this email already exists'},
+#                 status=status.HTTP_400_BAD_REQUEST
+#             )
+
+#         company_user = serializer.save()
+#         company_user.is_verified = True
+#         company_user.is_active = True
+#         company_user.user.role = 'employer'
+#         company_user.user.save()
+#         company_user.save()
+#         refresh = RefreshToken.for_user(company_user.user)
+#         return Response({
+#             'message': 'Company user registered successfully',
+#             'user_id': company_user.user.id,
+#             'email': company_user.user.email,
+#             'company_name': company_user.company_name,
+#             'access': str(refresh.access_token),
+#             'refresh': str(refresh)
+#         }, status=status.HTTP_201_CREATED)
+
+#     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+# @api_view(['POST'])
+# @permission_classes([AllowAny])
+# def login_company_user(request):
+#     user_role = CustomUser.objects.get(email=request.data.get("email")).role
+#     if user_role == 'job_seeker':
+#         return Response({"error": "User Not Found Please Register"}, status=status.HTTP_400_BAD_REQUEST)
+#     if user_role == 'admin':
+#         serializer = CompanyLoginSerializer(data=request.data)
+#         if serializer.is_valid():
+#             email = serializer.validated_data['email']
+#             password = serializer.validated_data['password']
+#             try:
+#                 user = User.objects.get(email=email)
+#                 user = authenticate(username=user.username, password=password)
+#                 if user:
+#                     refresh = RefreshToken.for_user(user)
+#                     return Response({
+#                         'message': 'Login successful',
+#                         'user_id': user.id,
+#                         'email': user.email,
+#                         'access': str(refresh.access_token),
+#                         'refresh': str(refresh),
+#                         'user_role': user.role
+#                     }, status=status.HTTP_200_OK)
+#                 else:
+#                     return Response(
+#                         {'error': 'Invalid credentials'},
+#                         status=status.HTTP_401_UNAUTHORIZED
+#                     )
+#             except User.DoesNotExist:
+#                 return Response(
+#                     {'error': 'User with this email does not exist'},
+#                     status=status.HTTP_404_NOT_FOUND
+#                 )
+#     serializer = CompanyLoginSerializer(data=request.data)
+#     if serializer.is_valid():
+#         email = serializer.validated_data['email']
+#         password = serializer.validated_data['password']
+
+#         try:
+#             user = User.objects.get(email=email)
+#             user = authenticate(username=user.username, password=password)
+#             if user:
+#                 refresh = RefreshToken.for_user(user)
+#                 return Response({
+#                     'message': 'Login successful',
+#                     'user_id': user.id,
+#                     'email': user.email,
+#                     # 'company_name': user.company_name,
+#                     'access': str(refresh.access_token),
+#                     'refresh': str(refresh)
+#                 }, status=status.HTTP_200_OK)
+#             else:
+#                 return Response(
+#                     {'error': 'Invalid credentials'},
+#                     status=status.HTTP_401_UNAUTHORIZED
+#                 )
+#         except User.DoesNotExist:
+#             return Response(
+#                 {'error': 'User with this email does not exist'},
+#                 status=status.HTTP_404_NOT_FOUND
+#             )
+
+#     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
@@ -241,7 +381,9 @@ class JobPostingDetailView(generics.RetrieveAPIView):
 
     def get_queryset(self):
         company_user = CompanyUser.objects.get(user=self.request.user)
-        return JobPosting.objects.filter(company_user=company_user)
+        return JobPosting.objects.filter(
+            company_user__company=company_user.company
+        )
 
 class JobPostingListView(generics.ListAPIView):
     serializer_class = JobPostingSerializer
@@ -252,7 +394,7 @@ class JobPostingListView(generics.ListAPIView):
 
     def get_queryset(self):
         company_user = CompanyUser.objects.get(user=self.request.user)
-        queryset = JobPosting.objects.filter(company_user=company_user).order_by('-created_at')
+        queryset = JobPosting.objects.filter(company_user__company=company_user.company).order_by('-created_at')
 
         status = self.request.query_params.get('status')
         if status and status != 'all':
@@ -354,7 +496,7 @@ class JobPostingUpdateView(generics.UpdateAPIView):
     def get_queryset(self):
         """Ensure that only the company user's jobs can be updated"""
         company_user = CompanyUser.objects.get(user=self.request.user)
-        return JobPosting.objects.filter(company_user=company_user)
+        return JobPosting.objects.filter(company_user__company=company_user.company)
 
 class JobPostingDeleteView(generics.DestroyAPIView):
     serializer_class = JobPostingSerializer
@@ -363,7 +505,7 @@ class JobPostingDeleteView(generics.DestroyAPIView):
     def get_queryset(self):
         """Limit the queryset so that a company user can only delete their own job postings."""
         company_user = CompanyUser.objects.get(user=self.request.user)
-        return JobPosting.objects.filter(company_user=company_user)
+        return JobPosting.objects.filter(company_user__company=company_user.company)
     
 class AnswerCreateView(generics.CreateAPIView):
     queryset = Answer.objects.all()
@@ -461,7 +603,7 @@ class CandidateListView(generics.ListAPIView):
 @permission_classes([AllowAny])
 def company_list(request):
     """List all companies"""
-    companies = CompanyUser.objects.select_related('country', 'state', 'city')
+    companies = CompanyUser.objects.select_related('company__country', 'company__state', 'company__city')
     serializer = CompanyListSerializer(companies, many=True)
     return Response(serializer.data)
 
@@ -555,6 +697,12 @@ class ScheduleInterviewView(generics.UpdateAPIView):
                     "status": instance.application_status  #choices must be fromm the application model.
                 }
         )
+
+from django.db import transaction
+from django.db.models import F
+from django.utils import timezone
+from django.utils.crypto import constant_time_compare
+from datetime import timedelta
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
@@ -910,18 +1058,25 @@ class CompanyUserUpdateView(APIView):
 @api_view(['PATCH'])
 @permission_classes([permissions.IsAuthenticated])
 def logo_upload(request):
+
     try:
-        company = CompanyUser.objects.get(user=request.user)
+        company_user = CompanyUser.objects.get(user=request.user)
+        company = company_user.company
+
     except CompanyUser.DoesNotExist:
-        return Response({"error": "Company not found."}, status=404)
+        return Response({"error": "Company not found."},status=404)
 
+    # CHECK FILE
     if 'company_logo' not in request.FILES:
-        return Response({"error": "No company logo file found in the request."}, status=400)
+        return Response({"error": "No company logo file found in the request."},status=400)
 
+    # SAVE LOGO
     company.company_logo = request.FILES['company_logo']
     company.save()
 
-    return Response({"company_logo_url": company.company_logo.url, "message": "Logo uploaded successfully."}, status=200)
+    return Response({
+        "company_logo_url": company.company_logo.url,
+        "message": "Logo uploaded successfully."}, status=200)
 
 
 class SavedProfileListCreateView(APIView):
@@ -1043,3 +1198,325 @@ class RemoveSavedProfileView(APIView):
                 {"error": "Saved profile not found"},
                 status=status.HTTP_404_NOT_FOUND
             )
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def add_sub_user(request):
+    try:
+        current_company_user = request.user.companyuser
+    except CompanyUser.DoesNotExist:
+        return Response(
+            {"error": "Company profile not found"},
+            status=status.HTTP_404_NOT_FOUND
+        )
+
+
+    # ONLY EMPLOYER CAN ADD SUB USERS
+    if current_company_user.role != 'employer':
+        return Response(
+            {"error": "Only admin can add sub users"},
+            status=status.HTTP_403_FORBIDDEN
+        )
+
+    # CHECK EMAIL EXISTS
+    email = request.data.get('email')
+    password = request.data.get('password')
+    
+    if User.objects.filter(email=email).exists():
+        return Response(
+            {"error": "Email already exists"},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    # SERIALIZER
+    serializer = SubUserSerializer(
+        data=request.data,
+        context={
+            'company': current_company_user.company
+        }
+    )
+
+    # CREATE SUB USER
+    if serializer.is_valid():
+        # SAVE USER
+        sub_user = serializer.save()
+        sub_user.is_verified = False
+        sub_user.save()
+
+        # GENERATE OTP
+        otp = generate_otp()
+
+        # SAVE OTP
+        EmailOTP.objects.create(
+            email=email,
+            otp_hash=hash_otp(otp)
+        )
+
+        uid = urlsafe_base64_encode(force_bytes(email))
+        token = default_token_generator.make_token(current_company_user.user)
+
+        verify_link = (
+            f"http://localhost:3005/"
+            f"confirm-otp/{uid}/{token}/"
+        )
+
+        # SEND EMAIL
+        send_email(
+            to_email=email,
+            subject="Verify your email",
+            template_name="Sub_user.html",
+            context={
+                "verify_link": verify_link,
+                "otp": otp,
+                "company_name":current_company_user.company.company_name,
+                "email": email,
+                "password": password
+            }
+        )
+        return Response({
+            "message":
+            "Verification email sent successfully",
+            "email": email
+        }, status=status.HTTP_200_OK)
+    
+    return Response(
+        serializer.errors,
+        status=status.HTTP_400_BAD_REQUEST
+    )
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def sub_user_list(request):
+
+    try:
+        current_company_user = CompanyUser.objects.get(user=request.user)
+    except CompanyUser.DoesNotExist:
+        return Response({"error": "Company profile not found"},status=status.HTTP_404_NOT_FOUND)
+
+    sub_users = CompanyUser.objects.filter(company=current_company_user.company,role='admin')
+
+    serializer = SubUserListSerializer(sub_users,many=True)
+
+    return Response(serializer.data)
+
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def delete_sub_user(request,pk):
+    try:
+        current_company_user = request.user.companyuser
+    except CompanyUser.DoesNotExist:
+        return Response(
+            {"error": "Company profile not found"},
+            status=status.HTTP_404_NOT_FOUND
+        )
+    
+    if current_company_user.role != 'employer':
+        return Response(
+            {"error": "Only employer can delete sub users"},
+            status=status.HTTP_403_FORBIDDEN
+        )
+    
+    try:
+        sub_user = CompanyUser.objects.get(id=pk)
+    except CompanyUser.DoesNotExist:
+        return Response(
+            {"error": "Sub user not found"},
+            status=status.HTTP_404_NOT_FOUND
+        )
+    
+    if sub_user.company != current_company_user.company:
+        return Response(
+            {"error": "You cannot delete users from another company"},
+            status=status.HTTP_403_FORBIDDEN
+        )
+    
+    if sub_user.user == request.user:
+        return Response(
+            {"error": "employer cannot delete himself"},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    
+    sub_user.user.delete()
+
+    return Response({
+
+        "message": "Sub user deleted successfully"
+
+    }, status=status.HTTP_200_OK)
+
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def verify_sub_user_otp(request):
+
+    otp = request.data.get("otp")
+
+    # CHECK OTP
+    if not otp:
+        return Response(
+            {"error": "OTP required"},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    # HASH OTP
+    otp_hash = hash_otp(otp)
+
+    # VALID TIME
+    valid_time = timezone.now() - timedelta(
+        minutes=SUBUSER_EXPIRY_MINUTES
+    )
+
+    with transaction.atomic():
+        # FIND OTP
+        otp_obj = EmailOTP.objects.select_for_update().filter(
+            otp_hash=otp_hash,
+            is_used=False,
+            created_at__gte=valid_time
+        ).order_by('-created_at').first()
+
+        # INVALID OTP
+        if not otp_obj:
+            return Response(
+                {"error": "Invalid or expired OTP"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # OTP VERIFIED
+        otp_obj.is_used = True
+        otp_obj.save(update_fields=["is_used"])
+
+        # GET EMAIL FROM OTP TABLE
+        email = otp_obj.email
+
+        # GET USER
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+
+            return Response(
+                {"error": "User not found"},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        # GET SUB USER
+        try:
+            sub_user = CompanyUser.objects.get(user=user)
+        except CompanyUser.DoesNotExist:
+            return Response(
+                {"error": "Sub user not found"},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        # EMPLOYER NOT ALLOWED
+        if sub_user.role == 'employer':
+            return Response(
+                {"error": "Employer cannot verify here"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # VERIFY USER
+        sub_user.is_verified = True
+        sub_user.save()
+
+    return Response(
+        {
+            "message": "Sub user verified successfully"
+        },
+        status=status.HTTP_200_OK
+    )
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def resend_otp(request):
+
+    # ONLY EMPLOYER CAN RESEND OTP
+    if request.user.role != 'employer':
+        return Response(
+            {"error": "Only employer can resend OTP"},
+            status=status.HTTP_403_FORBIDDEN
+        )
+
+    # GET USER ID
+    user_id = request.data.get("user_id")
+
+    if not user_id:
+        return Response(
+            {"error": "user_id is required"},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    # FIND COMPANY USER
+    try:
+        company_user = CompanyUser.objects.get(id=user_id)
+    except CompanyUser.DoesNotExist:
+        return Response(
+            {"error": "Sub user not found"},
+            status=status.HTTP_404_NOT_FOUND
+        )
+
+    # CHECK SAME COMPANY
+    if company_user.company != request.user.companyuser.company:
+        return Response(
+            {"error": "Unauthorized access"},
+            status=status.HTTP_403_FORBIDDEN
+        )
+
+    # CHECK ROLE
+    if company_user.role != 'admin':
+        return Response(
+            {"error": "Invalid sub user"},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    # CHECK VERIFIED STATUS
+    if company_user.is_verified:
+        return Response(
+            {"error": "User already verified"},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    # GET USER + EMAIL
+    user = company_user.user
+    email = user.email
+
+    # DELETE OLD OTP
+    EmailOTP.objects.filter(email=email).delete()
+
+    # GENERATE OTP
+    otp = generate_otp()
+
+    # SAVE OTP
+    EmailOTP.objects.create(
+        email=email,
+        otp_hash=hash_otp(otp)
+    )
+
+    # GENERATE VERIFY LINK
+    uid = urlsafe_base64_encode(force_bytes(email))
+    token = default_token_generator.make_token(user)
+
+    verify_link = (
+        f"http://localhost:3005/"
+        f"confirm-otp/{uid}/{token}/"
+    )
+
+
+    # SEND EMAIL
+    send_email(
+        to_email=email,
+        subject="Resend OTP Verification",
+        template_name="Resend_otp.html",
+        context={
+            "otp": otp,
+            "email": email,
+            "verify_link": verify_link,
+            "company_name": company_user.company.company_name,
+        }
+    )
+
+    return Response(
+        {
+            "message": "OTP resent successfully"
+        },
+        status=status.HTTP_200_OK
+    )

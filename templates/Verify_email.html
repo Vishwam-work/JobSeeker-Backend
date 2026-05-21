@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Verify Your Account</title>
+
+<style>
+
+body{
+    margin:0;
+    padding:0;
+    background:#f4f7fb;
+    font-family:Arial,sans-serif;
+}
+
+.container{
+    max-width:600px;
+    margin:40px auto;
+    background:#ffffff;
+    border-radius:12px;
+    overflow:hidden;
+    box-shadow:0 4px 12px rgba(0,0,0,0.1);
+}
+
+.header{
+    background:linear-gradient(to right,#4f46e5,#2563eb);
+    color:white;
+    text-align:center;
+    padding:30px;
+}
+
+.header h1{
+    margin:0;
+    font-size:28px;
+}
+
+.content{
+    padding:40px 30px;
+    text-align:center;
+}
+
+.content h2{
+    color:#111827;
+}
+
+.content p{
+    color:#6b7280;
+    line-height:1.6;
+}
+
+.otp-box{
+    margin:30px 0;
+    padding:20px;
+    background:#f3f4f6;
+    border-radius:10px;
+}
+
+.otp{
+    font-size:36px;
+    font-weight:bold;
+    letter-spacing:6px;
+    color:#111827;
+}
+
+.button{
+    display:inline-block;
+    padding:14px 28px;
+    background:#2563eb;
+    color:white !important;
+    text-decoration:none;
+    border-radius:8px;
+    margin-top:20px;
+    font-weight:bold;
+}
+
+.footer{
+    background:#f9fafb;
+    padding:20px;
+    text-align:center;
+    font-size:13px;
+    color:#9ca3af;
+}
+
+@media(max-width:600px){
+
+    .content{
+        padding:25px 20px;
+    }
+
+    .otp{
+        font-size:28px;
+        letter-spacing:4px;
+    }
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="header">
+
+        <h1>JOBSEEKER</h1>
+
+        <p>Employer Portal</p>
+
+    </div>
+
+    <div class="content">
+
+        <h2>Verify Your Account</h2>
+
+        <p>
+
+            You have been invited to join
+            <strong>{{ company_name }}</strong>
+            as a sub user.
+
+        </p>
+
+        <p>
+            Please verify your email address using the OTP below.
+        </p>
+
+        <div class="otp-box">
+
+            <div>Your OTP</div>
+
+            <div class="otp">
+                {{ otp }}
+            </div>
+
+        </div>
+
+        <a href="{{ verify_link }}" class="button">
+
+            Verify Account
+
+        </a>
+
+        <p style="margin-top:30px; font-size:14px; color:#9ca3af;">
+
+            This OTP will expire in 30 minute.
+
+        </p>
+
+    </div>
+
+    <div class="footer">
+
+        © 2026 NV Global Tech
+
+    </div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Your Resend OTP</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    background:#f1f5f9;
+    font-family:'Segoe UI',Arial,sans-serif;
+    padding:20px;
+    -webkit-text-size-adjust:none;
+}
+
+table{
+    border-spacing:0;
+}
+
+img{
+    border:0;
+}
+
+.email-wrapper{
+    width:100%;
+}
+
+.email-container{
+    max-width:620px;
+    margin:0 auto;
+    background:#ffffff;
+    border-radius:18px;
+    overflow:hidden;
+    box-shadow:0 10px 30px rgba(0,0,0,0.08);
+}
+
+/* Header */
+
+.header{
+    background:linear-gradient(135deg,#0f172a,#1e3a8a);
+    padding:40px 20px;
+    text-align:center;
+    color:#ffffff;
+}
+
+.logo{
+    font-size:34px;
+    font-weight:300;
+    letter-spacing:6px;
+}
+
+.badge{
+    display:inline-block;
+    margin-top:14px;
+    background:#dcfce7;
+    color:#15803d;
+    padding:7px 16px;
+    border-radius:999px;
+    font-size:12px;
+    font-weight:600;
+}
+
+.tagline{
+    margin-top:14px;
+    font-size:14px;
+    opacity:0.9;
+    line-height:1.6;
+}
+
+/* Content */
+
+.content{
+    padding:50px 40px;
+    text-align:center;
+}
+
+.title{
+    font-size:30px;
+    font-weight:700;
+    color:#0f172a;
+    margin-bottom:18px;
+    line-height:1.3;
+}
+
+.description{
+    font-size:15px;
+    color:#64748b;
+    line-height:1.9;
+    margin-bottom:36px;
+}
+
+/* OTP */
+
+.otp-section{
+    background:#eff6ff;
+    border:1px solid #bfdbfe;
+    border-radius:18px;
+    padding:35px 20px;
+    margin-bottom:30px;
+}
+
+.otp-label{
+    font-size:15px;
+    font-weight:600;
+    color:#1e3a8a;
+    margin-bottom:16px;
+}
+
+.otp{
+    font-size:42px;
+    font-weight:700;
+    letter-spacing:10px;
+    color:#0f172a;
+    word-break:break-word;
+    line-height:1.4;
+}
+
+/* Button */
+
+.button-wrapper{
+    margin-top:10px;
+}
+
+.button{
+    display:inline-block;
+    background:linear-gradient(135deg,#2563eb,#1d4ed8);
+    color:#ffffff !important;
+    text-decoration:none;
+    padding:14px 34px;
+    border-radius:12px;
+    font-size:15px;
+    font-weight:600;
+    line-height:1.4;
+}
+
+/* Security */
+
+.security-box{
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    border-radius:14px;
+    padding:18px;
+    font-size:14px;
+    color:#64748b;
+    line-height:1.8;
+    margin-top:30px;
+}
+
+/* Footer */
+
+.footer{
+    background:#f8fafc;
+    border-top:1px solid #e2e8f0;
+    padding:30px 20px;
+    text-align:center;
+    font-size:13px;
+    color:#64748b;
+    line-height:1.8;
+}
+
+/* Responsive */
+
+@media only screen and (max-width:600px){
+
+    body{
+        padding:10px;
+    }
+
+    .email-container{
+        border-radius:14px;
+    }
+
+    .header{
+        padding:32px 18px;
+    }
+
+    .logo{
+        font-size:28px;
+        letter-spacing:4px;
+    }
+
+    .badge{
+        font-size:11px;
+        padding:6px 14px;
+    }
+
+    .tagline{
+        font-size:13px;
+    }
+
+    .content{
+        padding:35px 22px;
+    }
+
+    .title{
+        font-size:24px;
+    }
+
+    .description{
+        font-size:14px;
+        line-height:1.8;
+    }
+
+    .otp-section{
+        padding:28px 16px;
+    }
+
+    .otp{
+        font-size:30px;
+        letter-spacing:6px;
+    }
+
+    .button{
+        width:100%;
+        padding:14px 20px;
+        font-size:15px;
+    }
+
+    .security-box{
+        font-size:13px;
+        padding:16px;
+    }
+
+    .footer{
+        font-size:12px;
+        line-height:1.7;
+    }
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="email-wrapper">
+
+<div class="email-container">
+
+    <!-- Header -->
+
+    <div class="header">
+
+        <div class="logo">
+            JOBSEEKER
+        </div>
+
+        <div class="badge">
+           Resend OTP
+        </div>
+
+        <div class="tagline">
+            Secure access to your employer account
+        </div>
+
+    </div>
+
+    <!-- Content -->
+
+    <div class="content">
+
+        <h1 class="title">
+            Verify Your Email
+        </h1>
+
+        <p class="description">
+
+            Your verification OTP for accessing
+            <strong>{{ company_name }}</strong>
+            is provided below.
+
+            Please use this OTP to complete your verification process.
+
+        </p>
+
+        <!-- OTP Section -->
+
+        <div class="otp-section">
+
+            <div class="otp-label">
+                Your Verification OTP
+            </div>
+
+            <div class="otp">
+                {{ otp }}
+            </div>
+
+        </div>
+
+        <div class="button-wrapper">
+
+                <a href="{{ verify_link }}" class="button" target="_blank" rel="noopener noreferrer">
+                    Verify Account
+                </a>
+
+        </div>
+
+
+        <!-- Security -->
+
+        <div class="security-box">
+
+            This OTP will expire in 30 minutes.<br><br>
+
+            If you did not request this verification,
+            please ignore this email.
+
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+
+    <div class="footer">
+
+        © 2026 NV Global Tech<br><br>
+
+        Block C-501, Ashtavinayak Icon,<br>
+        K.P. Heights, Viratnagar 100ft Road,<br>
+        Nikol, Ahmedabad – 382350, Gujarat, India
+
+    </div>
+
+</div>
+</div>
+
+</body>
+</html>
