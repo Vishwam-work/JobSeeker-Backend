@@ -1,0 +1,34 @@
+[
+    {
+        "model": "master.currency",
+        "pk": 1,
+        "fields": {
+            "name": "Indian Rupee",
+            "symbol": "₹"
+        }
+    },
+    {
+        "model": "master.currency",
+        "pk": 2,
+        "fields": {
+            "name": "Ukrainian Hryvnia",
+            "symbol": "₴"
+        }
+    },
+    {
+        "model": "master.currency",
+        "pk": 3,
+        "fields": {
+            "name": "Ugandan Shilling",
+            "symbol": "USh"
+        }
+    },
+    {
+        "model": "master.currency",
+        "pk": 4,
+        "fields": {
+            "name": "US Dollar",
+            "symbol": "$"
+        }
+    }
+]
