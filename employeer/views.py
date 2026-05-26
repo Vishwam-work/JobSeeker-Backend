@@ -603,7 +603,7 @@ class CandidateListView(generics.ListAPIView):
 @permission_classes([AllowAny])
 def company_list(request):
     """List all companies"""
-    companies = CompanyUser.objects.select_related('company__country', 'company__state', 'company__city')
+    companies = CompanyUser.objects.filter(role="employer")
     serializer = CompanyListSerializer(companies, many=True)
     return Response(serializer.data)
 
@@ -618,15 +618,38 @@ def company_detail(request, pk):
     return Response(serializer.data)
 
 @api_view(['GET'])
-def company_jobs(request, pk):
+def company_jobs(request,pk,name):
     """Get jobs for a specific company"""
     try:
         company = CompanyUser.objects.get(pk=pk)
+        company_by_name = JobPosting.objects.filter(company_user__company__company_name=name)
     except CompanyUser.DoesNotExist:
         return Response({'error': 'Company not found'}, status=404)
-    jobs = company.job_postings.filter(status='active')
+    jobs = JobPosting.objects.filter(company_user__company__company_name=name,status='active')
     serializer = JobPostingSerializer(jobs, many=True)
     return Response(serializer.data)
+
+# @api_view(['GET'])
+# def company_jobs(request, pk, name):
+#     """Get active jobs for a specific company"""
+
+#     print(pk)
+#     print(name)
+#     jobs = JobPosting.objects.filter(
+#         company_user__pk=pk,
+#         company_user__company__company_name=name,
+#         status='active'
+#     )
+
+#     if not jobs.exists():
+#         return Response(
+#             {'error': 'No jobs found for this company'},
+#             status=404
+#         )
+
+#     serializer = JobPostingSerializer(jobs, many=True)
+
+#     return Response(serializer.data)
 
 class ApplicationUpdateView(generics.UpdateAPIView):
     queryset = Application.objects.all()
@@ -1517,6 +1540,6 @@ def resend_otp(request):
     return Response(
         {
             "message": "OTP resent successfully"
-        },
+        },  
         status=status.HTTP_200_OK
     )
