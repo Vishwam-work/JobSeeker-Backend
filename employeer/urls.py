@@ -39,4 +39,6 @@ path('api/sub-users/',views.sub_user_list,name='sub-user-list'),
 path('api/sub-users/<int:pk>/delete/',views.delete_sub_user,name='delete-sub-user'),
 path('api/verify-sub-user-otp/',views.verify_sub_user_otp,name='verify-sub-user-otp'),
 path('api/resend-otp/', views.resend_otp, name='resend_otp'),
+path('api/find-jobs/', views.FindJobsView.as_view(), name='find-jobs'),
+path('api/task-status/<str:task_id>/', views.TaskStatusView.as_view(),name='task-status'),
 ]

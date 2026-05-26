@@ -32,6 +32,10 @@ from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_decode
 from django.utils.encoding import force_str
+from .tasks import fetch_jobs_task
+from automation.find_jobs import scrape_naukri_jobs
+from celery.result import AsyncResult
+import re
 
 User = get_user_model()
 
@@ -484,8 +488,38 @@ class AllJobsListView(generics.ListAPIView):
                     salary_query |= Q(salary_int__gte=min_salary) & Q(salary_int__lte=max_salary) | Q(salary_max_int__gte=min_salary) & Q(salary_max_int__lte=max_salary)
 
             queryset = queryset.filter(salary_query)
-        if experience:
-            queryset = queryset.filter(experience__in=experience)
+     
+        min_experience = self.request.GET.get("min_experience")
+        max_experience = self.request.GET.get("max_experience")
+
+        if min_experience and max_experience:
+
+            min_experience = int(min_experience)
+            max_experience = int(max_experience)
+
+            filtered_jobs = []
+
+            for job in queryset:
+
+                print("DB Experience >>>", job.experience)
+
+                match = re.findall(r'\d+', job.experience)
+                print(match)
+                if len(match) >= 2:
+
+                    db_min = int(match[0])
+                    db_max = int(match[1])
+
+                    print(db_min, db_max)
+
+                    # overlap condition
+                    if db_min >= min_experience and db_max <= max_experience:
+                        filtered_jobs.append(job.id)
+
+                    print(filtered_jobs)
+
+            queryset = queryset.filter(id__in=filtered_jobs)
+
         return queryset
 
 class JobPostingUpdateView(generics.UpdateAPIView):
@@ -1543,3 +1577,131 @@ def resend_otp(request):
         },  
         status=status.HTTP_200_OK
     )
+
+
+
+# class FindJobsView(APIView):
+
+#     permission_classes = [permissions.IsAuthenticated]
+
+#     def get(self, request):
+
+#         keyword = request.query_params.get("keyword")
+
+#         location = request.query_params.get("location")
+
+#         if not keyword or not location:
+
+#             return Response(
+#                 {
+#                     "error": "keyword and location are required"
+#                 },
+#                 status=status.HTTP_400_BAD_REQUEST
+#             )
+
+#         data = scrape_naukri_jobs(keyword, location)
+
+#         return Response(
+#             {
+#                 "message": "Jobs fetched successfully",
+#                 "total_jobs": len(data),
+#                 "jobs": data
+#             },
+#             status=status.HTTP_200_OK
+#         )
+
+#     def post(self, request):
+
+#         keyword = request.data.get("keyword")
+
+#         location = request.data.get("location")
+
+#         if not keyword or not location:
+
+#             return Response(
+#                 {
+#                     "error": "keyword and location are required"
+#                 },
+#                 status=status.HTTP_400_BAD_REQUEST
+#             )
+
+#         data = scrape_naukri_jobs(keyword, location)
+
+#         return Response(
+#             {
+#                 "message": "Jobs fetched successfully",
+#                 "total_jobs": len(data),
+#                 "jobs": data
+#             },
+#             status=status.HTTP_200_OK
+# )
+       
+
+
+class FindJobsView(APIView):
+
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request):
+
+        keyword = request.data.get("keyword")
+        location = request.data.get("location")
+
+        if not keyword:
+
+            return Response(
+                {
+                    "error": "Keyword is required"
+                },
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        task = fetch_jobs_task.delay(keyword, location)
+
+        return Response(
+            {
+                "message": "Job scraping started",
+                "task_id": task.id,
+                "status": "processing"
+            },
+            status=status.HTTP_202_ACCEPTED
+        )
+
+
+class TaskStatusView(APIView):
+
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, task_id):
+
+        result = AsyncResult(task_id)
+
+        if result.state == "PENDING":
+
+            return Response({
+                "status": "pending"
+            })
+
+        elif result.state == "STARTED":
+
+            return Response({
+                "status": "processing"
+            })
+
+        elif result.state == "SUCCESS":
+
+            return Response({
+                "status": "completed",
+                "data": result.result
+            })
+
+        elif result.state == "FAILURE":
+
+            return Response({
+                "status": "failed",
+                "error": str(result.result)
+            })
+
+        return Response({
+            "status": result.state
+        })
