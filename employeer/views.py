@@ -672,7 +672,7 @@ class ApplicationUpdateView(generics.UpdateAPIView):
                 context={
                     "user": instance.user,
                     "job_title": instance.job.title,
-                    "company_name": instance.job.company_user.company_name,
+                    "company_name": instance.job.company_user.company.company_name,
                     "application_status": instance.application_status
                 }
             )
@@ -686,7 +686,7 @@ class ApplicationUpdateView(generics.UpdateAPIView):
                 context={
                     "user": instance.user,
                     "job_title": instance.job.title,
-                    "company_name": instance.job.company_user.company_name,
+                    "company_name": instance.job.company_user.company.company_name,
                     "job_description": instance.job.description,
                     "application_status": instance.application_status
                 }
@@ -817,7 +817,7 @@ def increment_job_click(request, job_id):
     request_id = request.data.get("request_id")
 
     if not request_id:
-        return Response( {"error": "request_id is required"}, status=400)
+        return Response( {"error": "request_id is required"}, status=400) 
 
     try:
         with transaction.atomic():
@@ -825,8 +825,8 @@ def increment_job_click(request, job_id):
             JobPosting.objects.filter(id=job_id).update(apply_clicks=F("apply_clicks") + 1)
 
     except IntegrityError:
-         pass
-
+        return Response(status=200)
+    
     return Response(status=204)
     # return Response({
     #                   "job_clicks": JobPosting.apply_clicks,
