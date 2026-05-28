@@ -64,17 +64,43 @@ class JobCategoryList(generics.ListAPIView):
         if query:
             return JobCategory.objects.filter(name__icontains=query).order_by("name")[:10]
         return JobCategory.objects.all().order_by("name")
+# class JobTitleList(generics.ListAPIView):
+#     serializer_class = JobTitleSerializer
+#     permission_classes = []
+#     def get_queryset(self):
+#         q = self.request.GET.get("q")
+
+#         if q:
+#             return JobTitle.objects.filter(title__icontains=q).distinct().order_by("title")[:10]
+#         return JobTitle.objects.all().distinct().order_by("title")
+
 class JobTitleList(generics.ListAPIView):
     serializer_class = JobTitleSerializer
     permission_classes = []
+
     def get_queryset(self):
-        q = self.request.GET.get("q")
 
-        if q:
-            return JobTitle.objects.filter(title__icontains=q).order_by("title")[:10]
+        q = self.request.GET.get("q", "")
 
-        return JobTitle.objects.all().order_by("title")
+        queryset = JobTitle.objects.filter(
+            title__icontains=q
+        ).order_by("title")
 
+        unique_titles = []
+        unique_ids = set()
+
+        for job in queryset:
+
+            title = job.title.lower().strip()
+
+            if title not in unique_ids:
+                unique_ids.add(title)
+                unique_titles.append(job.id)
+
+        return JobTitle.objects.filter(
+            id__in=unique_titles
+        ).order_by("title")
+    
 class CurrencyList(generics.ListAPIView):
     queryset = Currency.objects.all()
     serializer_class = CurrencySerializer
