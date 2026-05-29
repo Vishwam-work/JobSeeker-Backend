@@ -540,6 +540,7 @@ class CompanyDetailSerializer(serializers.ModelSerializer):
     country = serializers.CharField(source='country.name', read_only=True)
     state = serializers.CharField(source='state.name', read_only=True)
     city = serializers.CharField(source='city.name', read_only=True)
+    company = CompanySerializer(read_only=True)
     class Meta:
         model = CompanyUser
         fields = "__all__"

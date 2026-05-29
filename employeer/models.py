@@ -138,6 +138,9 @@ class JobPosting(models.Model):
     applicants=models.PositiveIntegerField(default=0)
     apply_clicks=models.PositiveIntegerField(default=0)
     website_apply = models.URLField(blank=True, null=True, max_length=800)
+    min_experience = models.CharField(max_length=50,null=True,blank=True)
+    max_experience = models.CharField(max_length=50,null=True,blank=True)
+
     def __str__(self):
         return self.title
     

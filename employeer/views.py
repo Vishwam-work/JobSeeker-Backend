@@ -568,9 +568,9 @@ class EmployerApplicationsListView(generics.ListAPIView):
         jobs = JobPosting.objects.filter(company_user=company_user)
 
         queryset = Application.objects.filter(job__in=jobs).order_by('-applied_at')
-        status = self.request.query_params.get('status')
-        if status and status != "All":
-            queryset = queryset.filter(application_status__iexact=status)
+        statuses = self.request.query_params.getlist('status')
+        if statuses and "All" not in statuses:
+            queryset = queryset.filter(application_status__in=statuses)
 
         gender = self.request.query_params.get('gender')
         if gender and gender != "All":
@@ -678,6 +678,7 @@ class ApplicationUpdateView(generics.UpdateAPIView):
             )
         elif instance.application_status == "shortlisted":
             user_email = instance.user.email
+            link = (f"http://localhost:3000/job-details?id={instance.job.id}")
 
             send_email(
                 to_email=user_email,
@@ -686,6 +687,7 @@ class ApplicationUpdateView(generics.UpdateAPIView):
                 context={
                     "user": instance.user,
                     "job_title": instance.job.title,
+                    "job_link": link,
                     "company_name": instance.job.company_user.company.company_name,
                     "job_description": instance.job.description,
                     "application_status": instance.application_status
