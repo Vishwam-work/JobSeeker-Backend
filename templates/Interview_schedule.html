@@ -6,203 +6,218 @@
     <title>Interview Scheduled</title>
 
     <style>
-      body,
-      table,
-      td {
+      body {
         margin: 0;
         padding: 0;
-        border: 0;
-        -webkit-text-size-adjust: 100%;
-        -ms-text-size-adjust: 100%;
-      }
-      table {
-        border-collapse: collapse !important;
+        background: #f4f7fb;
+        font-family: Arial, sans-serif;
       }
 
-      body {
-        width: 100% !important;
-        background: #f1f5f9;
-        font-family:
-          "Segoe UI",
-          system-ui,
-          -apple-system,
-          sans-serif;
-      }
-
-      .wrapper {
-        width: 100%;
-        padding: 40px 0;
-      }
-
-      .email-container {
-        max-width: 620px;
-        margin: 0 auto;
+      .container {
+        max-width: 600px;
+        margin: 40px auto;
         background: #ffffff;
-        border-radius: 16px;
+        border-radius: 12px;
         overflow: hidden;
-        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
       }
 
       /* Header */
+
       .header {
-       background: linear-gradient(90deg, #6a11cb 0%, #1a3769 100%)
-        color: #fff;
+        background: linear-gradient(to right, #4f46e5, #2563eb);
+        color: white;
         text-align: center;
-        padding: 30px 20px;
+        padding: 30px;
       }
+
       .logo {
-        font-size: 34px;
-        letter-spacing: 6px;
-        font-weight: 300;
+        font-size: 32px;
+        font-weight: bold;
+        margin-bottom: 10px;
       }
+
       .tagline {
         font-size: 14px;
-        opacity: 0.9;
-        margin-top: 6px;
+        opacity: 0.95;
       }
 
       /* Content */
-      .main-content {
-        padding: 50px 40px;
+
+      .content {
+        padding: 40px 30px;
         text-align: center;
       }
-      .title {
-        font-size: 26px;
-        font-weight: 700;
-        color: #0f172a;
-        margin-bottom: 16px;
+
+      .content h1 {
+        color: #111827;
+        margin-bottom: 20px;
+        font-size: 28px;
       }
+
       .message {
+        color: #6b7280;
+        line-height: 1.7;
         font-size: 15px;
-        color: #64748b;
         margin-bottom: 20px;
       }
 
       /* Info Box */
+
       .info-box {
-        background: #f8fafc;
-        border-radius: 12px;
+        margin: 30px 0;
         padding: 20px;
-        border: 1px solid #e2e8f0;
+        background: #f3f4f6;
+        border-radius: 10px;
         text-align: left;
-        margin-top: 20px;
       }
+
       .info-row {
-        margin-bottom: 10px;
+        margin-bottom: 12px;
         font-size: 14px;
-        color: #334155;
+        color: #374151;
       }
+
       .label {
-        font-weight: 600;
-        color: #0f172a;
+        font-weight: bold;
+        color: #111827;
       }
 
       /* Button */
+
       .button {
         display: inline-block;
         padding: 14px 28px;
-        font-size: 15px;
-        font-weight: 600;
-        color: #ffffff !important;
-         background: linear-gradient(90deg, #6a11cb 0%, #1a3769 100%)
-        border-radius: 10px;
+        background: #2563eb;
+        color: white !important;
         text-decoration: none;
-        margin: 25px 0;
+        border-radius: 8px;
+        margin-top: 20px;
+        font-weight: bold;
       }
+
       .button:hover {
         opacity: 0.9;
       }
 
       /* Footer */
+
       .footer {
-        background: #f8fafc;
-        padding: 28px 20px;
+        background: #f9fafb;
+        padding: 20px;
         text-align: center;
         font-size: 13px;
-        color: #64748b;
-        border-top: 1px solid #e2e8f0;
+        color: #9ca3af;
+        line-height: 1.7;
       }
 
-      @media screen and (max-width: 600px) {
-        .main-content {
-          padding: 35px 20px;
+      @media (max-width: 600px) {
+        .content {
+          padding: 25px 20px;
+        }
+
+        .content h1 {
+          font-size: 24px;
+        }
+
+        .logo {
+          font-size: 28px;
         }
       }
     </style>
   </head>
 
   <body>
-    <div class="wrapper">
-      <div class="email-container">
-        <!-- Header -->
-        <div class="header">
-          <div class="logo">JOBSEEKER</div>
-          <span
-            style="
-              font-size: 12px;
-              background-color: #bbf7d0;
-              color: #065f46;
-              padding: 4px 10px;
-              border-radius: 9999px;
-              font-weight: 500;
-              display: inline-block;
-            "
-            >Interview Scheduled</span
-          >
-          <div class="tagline">Your Next Step Starts Here 🚀</div>
+    <div class="container">
+
+      <!-- Header -->
+
+      <div class="header">
+
+        <div class="logo">JOBSEEKER</div>
+
+        <p>Interview Scheduled</p>
+
+        <div class="tagline">
+          Your Next Step Starts Here 🚀
         </div>
 
-        <!-- Content -->
-        <div class="main-content">
-          <h1 class="title">Interview Scheduled 🎉</h1>
+      </div>
 
-          <p class="message">
-            Hello <strong>{{ user.first_name }}</strong>,<br /><br />
-            Your interview for the position of <strong>{{ job }}</strong> has
-            been successfully scheduled.
-          </p>
+      <!-- Content -->
 
-          <!-- Interview Details -->
-          <div class="info-box">
-            <div class="info-row">
-              <span class="label">Date:</span> {{ date }}
-            </div>
-            <div class="info-row">
-              <span class="label">Time:</span> {{ time }}
-            </div>
-            <div class="info-row">
-              <span class="label">Mode:</span> {{ mode }}
-            </div>
+      <div class="content">
 
-            {% if notes %}
-            <div class="info-row">
-              <span class="label">Notes:</span> {{ notes }}
-            </div>
-            {% endif %}
+        <h1>Interview Scheduled 🎉</h1>
+
+        <p class="message">
+
+          Hello <strong>{{ user.first_name }}</strong>,<br /><br />
+
+          Your interview for the position of
+          <strong>{{ job }}</strong>
+          has been successfully scheduled.
+
+        </p>
+
+        <!-- Interview Details -->
+
+        <div class="info-box">
+
+          <div class="info-row">
+            <span class="label">Date:</span>
+            {{ date }}
           </div>
 
-          {% if link %}
-          <!-- Join Button -->
-          <a href="{{ link }}" class="button" style="background: linear-gradient(90deg, #6a11cb 0%, #1a3769 100%);">Join Interview</a>
+          <div class="info-row">
+            <span class="label">Time:</span>
+            {{ time }}
+          </div>
+
+          <div class="info-row">
+            <span class="label">Mode:</span>
+            {{ mode }}
+          </div>
+
+          {% if notes %}
+          <div class="info-row">
+            <span class="label">Notes:</span>
+            {{ notes }}
+          </div>
           {% endif %}
 
-          <p class="message">
-            Please be available on time and ensure a stable internet connection.
-            We wish you the best of luck! 💼✨
-          </p>
         </div>
 
-        <!-- Footer -->
-        <div class="footer" style="font-size: 12px; color: #fff; background: linear-gradient(90deg, #6a11cb 0%, #1a3769 100%);">
-          © 2026 NV Global Tech<br /><br />
+        {% if link %}
+        <a href="{{ link }}" class="button">
+          Join Interview
+        </a>
+        {% endif %}
 
-          Block C-501, Ashtavinayak Icon,<br />
-          K.P. Heights, Viratnagar 100ft Road,<br />
-          Nikol, Ahmedabad – 382350, Gujarat, India<br /><br />
+        <p class="message">
 
-          This is an automated email. Please do not reply.
-        </div>
+          Please be available on time and ensure a stable internet connection.
+
+          We wish you the best of luck! 💼✨
+
+        </p>
+
       </div>
+
+      <!-- Footer -->
+
+      <div class="footer">
+
+        © 2026 NV Global Tech<br /><br />
+
+        Block C-501, Ashtavinayak Icon,<br />
+        K.P. Heights, Viratnagar 100ft Road,<br />
+        Nikol, Ahmedabad – 382350, Gujarat, India<br /><br />
+
+        This is an automated email. Please do not reply.
+
+      </div>
+
     </div>
   </body>
 </html>

@@ -510,6 +510,10 @@ class ApplicationListItemSerializer(serializers.ModelSerializer):
             'city': getattr(profile.city, 'name', None),
             'skills': skills,
             'experiences': experiences,
+            'current_salary':profile.current_salary,
+            'current_currency': {'name': profile.current_currency.name,'symbol': profile.current_currency.symbol,'code': profile.current_currency.code,'symbol_native': profile.current_currency.symbol_native,
+            } if profile.current_currency else None,
+            'expected_salary':profile.expected_salary,
             'educations': educations,
             'certifications': certifications,
             'professional_summary': profile.professional_summary,
@@ -536,6 +540,7 @@ class CompanyDetailSerializer(serializers.ModelSerializer):
     country = serializers.CharField(source='country.name', read_only=True)
     state = serializers.CharField(source='state.name', read_only=True)
     city = serializers.CharField(source='city.name', read_only=True)
+    company = CompanySerializer(read_only=True)
     class Meta:
         model = CompanyUser
         fields = "__all__"
