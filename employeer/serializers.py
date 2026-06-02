@@ -22,6 +22,10 @@ class CompanyLoginSerializer(serializers.Serializer):
     email = serializers.EmailField()
     password = serializers.CharField()
     
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'email']
 
 class CompanyUserSerializer(serializers.ModelSerializer):
 
@@ -72,7 +76,7 @@ class CompanyUserSerializer(serializers.ModelSerializer):
 
     # RESPONSE COMPANY DATA
     company = CompanySerializer(read_only=True)
-
+    user = UserSerializer(read_only=True)
     class Meta:
         model = CompanyUser
 
@@ -108,6 +112,7 @@ class CompanyUserSerializer(serializers.ModelSerializer):
 
             # RESPONSE
             'company',
+            'user',
         ]
 
         extra_kwargs = {
