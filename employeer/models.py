@@ -177,6 +177,11 @@ class Application(models.Model):
         ("EST","EST"),
         ("CST","CST"),
         ("PST","PST"),
+        ("GST","GST"),
+        ("CET","CET"),
+        ("GMT","GMT"),
+        ("BST","BST"),
+
     ])
     class Meta:
         unique_together = ('user', 'job')
