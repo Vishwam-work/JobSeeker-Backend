@@ -321,7 +321,7 @@ def forgot_password(request):
         uid = urlsafe_base64_encode(force_bytes(user.id))
         token = password_reset_token.make_token(user)
 
-        reset_link = f"os.env('LOCAL_EMPLOYEER')/reset-password/{uid}/{token}/"
+        reset_link = f"{os.environ['BACKEND_URL']}/reset-password/{uid}/{token}/"
 
         # 🔥 Send email using SendGrid
         send_email(
@@ -1284,7 +1284,7 @@ def add_sub_user(request):
         token = default_token_generator.make_token(current_company_user.user)
 
         verify_link = (
-            f"os.env('LOCAL_EMPLOYEER')/"
+            f"{os.environ['BACKEND_URL']}/"
             f"confirm-otp/{uid}/{token}/"
         )
 
@@ -1524,7 +1524,7 @@ def resend_otp(request):
     token = default_token_generator.make_token(user)
 
     verify_link = (
-        f"os.env('LOCAL_EMPLOYEER')/"
+        f"{os.environ['BACKEND_URL']}/"
         f"confirm-otp/{uid}/{token}/"
     )
 
