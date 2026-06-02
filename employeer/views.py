@@ -32,6 +32,7 @@ from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_decode
 from django.utils.encoding import force_str
+import os
 
 User = get_user_model()
 
@@ -320,7 +321,7 @@ def forgot_password(request):
         uid = urlsafe_base64_encode(force_bytes(user.id))
         token = password_reset_token.make_token(user)
 
-        reset_link = f"http://localhost:3005/reset-password/{uid}/{token}/"
+        reset_link = f"os.env('LOCAL_EMPLOYEER')/reset-password/{uid}/{token}/"
 
         # 🔥 Send email using SendGrid
         send_email(
@@ -425,7 +426,7 @@ class AllJobsListView(generics.ListAPIView):
     queryset = JobPosting.objects.filter(status='active').order_by('-created_at')
 
     def get_queryset(self):
-        self.pagination_class.page_size = 3
+        self.pagination_class.page_size = 7
         queryset = JobPosting.objects.filter(status='active').order_by('-created_at')
         job_type = self.request.query_params.getlist('job_type', None)
         work_mode = self.request.query_params.getlist('work_mode', None)
@@ -678,7 +679,7 @@ class ApplicationUpdateView(generics.UpdateAPIView):
             )
         elif instance.application_status == "shortlisted":
             user_email = instance.user.email
-            link = (f"http://localhost:3000/job-details?id={instance.job.id}")
+            link = (f"{os.environ['BACKEND_URL']}/job-details?id={instance.job.id}")
 
             send_email(
                 to_email=user_email,
@@ -688,9 +689,10 @@ class ApplicationUpdateView(generics.UpdateAPIView):
                     "user": instance.user,
                     "job_title": instance.job.title,
                     "job_link": link,
-                    "company_name": instance.job.company_user.company.company_name,
+                    "company_name": instance.job.company,
                     "job_description": instance.job.description,
-                    "application_status": instance.application_status
+                    "application_status": instance.application_status,
+                    "candidate_name": instance.user.full_name
                 }
             )
 # Get all the applications
@@ -716,6 +718,7 @@ class ScheduleInterviewView(generics.UpdateAPIView):
                     "job": instance.job.title,
                     "date": instance.interview_date,
                     "time": instance.interview_time,
+                    "timezone": instance.timezone,
                     "mode": instance.interview_mode,
                     "link": instance.meet_link,
                     "notes": instance.notes,
@@ -1281,7 +1284,7 @@ def add_sub_user(request):
         token = default_token_generator.make_token(current_company_user.user)
 
         verify_link = (
-            f"http://localhost:3005/"
+            f"os.env('LOCAL_EMPLOYEER')/"
             f"confirm-otp/{uid}/{token}/"
         )
 
@@ -1521,7 +1524,7 @@ def resend_otp(request):
     token = default_token_generator.make_token(user)
 
     verify_link = (
-        f"http://localhost:3005/"
+        f"os.env('LOCAL_EMPLOYEER')/"
         f"confirm-otp/{uid}/{token}/"
     )
 

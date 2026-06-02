@@ -25,7 +25,7 @@
       /* Header */
 
       .header {
-        background: linear-gradient(to right, #4f46e5, #2563eb);
+        background: linear-gradient(90deg, #6a11cb 0%, #1a3769 100%);
         color: white;
         text-align: center;
         padding: 30px;
@@ -35,6 +35,7 @@
         font-size: 32px;
         font-weight: bold;
         margin-bottom: 10px;
+        color: #ffffff;
       }
 
       .tagline {
@@ -88,7 +89,7 @@
       .button {
         display: inline-block;
         padding: 14px 28px;
-        background: #2563eb;
+        background: linear-gradient(90deg, #6a11cb 0%, #1a3769 100%);
         color: white !important;
         text-decoration: none;
         border-radius: 8px;
@@ -103,11 +104,11 @@
       /* Footer */
 
       .footer {
-        background: #f9fafb;
-        padding: 20px;
+        background: linear-gradient(90deg, #6a11cb 0%, #365490 100%);
+        padding: 30px 20px;
         text-align: center;
         font-size: 13px;
-        color: #9ca3af;
+        color: #ffffff;
         line-height: 1.7;
       }
 
@@ -136,10 +137,10 @@
 
         <div class="logo">JOBSEEKER</div>
 
-        <p>Interview Scheduled</p>
+        <p style="color: white;">Interview Scheduled</p>
 
         <div class="tagline">
-          Your Next Step Starts Here 🚀
+          Your Next Step Starts Here 
         </div>
 
       </div>
@@ -148,11 +149,11 @@
 
       <div class="content">
 
-        <h1>Interview Scheduled 🎉</h1>
+        <h1>Interview Scheduled </h1>
 
         <p class="message">
 
-          Hello <strong>{{ user.first_name }}</strong>,<br /><br />
+          Hello <strong>{{ user.full_name }}</strong>,<br /><br />
 
           Your interview for the position of
           <strong>{{ job }}</strong>
@@ -171,7 +172,7 @@
 
           <div class="info-row">
             <span class="label">Time:</span>
-            {{ time }}
+            {{ time }}  {{ timezone }}
           </div>
 
           <div class="info-row">
@@ -189,7 +190,7 @@
         </div>
 
         {% if link %}
-        <a href="{{ link }}" class="button">
+        <a href="{{ link }}" class="button" target="_blank">
           Join Interview
         </a>
         {% endif %}
@@ -198,7 +199,7 @@
 
           Please be available on time and ensure a stable internet connection.
 
-          We wish you the best of luck! 💼✨
+          We wish you the best of luck! 
 
         </p>
 
@@ -208,15 +209,17 @@
 
       <div class="footer">
 
-        © 2026 NV Global Tech<br /><br />
+          <span style="color:#ffffff;">
+            © 2026 NV Global Tech<br /><br />
 
-        Block C-501, Ashtavinayak Icon,<br />
-        K.P. Heights, Viratnagar 100ft Road,<br />
-        Nikol, Ahmedabad – 382350, Gujarat, India<br /><br />
+            Block C-501, Ashtavinayak Icon,<br />
+            K.P. Heights, Viratnagar 100ft Road,<br />
+            Nikol, Ahmedabad – 382350, Gujarat, India<br /><br />
 
-        This is an automated email. Please do not reply.
+            This is an automated email. Please do not reply.
+          </span>
 
-      </div>
+        </div>
 
     </div>
   </body>

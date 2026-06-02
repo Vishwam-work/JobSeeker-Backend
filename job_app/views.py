@@ -180,7 +180,9 @@ class SavedJobListView(generics.ListAPIView):
     pagination_class = SavedJobPagination
 
     def get_queryset(self):
-        return SavedJob.objects.filter(user=self.request.user)
+        queryset = SavedJob.objects.filter(user=self.request.user)
+        total_jobs = queryset.count()
+        return queryset
 
 
 class SavedJobDeleteView(generics.DestroyAPIView):
@@ -287,8 +289,10 @@ class MyAppliedJobsView(generics.ListAPIView):
     pagination_class = AppliedJobPagination
 
     def get_queryset(self):
-        return Application.objects.filter(user=self.request.user)
-
+        queryset = Application.objects.filter(user=self.request.user)
+        total_jobs = queryset.count()
+        print(total_jobs)
+        return queryset
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def forgot_password(request):
