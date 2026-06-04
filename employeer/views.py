@@ -321,7 +321,7 @@ def forgot_password(request):
         uid = urlsafe_base64_encode(force_bytes(user.id))
         token = password_reset_token.make_token(user)
 
-        reset_link = f"{os.environ['BACKEND_URL']}/reset-password/{uid}/{token}/"
+        reset_link = f"https://nvglobaltechtestemployerv10.vercel.app/reset-password/{uid}/{token}/"
 
         # 🔥 Send email using SendGrid
         send_email(
@@ -560,7 +560,7 @@ class EmployerApplicationsListView(generics.ListAPIView):
     filter_backends = [filters.SearchFilter]
     search_fields = ['user__full_name', 'job__title']
     def get_queryset(self):
-        # List applications for jobs belonging to the current employer
+        # List applications for jobs belonging to the 1current employer
         try:
             company_user = CompanyUser.objects.get(user=self.request.user)
         except CompanyUser.DoesNotExist:
@@ -569,7 +569,7 @@ class EmployerApplicationsListView(generics.ListAPIView):
         jobs = JobPosting.objects.filter(company_user=company_user)
 
         queryset = Application.objects.filter(job__in=jobs).order_by('-applied_at')
-        statuses = self.request.query_params.getlist('status')
+        statuses =[status.lower() if status == "Shortlisted" or status == "Rejected" else status for status in self.request.query_params.getlist('status')]
         if statuses and "All" not in statuses:
             queryset = queryset.filter(application_status__in=statuses)
 
@@ -679,7 +679,7 @@ class ApplicationUpdateView(generics.UpdateAPIView):
             )
         elif instance.application_status == "shortlisted":
             user_email = instance.user.email
-            link = (f"{os.environ['BACKEND_URL']}/job-details?id={instance.job.id}")
+            link = (f"https://nvglobaltechtestserver90.vercel.app/job-details?id={instance.job.id}")
 
             send_email(
                 to_email=user_email,
@@ -1284,7 +1284,7 @@ def add_sub_user(request):
         token = default_token_generator.make_token(current_company_user.user)
 
         verify_link = (
-            f"{os.environ['BACKEND_URL']}/"
+            f"https://nvglobaltechtestemployerv10.vercel.app/"
             f"confirm-otp/{uid}/{token}/"
         )
 
@@ -1524,7 +1524,7 @@ def resend_otp(request):
     token = default_token_generator.make_token(user)
 
     verify_link = (
-        f"{os.environ['BACKEND_URL']}/"
+        f"https://nvglobaltechtestemployerv10.vercel.app/"
         f"confirm-otp/{uid}/{token}/"
     )
 

@@ -156,7 +156,9 @@
           Hello <strong>{{ user.full_name }}</strong>,<br /><br />
 
           Your interview for the position of
-          <strong>{{ job }}</strong>
+          <strong><a href="{{ job_link }}"
+                  style="color:#2563eb; text-decoration:none; font-weight:bold;" target="_blank">
+                  {{ job_title }}</a></strong>
           has been successfully scheduled.
 
         </p>
