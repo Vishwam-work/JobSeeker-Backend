@@ -111,7 +111,7 @@ class JobPosting(models.Model):
     job_title = models.CharField(max_length=255, blank=True, null=True)
     company = models.CharField(max_length=255)
     location = models.CharField(max_length=255, blank=True, null=True)
-    experience = models.CharField(max_length=50)
+    experience = models.CharField(max_length=50, blank=True, null=True)
     currency = models.ForeignKey(master.Currency, on_delete=models.SET_NULL, blank=True, null=True, related_name="currency")
     salary = models.CharField(max_length=50, blank=True, null=True)
     salary_max = models.CharField(max_length=50, blank=True, null=True)

@@ -433,9 +433,21 @@ class AllJobsListView(generics.ListAPIView):
         location = self.request.query_params.get('location', None)
         company = self.request.query_params.getlist('company', None)
         search = self.request.query_params.get('search', None)
-        experience = self.request.query_params.getlist('experience', None)
+        # experience = self.request.query_params.getlist('experience', None)
         salary_ranges = self.request.query_params.getlist('salary_range', None)
+        min_experience = self.request.query_params.get('min_experience')
+        max_experience = self.request.query_params.get('max_experience')
         
+        queryset = queryset.annotate(
+            min_exp_int=Cast('min_experience', IntegerField()),
+            max_exp_int=Cast('max_experience', IntegerField())
+        )
+        if min_experience:
+            min_experience = int(min_experience)
+
+        if max_experience:
+            max_experience = int(max_experience)
+
         if job_type:
             queryset = [
             job for job in queryset
@@ -485,8 +497,26 @@ class AllJobsListView(generics.ListAPIView):
                     salary_query |= Q(salary_int__gte=min_salary) & Q(salary_int__lte=max_salary) | Q(salary_max_int__gte=min_salary) & Q(salary_max_int__lte=max_salary)
 
             queryset = queryset.filter(salary_query)
-        if experience:
-            queryset = queryset.filter(experience__in=experience)
+        # if experience:
+        #     queryset = queryset.filter(experience__in=experience)
+
+        if min_experience and not max_experience:
+            queryset = queryset.filter(
+                max_exp_int__gte=min_experience
+            )
+
+        # Only Max Experience selected
+        elif max_experience and not min_experience:
+            queryset = queryset.filter(
+                min_exp_int__lte=max_experience
+            )
+
+        # Both selected
+        elif min_experience and max_experience:
+            queryset = queryset.filter(
+                min_exp_int__lte=max_experience,
+                max_exp_int__gte=min_experience
+            )
         return queryset
 
 class JobPostingUpdateView(generics.UpdateAPIView):
