@@ -745,7 +745,7 @@ class ScheduleInterviewView(generics.UpdateAPIView):
                 template_name="Interview_schedule.html",
                 context={
                     "user": instance.user,
-                    "job": instance.job.title,
+                    "job_title": instance.job.title,
                     "date": instance.interview_date,
                     "time": instance.interview_time,
                     "timezone": instance.timezone,
