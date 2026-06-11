@@ -695,7 +695,7 @@ class ApplicationUpdateView(generics.UpdateAPIView):
         instance = serializer.save()
         if instance.application_status == "rejected":
             user_email = instance.user.email
-
+            link = (f"https://nvglobaltechtestserver90.vercel.app/job-details?id={instance.job.id}")
             send_email(
                 to_email=user_email,
                 subject="Application Rejected",
@@ -703,6 +703,7 @@ class ApplicationUpdateView(generics.UpdateAPIView):
                 context={
                     "user": instance.user,
                     "job_title": instance.job.title,
+                    "job_link": link,
                     "company_name": instance.job.company_user.company.company_name,
                     "application_status": instance.application_status
                 }
@@ -739,6 +740,9 @@ class ScheduleInterviewView(generics.UpdateAPIView):
     def perform_update(self, serializer):
         instance = serializer.save(application_status="Interview Scheduled")
         email = instance.user.email
+
+        link = (f"https://nvglobaltechtestserver90.vercel.app/job-details?id={instance.job.id}")
+
         send_email(
                 to_email=email,
                 subject="Interview Scheduled",
@@ -752,7 +756,8 @@ class ScheduleInterviewView(generics.UpdateAPIView):
                     "mode": instance.interview_mode,
                     "link": instance.meet_link,
                     "notes": instance.notes,
-                    "status": instance.application_status  #choices must be fromm the application model.
+                    "status": instance.application_status,  #choices must be fromm the application model.,
+                    "job_link": link
                 }
         )
 
