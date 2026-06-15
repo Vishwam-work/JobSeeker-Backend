@@ -620,6 +620,8 @@ class EmployerApplicationsListView(generics.ListAPIView):
             queryset = queryset.filter(user__profile__experience__icontains=experience)
 
         return queryset
+    
+        
 
 # View to get the list of candidates for a specific job
 class CandidateListView(generics.ListAPIView):
