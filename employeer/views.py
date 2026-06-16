@@ -46,6 +46,11 @@ OTP_RESEND_COOLDOWN_SECONDS = 60
 MAX_OTP_ATTEMPTS = 3
 SUBUSER_EXPIRY_MINUTES = 1
 
+class CompanyListPagination(PageNumberPagination):
+    page_size = 1
+    page_size_query_param = 'page_size'
+    max_page_size = 50
+
 
 def hash_otp(otp: str) -> str:
     secret = settings.SECRET_KEY
@@ -632,13 +637,71 @@ class CandidateListView(generics.ListAPIView):
         job_id = self.kwargs['job_id']
         return Application.objects.filter(job_id=job_id).order_by('-applied_at')
 
+from django.db.models import Q
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
+
 @api_view(['GET'])
 @permission_classes([AllowAny])
 def company_list(request):
-    """List all companies"""
     companies = CompanyUser.objects.filter(role="employer")
-    serializer = CompanyListSerializer(companies, many=True)
-    return Response(serializer.data)
+    # pagination_class = PageNumberPagination
+    # pagination_class.page_size = 1
+
+    search = request.GET.get("search")
+    company_type = request.GET.get("company_type")
+    state = request.GET.get("state")
+    industry = request.GET.get("industry")
+    company_size = request.GET.get("company_size")
+    
+    # Search
+    if search:
+        companies = companies.filter(
+            Q(company__company_name__icontains=search) |
+            Q(company__company_type__icontains=search) |
+            Q(company__state__name__icontains=search) |
+            Q(company__country__name__icontains=search) |
+            Q(company__city__name__icontains=search) |
+            Q(company__industry__icontains=search)
+        )
+
+    if company_type:
+        companies = companies.filter(
+            company__company_type__iexact=company_type
+        )
+
+    if state:
+        companies = companies.filter(
+            company__state__name__iexact=state
+        )
+    
+    if industry:
+        companies = companies.filter(
+            company__industry__iexact=industry
+        )
+
+    if company_size:
+        companies = companies.filter(
+            company__company_size__iexact=company_size
+        )
+
+    paginator = PageNumberPagination()
+    paginator.page_size = 1
+
+    result_page = paginator.paginate_queryset(
+        companies.distinct(),
+        request
+    )
+
+    serializer = CompanyListSerializer(
+        result_page,
+        many=True
+    )
+
+    return paginator.get_paginated_response(
+        serializer.data
+    )
 
 @api_view(['GET'])
 def company_detail(request, pk):
@@ -1146,6 +1209,7 @@ def logo_upload(request):
 
 class SavedProfileListCreateView(APIView):
 
+    pagination_class = SavedProfPagination 
     def post(self, request):
         profile_id = request.data.get("profile")
 
