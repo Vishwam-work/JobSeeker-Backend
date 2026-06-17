@@ -646,8 +646,6 @@ from rest_framework.response import Response
 @permission_classes([AllowAny])
 def company_list(request):
     companies = CompanyUser.objects.filter(role="employer")
-    # pagination_class = PageNumberPagination
-    # pagination_class.page_size = 1
 
     search = request.GET.get("search")
     company_type = request.GET.get("company_type")
@@ -687,12 +685,9 @@ def company_list(request):
         )
 
     paginator = PageNumberPagination()
-    paginator.page_size = 1
+    paginator.page_size = 8
 
-    result_page = paginator.paginate_queryset(
-        companies.distinct(),
-        request
-    )
+    result_page = paginator.paginate_queryset(companies.distinct(),request)
 
     serializer = CompanyListSerializer(
         result_page,
@@ -1209,7 +1204,6 @@ def logo_upload(request):
 
 class SavedProfileListCreateView(APIView):
 
-    pagination_class = SavedProfPagination 
     def post(self, request):
         profile_id = request.data.get("profile")
 
@@ -1285,17 +1279,28 @@ class ViewedProfileAPIView(APIView):
             status=status.HTTP_200_OK
         )
 
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+
 class SavedProfilesAllView(APIView):
     permission_classes = [IsAuthenticated]
+    pagination_class = SavedProfPagination
+
     def get(self, request):
         try:
             company_user = CompanyUser.objects.get(user=request.user)
+
             saved_profiles = SaveProf.objects.filter(
                 user=company_user
             ).select_related("profile").order_by("-saved_at")
-            serializer = SavedProfileSerializer(saved_profiles, many=True)
 
-            return Response(serializer.data)
+            paginator = self.pagination_class()
+            page = paginator.paginate_queryset(saved_profiles, request)
+
+            serializer = SavedProfileSerializer(page, many=True)
+
+            return paginator.get_paginated_response(serializer.data)
 
         except CompanyUser.DoesNotExist:
             return Response(
