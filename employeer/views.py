@@ -1063,7 +1063,7 @@ class ProfileListAPIView(APIView):
 
             queryset = queryset.annotate(
                 experience_int=Cast(
-                    Replace('experience', Value(' years'), Value('')),
+                    Replace('experience', Value('years'), Value('')),
                     IntegerField()
                 )
             )
@@ -1144,6 +1144,26 @@ class ProfileListAPIView(APIView):
                     educations__education__name__in=degree_course
                 )
         return queryset.distinct() 
+    
+class SingleProfileAPIView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request, profile_id):
+        try:
+            profile = Profile.objects.get(id=profile_id,user__role='job_seeker')
+
+            serializer = ProfileSerializer(profile)
+
+            return Response({
+                "status": True,
+                "data": serializer.data
+            }, status=status.HTTP_200_OK)
+
+        except Profile.DoesNotExist:
+            return Response({
+                "status": False,
+                "message": "Profile not found"
+            }, status=status.HTTP_404_NOT_FOUND)
     
 class CompanyUserDetail(APIView):
     permission_classes = [permissions.IsAuthenticated]

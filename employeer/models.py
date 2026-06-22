@@ -1,8 +1,8 @@
 from django.conf import settings
 from django.db import models
 from master import models as master
-from job_app import models as job_app
-from job_app.models import CustomUser
+# from job_app import models as job_app
+# from job_app.models import CustomUser
 import uuid
 
 STATUS_CHOICES = [
@@ -145,7 +145,7 @@ class JobPosting(models.Model):
         return self.title
     
 class Answer(models.Model):
-    user = models.ForeignKey(job_app.CustomUser, on_delete=models.CASCADE, related_name='answers', null=True)
+    user = models.ForeignKey("job_app.CustomUser", on_delete=models.CASCADE, related_name='answers', null=True)
     job = models.ForeignKey(JobPosting, on_delete=models.CASCADE, related_name='answers')
     question_index = models.PositiveIntegerField()
     answer_text = models.TextField()
@@ -157,7 +157,7 @@ class Answer(models.Model):
         return f"{self.user} - {self.job.title} - Q{self.question_index}"
 
 class Application(models.Model):
-    user = models.ForeignKey(job_app.CustomUser, on_delete=models.CASCADE, related_name='applications')
+    user = models.ForeignKey("job_app.CustomUser", on_delete=models.CASCADE, related_name='applications')
     job = models.ForeignKey(JobPosting, on_delete=models.CASCADE, related_name='applications')
     applied_at = models.DateTimeField(auto_now_add=True)
     application_status = models.CharField(max_length=20, choices=[
@@ -205,7 +205,7 @@ class JobClickEvent(models.Model):
 
 class SaveProf(models.Model):
     user = models.ForeignKey(CompanyUser,on_delete=models.CASCADE,related_name='saved_profiles')
-    profile = models.ForeignKey(job_app.Profile,on_delete=models.CASCADE)
+    profile = models.ForeignKey("job_app.Profile",on_delete=models.CASCADE)
     saved_at = models.DateTimeField(auto_now_add=True,blank=True, null=True)
 
     class Meta:
