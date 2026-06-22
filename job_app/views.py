@@ -76,7 +76,8 @@ def register(request):
             email=user.email,
             phone=user.mobile_number,
             country_id=request.data.get("country_id"),
-            resume=resume_file if resume_file else None
+            resume=resume_file if resume_file else None,
+            phone_code=user.mobile_code
         )
         EmailOTP.objects.filter(email=email).delete()
         return Response({

@@ -24,6 +24,8 @@ class CustomUser(AbstractUser):
     is_verified = models.BooleanField(default=False)
     country_id = models.ForeignKey(master.Country, on_delete=models.SET_NULL, null=True, blank=True, related_name="users")
     role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='job_seeker') 
+    mobile_code = models.CharField(max_length=10, blank=True, null=True)
+
     def __str__(self):
         return self.email
 

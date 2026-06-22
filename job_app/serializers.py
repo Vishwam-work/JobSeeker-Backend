@@ -14,7 +14,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
     country_id = serializers.IntegerField(write_only=True, required=False, allow_null=True)
     class Meta:
         model = User
-        fields = ('full_name', 'email', 'password', 'mobile_number', 'work_status', 'receive_promotions', 'country_id')
+        fields = ('full_name', 'email', 'password', 'mobile_number', 'work_status', 'receive_promotions', 'country_id','mobile_code')
 
     def create(self, validated_data):
         country_id = validated_data.pop('country_id', None)
@@ -253,6 +253,7 @@ class ProfileSerializer(serializers.ModelSerializer):
                 )
 
         return instance
+    
 
 class SavedJobSerializer(serializers.ModelSerializer):
     job_title = serializers.CharField(source="job.title", read_only=True)
