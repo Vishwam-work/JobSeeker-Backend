@@ -420,109 +420,244 @@ class JobPostingListView(generics.ListAPIView):
         return queryset
         # return JobPosting.objects.filter(company_user=company_user).order_by('-created_at')
 
+# class AllJobsListView(generics.ListAPIView):
+#     """
+#     View to fetch all jobs from the database
+#     This view is publicly accessible and returns all active job postings
+#     """
+#     serializer_class = JobPostingSerializer
+#     permission_classes = [AllowAny]
+#     pagination_class = PageNumberPagination
+#     queryset = JobPosting.objects.filter(status='active').order_by('-created_at')
+
+#     def get_queryset(self):
+#         self.pagination_class.page_size = 7
+#         queryset = JobPosting.objects.filter(status='active').order_by('-created_at')
+#         job_type = self.request.query_params.getlist('job_type', None)
+#         work_mode = self.request.query_params.getlist('work_mode', None)
+#         location = self.request.query_params.get('location', None)
+#         company = self.request.query_params.getlist('company', None)
+#         search = self.request.query_params.get('search', None)
+#         # experience = self.request.query_params.getlist('experience', None)
+#         salary_ranges = self.request.query_params.getlist('salary_range', None)
+#         min_experience = self.request.query_params.get('min_experience')
+#         max_experience = self.request.query_params.get('max_experience')
+
+#         print(job_type)
+#         print(work_mode)
+#         print(location)
+#         print(company)
+#         print(search)
+#         # print(experience)
+#         print(salary_ranges)
+#         print(min_experience)
+#         print(max_experience)
+#         print("*"*50)
+
+        
+#         queryset = queryset.annotate(
+#             min_exp_int=Cast('min_experience', IntegerField()),
+#             max_exp_int=Cast('max_experience', IntegerField())
+#         )
+#         if min_experience:
+#             print(min_experience)
+#             min_experience = int(min_experience)
+
+#         if max_experience:
+#             print(max_experience)
+#             max_experience = int(max_experience)
+
+#         if job_type:
+#             print(job_type)
+#             queryset = [
+#             job for job in queryset
+#             if any(
+#                 jt.replace("-", " ").lower() in
+#                 [(j.replace("-", " ").lower()) for j in (job.job_type or [])]
+#                 for jt in job_type
+#             )
+#             ]
+            
+#             print(type(queryset))
+
+#         if work_mode:
+#             queryset = queryset.filter(work_mode=work_mode)
+             
+#         if location:
+#             location_query = Q(location=location)
+#             queryset = queryset.filter(location_query)
+
+#         if company:
+#             company_query = Q()
+#             for comp in company:
+#                 company_query |= Q(company__iexact=comp)
+
+#             queryset = queryset.filter(company_query)
+
+#         if search:
+#             queryset = queryset.filter(
+#                 Q(title__icontains=search) |
+#                 Q(company__icontains=search) |
+#                 Q(location__icontains=search)
+#             )
+#         if salary_ranges:
+#             queryset = queryset.annotate(
+#                 salary_int=Cast('salary', IntegerField()),
+#                 salary_max_int=Cast('salary_max', IntegerField())
+#             )
+
+#             print(type(queryset))
+
+#             salary_query = Q()
+
+#             for sr in salary_ranges:
+#                 if "+" in sr:
+#                     min_salary = int(sr.replace("+", "")) * 100000
+#                     salary_query |= Q(salary_int__gte=min_salary) | Q(salary_max_int__gte=min_salary)
+
+#                 elif "-" in sr:
+#                     min_salary, max_salary = sr.split('-')
+#                     min_salary = int(min_salary) * 100000
+#                     max_salary = int(max_salary) * 100000
+
+#                     salary_query |= Q(salary_int__gte=min_salary) & Q(salary_int__lte=max_salary) | Q(salary_max_int__gte=min_salary) & Q(salary_max_int__lte=max_salary)
+
+#             queryset = queryset.filter(salary_query)
+#         # if experience:
+#         #     queryset = queryset.filter(experience__in=experience)
+
+#         if min_experience and not max_experience:
+#             queryset = queryset.filter(
+#                 max_exp_int__gte=min_experience
+#             )
+
+#         # Only Max Experience selected
+#         elif max_experience and not min_experience:
+#             queryset = queryset.filter(
+#                 min_exp_int__lte=max_experience
+#             )
+
+#         # Both selected
+#         elif min_experience and max_experience:
+#             queryset = queryset.filter(
+#                 min_exp_int__lte=max_experience,
+#                 max_exp_int__gte=min_experience
+#             )
+#         return queryset
+
 class AllJobsListView(generics.ListAPIView):
-    """
-    View to fetch all jobs from the database
-    This view is publicly accessible and returns all active job postings
-    """
     serializer_class = JobPostingSerializer
     permission_classes = [AllowAny]
     pagination_class = PageNumberPagination
-    queryset = JobPosting.objects.filter(status='active').order_by('-created_at')
 
     def get_queryset(self):
         self.pagination_class.page_size = 7
-        queryset = JobPosting.objects.filter(status='active').order_by('-created_at')
-        job_type = self.request.query_params.getlist('job_type', None)
-        work_mode = self.request.query_params.getlist('work_mode', None)
-        location = self.request.query_params.get('location', None)
-        company = self.request.query_params.getlist('company', None)
-        search = self.request.query_params.get('search', None)
-        # experience = self.request.query_params.getlist('experience', None)
-        salary_ranges = self.request.query_params.getlist('salary_range', None)
+
+        queryset = JobPosting.objects.filter(
+            status='active'
+        ).order_by('-created_at')
+
+        work_mode = self.request.query_params.getlist('work_mode')
+        location = self.request.query_params.get('location')
+        company = self.request.query_params.getlist('company')
+        search = self.request.query_params.get('search')
+        salary_ranges = self.request.query_params.getlist('salary_range')
         min_experience = self.request.query_params.get('min_experience')
         max_experience = self.request.query_params.get('max_experience')
-        
+
         queryset = queryset.annotate(
             min_exp_int=Cast('min_experience', IntegerField()),
-            max_exp_int=Cast('max_experience', IntegerField())
+            max_exp_int=Cast('max_experience', IntegerField()),
+            salary_int=Cast('salary', IntegerField()),
+            salary_max_int=Cast('salary_max', IntegerField())
         )
-        if min_experience:
-            min_experience = int(min_experience)
 
-        if max_experience:
-            max_experience = int(max_experience)
-
-        if job_type:
-            queryset = [
-            job for job in queryset
-            if any(
-                jt.replace("-", " ").lower() in
-                [(j.replace("-", " ").lower()) for j in (job.job_type or [])]
-                for jt in job_type
-            )
-            ]
-        if work_mode:
-            print(work_mode)
-            queryset = [
-                job for job in queryset
-                if any(wm in (job.work_mode or []) for wm in work_mode)
-            ]
-        if location:
-            queryset = queryset.filter(location=location)
-        if company:
-            queryset = [
-                comp for comp in queryset
-                if any(wm in (comp.company or []) for wm in company)
-            ]
+        # Search
         if search:
             queryset = queryset.filter(
                 Q(title__icontains=search) |
                 Q(company__icontains=search) |
                 Q(location__icontains=search)
             )
-        if salary_ranges:
-            queryset = queryset.annotate(
-                salary_int=Cast('salary', IntegerField()),
-                salary_max_int=Cast('salary_max', IntegerField())
-            )
 
+        # Work Mode
+        if work_mode:
+            work_mode = [wm.lower() for wm in work_mode]
+            queryset = queryset.filter(work_mode__in=work_mode)
+
+        # Location
+        if location:
+            queryset = queryset.filter(location__iexact=location)
+
+        # Company
+        if company:
+            queryset = queryset.filter(company__in=company)
+
+        # Salary
+        if salary_ranges:
             salary_query = Q()
 
             for sr in salary_ranges:
                 if "+" in sr:
                     min_salary = int(sr.replace("+", "")) * 100000
-                    salary_query |= Q(salary_int__gte=min_salary) | Q(salary_max_int__gte=min_salary)
+                    salary_query |= Q(salary_int__gte=min_salary)
 
                 elif "-" in sr:
                     min_salary, max_salary = sr.split('-')
                     min_salary = int(min_salary) * 100000
                     max_salary = int(max_salary) * 100000
 
-                    salary_query |= Q(salary_int__gte=min_salary) & Q(salary_int__lte=max_salary) | Q(salary_max_int__gte=min_salary) & Q(salary_max_int__lte=max_salary)
+                    salary_query |= Q(
+                        salary_int__gte=min_salary,
+                        salary_int__lte=max_salary
+                    )
 
             queryset = queryset.filter(salary_query)
-        # if experience:
-        #     queryset = queryset.filter(experience__in=experience)
+
+        # Experience
+        if min_experience:
+            min_experience = int(min_experience)
+
+        if max_experience:
+            max_experience = int(max_experience)
 
         if min_experience and not max_experience:
-            queryset = queryset.filter(
-                max_exp_int__gte=min_experience
-            )
+            queryset = queryset.filter(max_exp_int__gte=min_experience)
 
-        # Only Max Experience selected
         elif max_experience and not min_experience:
-            queryset = queryset.filter(
-                min_exp_int__lte=max_experience
-            )
+            queryset = queryset.filter(min_exp_int__lte=max_experience)
 
-        # Both selected
         elif min_experience and max_experience:
             queryset = queryset.filter(
                 min_exp_int__lte=max_experience,
                 max_exp_int__gte=min_experience
             )
+
         return queryset
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        job_type = request.query_params.getlist('job_type')
+
+        # JSONField filter here
+        if job_type:
+            queryset = [
+                job for job in queryset
+                if any(
+                    jt.lower().replace(" ", "-") in
+                    [j.lower() for j in (job.job_type or [])]
+                    for jt in job_type
+                )
+            ]
+
+        page = self.paginate_queryset(queryset)
+
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
 
 class JobPostingUpdateView(generics.UpdateAPIView):
     queryset = JobPosting.objects.all()
@@ -648,10 +783,10 @@ def company_list(request):
     companies = CompanyUser.objects.filter(role="employer")
 
     search = request.GET.get("search")
-    company_type = request.GET.get("company_type")
+    company_type = request.GET.getlist("company_type")
     state = request.GET.get("state")
-    industry = request.GET.get("industry")
-    company_size = request.GET.get("company_size")
+    industry = request.GET.getlist("industry")
+    company_size = request.GET.getlist("company_size")
     
     # Search
     if search:
@@ -666,7 +801,7 @@ def company_list(request):
 
     if company_type:
         companies = companies.filter(
-            company__company_type__iexact=company_type
+            company__company_type__in=company_type
         )
 
     if state:
@@ -676,12 +811,12 @@ def company_list(request):
     
     if industry:
         companies = companies.filter(
-            company__industry__iexact=industry
+            company__industry__in=industry
         )
 
     if company_size:
         companies = companies.filter(
-            company__company_size__iexact=company_size
+            company__company_size__in=company_size
         )
 
     paginator = PageNumberPagination()
