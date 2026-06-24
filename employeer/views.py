@@ -564,6 +564,7 @@ class AllJobsListView(generics.ListAPIView):
         salary_ranges = self.request.query_params.getlist('salary_range')
         min_experience = self.request.query_params.get('min_experience')
         max_experience = self.request.query_params.get('max_experience')
+        posted_within = self.request.query_params.get('posted_within')
 
         queryset = queryset.annotate(
             min_exp_int=Cast('min_experience', IntegerField()),
@@ -632,7 +633,11 @@ class AllJobsListView(generics.ListAPIView):
                 min_exp_int__lte=max_experience,
                 max_exp_int__gte=min_experience
             )
-
+        if posted_within:
+            posted_within = int(posted_within)
+            now = timezone.now()
+            queryset = queryset.filter(created_at__gte=now - timedelta(days=posted_within))
+            
         return queryset
 
     def list(self, request, *args, **kwargs):
