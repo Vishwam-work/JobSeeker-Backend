@@ -19,5 +19,6 @@ urlpatterns = [
     path('api/my-applied-jobs/', views.MyAppliedJobsView.as_view(), name='my-applied-jobs'),
     path('api/reset-password/', views.reset_password, name='request-password-reset'),
     path('api/forgot-password/', views.forgot_password, name='forgot-password'),
-    path('api/profile/upload-profile-image/', views.image_upload, name='upload-profile-image')
+    path('api/profile/upload-profile-image/', views.image_upload, name='upload-profile-image'),
+    path('api/download-resume/<int:profile_id>/',views.DownloadResumeView.as_view(),name="download-resume"),
 ]+static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
