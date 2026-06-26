@@ -2,6 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
+<!-- <link rel="stylesheet" href="path/to/font-awesome/css/font-awesome.min.css"> -->
 <style>
 @page {
     size: A4;
@@ -104,18 +105,18 @@ h3 {
     <div class="section">
     <div class="section-title">CONTACT</div>
 
-    <p><span class="icon">☎</span> +{{ profile.phone_code }} {{ profile.phone }}</p>
+    <p><span class="icon">•</span> +{{ profile.phone_code }} {{ profile.phone }}</p>
 
-    <p><span class="icon">✉</span> {{ profile.email }}</p>
+    <p><span class="icon">•</span> {{ profile.email }}</p>
 
     <p>
-        <span class="icon">🏠</span>
+        <span class="icon">•</span>
         {% if profile.city %}{{ profile.city.name }}{% endif %}
         {% if profile.state %}, {{ profile.state.name }}{% endif %}
         {% if profile.country %}, {{ profile.country.name }}{% endif %}
     </p>
 
-    <p><span class="icon">🕒</span> {{ profile.notice_period }}</p>
+    <p><span class="icon">•</span> {{ profile.notice_period }}</p>
     </div>
 
     {% if profile.skills %}

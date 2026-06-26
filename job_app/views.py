@@ -420,6 +420,7 @@ class DownloadResumeView(APIView):
 
     def generate_pdf(self, request, profile_id):
         try:
+           
             profile = Profile.objects.prefetch_related(
                 "skills",
                 "experiences",
@@ -430,7 +431,7 @@ class DownloadResumeView(APIView):
                 "state",
                 "city"
             ).get(id=profile_id)
-
+            
             serializer = ProfileSerializer(profile)
             data = serializer.data
 
@@ -439,7 +440,7 @@ class DownloadResumeView(APIView):
                 data["profile_image"] = request.build_absolute_uri(
                     data["profile_image"]
                 )
-
+            
             html_string = render_to_string(
                 "resume_template.html",
                 {"profile": data}
@@ -453,7 +454,7 @@ class DownloadResumeView(APIView):
                     a.decompose()
 
                 data["professional_summary"] = str(soup)
-
+            
             path_wkhtmltopdf = os.path.join(
                 settings.BASE_DIR,
                 "media",
@@ -471,14 +472,14 @@ class DownloadResumeView(APIView):
                 "margin-left": "0",
                 "enable-local-file-access": ""
             }
-
+            
             pdf = pdfkit.from_string(
                 html_string,
                 False,
                 configuration=config,
                 options=options
             )
-
+            
             response = HttpResponse(
                 pdf,
                 content_type="application/pdf"
