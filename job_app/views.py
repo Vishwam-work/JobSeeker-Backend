@@ -409,9 +409,9 @@ def google_login(request):
         print("ERROR:", str(e))
         return Response({"error": str(e)}, status=400)
     
-@api_view(['POST'])
-@permission_classes([AllowAny])
+
 class DownloadResumeView(APIView):
+    permission_classes = [permissions.AllowAny]
 
     def get(self, request, profile_id):
         return self.generate_pdf(request, profile_id)
