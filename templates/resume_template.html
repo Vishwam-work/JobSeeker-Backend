@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<!-- <link rel="stylesheet" href="path/to/font-awesome/css/font-awesome.min.css"> -->
+<style>
+@page {
+    size: A4;
+    margin: 0;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+.header {
+    background: #334155;
+    color: white;
+    text-align: center;
+    padding: 25px;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.layout {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.sidebar {
+    width: 32%;
+    background: #e5e7eb;
+    vertical-align: top;
+    padding: 20px;
+}
+
+.main {
+    width: 68%;
+    vertical-align: top;
+    padding: 20px;
+}
+
+.section {
+    margin-bottom: 25px;
+}
+
+.section-title {
+    font-size: 22px;
+    font-weight: bold;
+    border-bottom: 2px solid #334155;
+    margin-bottom: 15px;
+}
+
+.profile-image {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.profile-image img {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+}
+
+p {
+    margin: 5px 0;
+    line-height: 1.5;
+}
+
+h3 {
+    margin: 0;
+}
+.icon {
+    /* display: inline-block; */
+    width: 20px;
+    font-weight: bold;
+}
+.summary p {
+    margin: 8px 0;
+}
+
+.summary ul {
+    padding-left: 20px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+    {{ profile.full_name }}
+</div>
+
+<table class="layout">
+<tr>
+
+<td class="sidebar">
+
+    {% if profile.profile_image %}
+    <div class="profile-image">
+        <img src="{{ profile.profile_image }}">
+    </div>
+    {% endif %}
+    <div class="section">
+    <div class="section-title">CONTACT</div>
+
+    <p><span class="icon">•</span> +{{ profile.phone_code }} {{ profile.phone }}</p>
+
+    <p><span class="icon">•</span> {{ profile.email }}</p>
+
+    <p>
+        <span class="icon">•</span>
+        {% if profile.city %}{{ profile.city.name }}{% endif %}
+        {% if profile.state %}, {{ profile.state.name }}{% endif %}
+        {% if profile.country %}, {{ profile.country.name }}{% endif %}
+    </p>
+
+    <p><span class="icon">•</span> {{ profile.notice_period }}</p>
+    </div>
+
+    {% if profile.skills %}
+    <div class="section">
+        <div class="section-title">SKILLS</div>
+        {% for skill in profile.skills %}
+            <p>• {{ skill.name }}</p>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if profile.certifications %}
+    <div class="section">
+        <div class="section-title">CERTIFICATIONS</div>
+        {% for cert in profile.certifications %}
+            <p><b>{{ cert.name }}</b></p>
+            <p>{{ cert.issuer }}</p>
+            <p>{{ cert.year }}</p>
+            <br>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+</td>
+
+<td class="main">
+
+    {% if profile.professional_summary %}
+    <div class="section">
+        <div class="section-title">PROFESSIONAL SUMMARY</div>
+        <div class="summary">
+            {{ profile.professional_summary|safe }}
+        </div>
+    </div>
+    {% endif %}
+
+    {% if profile.experiences %}
+    <div class="section">
+        <div class="section-title">EXPERIENCE</div>
+        {% for exp in profile.experiences %}
+            <h3>{{ exp.company }}</h3>
+            <p>{{ exp.job_title }}</p>
+            <p>
+                {{ exp.start_date }} -
+                {% if exp.end_date %}
+                    {{ exp.end_date }}
+                {% else %}
+                    Present
+                {% endif %}
+            </p>
+            <p>{{ exp.description }}</p>
+            <br>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if profile.educations %}
+    <div class="section">
+        <div class="section-title">EDUCATION</div>
+        {% for edu in profile.educations %}
+            <h3>
+                {% if edu.course_detail %}
+                    {{ edu.course_detail.name }}
+                {% endif %}
+            </h3>
+
+            <p>{{ edu.institution }}</p>
+            <p>{{ edu.start_year }} - {{ edu.end_year }}</p>
+            <p>{{ edu.percentage }} ({{ edu.score_type }})</p>
+            <br>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+</td>
+
+</tr>
+</table>
+
+</body>
+</html>
