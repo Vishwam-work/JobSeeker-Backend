@@ -2,86 +2,99 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<!-- <link rel="stylesheet" href="path/to/font-awesome/css/font-awesome.min.css"> -->
 <style>
 @page {
     size: A4;
     margin: 0;
 }
 
-body {
+* {
+    box-sizing: border-box;
+}
+
+html, body {
     margin: 0;
+    padding: 0;
     font-family: Arial, sans-serif;
+    font-size: 13px;
+    /* -webkit-print-color-adjust: exact; */
+}
+
+body {
+    width: 210mm;
 }
 
 .header {
     background: #334155;
     color: white;
     text-align: center;
-    padding: 25px;
-    font-size: 28px;
+    padding: 18px;
+    font-size: 24px;
     font-weight: bold;
 }
 
 .layout {
+    display: flex;
     width: 100%;
-    border-collapse: collapse;
 }
 
 .sidebar {
     width: 32%;
     background: #e5e7eb;
-    vertical-align: top;
-    padding: 20px;
+    padding: 16px;
 }
 
 .main {
     width: 68%;
-    vertical-align: top;
-    padding: 20px;
+    padding: 16px;
 }
 
 .section {
-    margin-bottom: 25px;
+    margin-bottom: 18px;
 }
 
 .section-title {
-    font-size: 22px;
+    font-size: 18px;
     font-weight: bold;
     border-bottom: 2px solid #334155;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
+    padding-bottom: 3px;
 }
 
 .profile-image {
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 16px;
 }
 
 .profile-image img {
-    width: 120px;
-    height: 120px;
+    width: 100px;
+    height: 100px;
     border-radius: 50%;
+    object-fit: cover;
 }
 
 p {
-    margin: 5px 0;
-    line-height: 1.5;
+    margin: 3px 0;
+    line-height: 1.4;
 }
 
 h3 {
     margin: 0;
+    font-size: 14px;
 }
+
 .icon {
-    /* display: inline-block; */
-    width: 20px;
+    width: 15px;
+    display: inline-block;
     font-weight: bold;
 }
+
 .summary p {
-    margin: 8px 0;
+    margin: 5px 0;
 }
 
 .summary ul {
-    padding-left: 20px;
+    padding-left: 18px;
 }
 </style>
 </head>
@@ -92,31 +105,31 @@ h3 {
     {{ profile.full_name }}
 </div>
 
-<table class="layout">
-<tr>
+<div class="layout">
 
-<td class="sidebar">
+<div class="sidebar">
 
     {% if profile.profile_image %}
     <div class="profile-image">
         <img src="{{ profile.profile_image }}">
     </div>
     {% endif %}
+
     <div class="section">
-    <div class="section-title">CONTACT</div>
+        <div class="section-title">CONTACT</div>
 
-    <p><span class="icon">•</span> +{{ profile.phone_code }} {{ profile.phone }}</p>
+        <p><span class="icon">•</span> +{{ profile.phone_code }} {{ profile.phone }}</p>
 
-    <p><span class="icon">•</span> {{ profile.email }}</p>
+        <p><span class="icon">•</span> {{ profile.email }}</p>
 
-    <p>
-        <span class="icon">•</span>
-        {% if profile.city %}{{ profile.city.name }}{% endif %}
-        {% if profile.state %}, {{ profile.state.name }}{% endif %}
-        {% if profile.country %}, {{ profile.country.name }}{% endif %}
-    </p>
+        <p>
+            <span class="icon">•</span>
+            {% if profile.city %}{{ profile.city.name }}{% endif %}
+            {% if profile.state %}, {{ profile.state.name }}{% endif %}
+            {% if profile.country %}, {{ profile.country.name }}{% endif %}
+        </p>
 
-    <p><span class="icon">•</span> {{ profile.notice_period }}</p>
+        <p><span class="icon">•</span> {{ profile.notice_period }}</p>
     </div>
 
     {% if profile.skills %}
@@ -140,9 +153,9 @@ h3 {
     </div>
     {% endif %}
 
-</td>
+</div>
 
-<td class="main">
+<div class="main">
 
     {% if profile.professional_summary %}
     <div class="section">
@@ -191,10 +204,9 @@ h3 {
     </div>
     {% endif %}
 
-</td>
+</div>
 
-</tr>
-</table>
+</div>
 
 </body>
 </html>

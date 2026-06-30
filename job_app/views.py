@@ -34,6 +34,7 @@ from django.template.loader import render_to_string
 import pdfkit
 from bs4 import BeautifulSoup
 import os
+from playwright.sync_api import sync_playwright
 
 class AppliedJobPagination(PageNumberPagination):
     page_size = 5
@@ -409,9 +410,102 @@ def google_login(request):
         print("ERROR:", str(e))
         return Response({"error": str(e)}, status=400)
     
+# @api_view(['POST'])
+# class DownloadResumeView(APIView):
+#     permission_classes([AllowAny])
+#     def get(self, request, profile_id):
+#         return self.generate_pdf(request, profile_id)
 
+#     def post(self, request, profile_id):
+#         return self.generate_pdf(request, profile_id)
+
+#     def generate_pdf(self, request, profile_id):
+#         try:
+           
+#             profile = Profile.objects.prefetch_related(
+#                 "skills",
+#                 "experiences",
+#                 "educations",
+#                 "certifications"
+#             ).select_related(
+#                 "country",
+#                 "state",
+#                 "city"
+#             ).get(id=profile_id)
+            
+#             serializer = ProfileSerializer(profile)
+#             data = serializer.data
+
+#             # Full image URL
+#             if data.get("profile_image"):
+#                 data["profile_image"] = request.build_absolute_uri(
+#                     data["profile_image"]
+#                 )
+            
+#             html_string = render_to_string(
+#                 "resume_template.html",
+#                 {"profile": data}
+#             )
+
+#             summary = data.get("professional_summary", "")
+#             if summary:
+#                 soup = BeautifulSoup(summary, "html.parser")
+
+#                 for a in soup.find_all("a"):
+#                     a.decompose()
+
+#                 data["professional_summary"] = str(soup)
+            
+#             path_wkhtmltopdf = os.path.join(
+#                 settings.BASE_DIR,
+#                 "job_app",
+#                 "wkhtmltopdf.exe"
+#             )
+
+#             config = pdfkit.configuration(wkhtmltopdf=path_wkhtmltopdf)
+
+#             options = {
+#                 "page-size": "A4",
+#                 "encoding": "UTF-8",
+#                 "margin-top": "0",
+#                 "margin-right": "0",
+#                 "margin-bottom": "0",
+#                 "margin-left": "0",
+#                 "enable-local-file-access": ""
+#             }
+            
+#             pdf = pdfkit.from_string(
+#                 html_string,
+#                 False,
+#                 configuration=config,
+#                 options=options
+#             )
+            
+#             response = HttpResponse(
+#                 pdf,
+#                 content_type="application/pdf"
+#             )
+
+#             response["Content-Disposition"] = (
+#                 f'attachment; filename="resume_{profile_id}.pdf"'
+#             )
+
+#             return response
+
+#         except Profile.DoesNotExist:
+#             return Response(
+#                 {"error": "Profile not found"},
+#                 status=404
+#             )
+
+#         except Exception as e:
+#             return Response(
+#                 {"error": str(e)},
+#                 status=500
+#             )
+        
 class DownloadResumeView(APIView):
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [AllowAny]
 
     def get(self, request, profile_id):
         return self.generate_pdf(request, profile_id)
@@ -421,7 +515,6 @@ class DownloadResumeView(APIView):
 
     def generate_pdf(self, request, profile_id):
         try:
-           
             profile = Profile.objects.prefetch_related(
                 "skills",
                 "experiences",
@@ -432,7 +525,7 @@ class DownloadResumeView(APIView):
                 "state",
                 "city"
             ).get(id=profile_id)
-            
+
             serializer = ProfileSerializer(profile)
             data = serializer.data
 
@@ -441,12 +534,8 @@ class DownloadResumeView(APIView):
                 data["profile_image"] = request.build_absolute_uri(
                     data["profile_image"]
                 )
-            
-            html_string = render_to_string(
-                "resume_template.html",
-                {"profile": data}
-            )
 
+            # Clean professional summary
             summary = data.get("professional_summary", "")
             if summary:
                 soup = BeautifulSoup(summary, "html.parser")
@@ -455,32 +544,38 @@ class DownloadResumeView(APIView):
                     a.decompose()
 
                 data["professional_summary"] = str(soup)
-            
-            path_wkhtmltopdf = os.path.join(
-                settings.BASE_DIR,
-                "job_app",
-                "wkhtmltopdf.exe"
+
+            html_string = render_to_string(
+                "resume_template.html",
+                {"profile": data}
             )
 
-            config = pdfkit.configuration(wkhtmltopdf=path_wkhtmltopdf)
+            # Generate PDF using Playwright
+            with sync_playwright() as p:
+                browser = p.chromium.launch(headless=True)
 
-            options = {
-                "page-size": "A4",
-                "encoding": "UTF-8",
-                "margin-top": "0",
-                "margin-right": "0",
-                "margin-bottom": "0",
-                "margin-left": "0",
-                "enable-local-file-access": ""
-            }
-            
-            pdf = pdfkit.from_string(
-                html_string,
-                False,
-                configuration=config,
-                options=options
-            )
-            
+                page = browser.new_page()
+
+                page.set_content(
+                    html_string,
+                    wait_until="networkidle"
+                )
+
+                page.emulate_media(media="screen")
+
+                pdf = page.pdf(
+                    format="A4",
+                    print_background=True,
+                    margin={
+                        "top": "0px",
+                        "right": "0px",
+                        "bottom": "0px",
+                        "left": "0px",
+                    }
+                )
+
+                browser.close()
+
             response = HttpResponse(
                 pdf,
                 content_type="application/pdf"
@@ -503,4 +598,3 @@ class DownloadResumeView(APIView):
                 {"error": str(e)},
                 status=500
             )
-        
