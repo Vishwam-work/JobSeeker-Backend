@@ -458,7 +458,7 @@ class DownloadResumeView(APIView):
             
             path_wkhtmltopdf = os.path.join(
                 settings.BASE_DIR,
-                "media",
+                "job_app",
                 "wkhtmltopdf.exe"
             )
 
