@@ -1,12 +1,10 @@
 import os
 import secrets
 import logging
+from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
 from jinja2 import Environment, FileSystemLoader
 from django.contrib.auth.tokens import PasswordResetTokenGenerator,default_token_generator
-from django.core.mail import EmailMessage
-from django.template.loader import render_to_string
-from django.conf import settings
 
 logger = logging.getLogger(__name__)
 
@@ -16,27 +14,24 @@ def generate_otp():
     return str(secrets.randbelow(900000) + 100000)
 
 def send_email(to_email, subject, template_name, context):
+    env = Environment(
+        loader=FileSystemLoader(os.path.join(BASE_DIR, "templates"))
+    )
+    template = env.get_template(template_name)
+    html_content = template.render(context)
+
+    message = Mail(
+        from_email="ruchi@nvglobaltech.com",
+        to_emails=to_email,
+        subject=subject,
+        html_content=html_content
+    )
     try:
-        html_content = render_to_string(
-            template_name,
-            context
-        )
-
-        email = EmailMessage(
-            subject=subject,
-            body=html_content,
-            from_email=settings.SYSTEM_EMAIL_FROM_EMAIL,
-            to=[to_email],
-        )
-
-        email.content_subtype = "html"
-
-        email.send(fail_silently=False)
-
+        sg = SendGridAPIClient(os.environ["SECRET_KEY"])
+        sg.send(message)
         return True
-
     except Exception:
-        logger.exception("SMTP email failed")
+        logger.exception("SendGrid email failed")
         return False
 
 

@@ -14,7 +14,6 @@ from pathlib import Path
 import os
 from dotenv import load_dotenv
 
-
 load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -204,17 +203,10 @@ AUTH_USER_MODEL = 'job_app.CustomUser'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-
-EMAIL_HOST = os.getenv("SYSTEM_EMAIL_HOST")
-EMAIL_PORT = int(os.getenv("SYSTEM_EMAIL_PORT", 587))
-
-EMAIL_HOST_USER = os.getenv("SYSTEM_EMAIL_USERNAME")
-EMAIL_HOST_PASSWORD = os.getenv("SYSTEM_EMAIL_PASSWORD")
-
-EMAIL_USE_TLS = os.getenv("SYSTEM_EMAIL_ENCRYPTION", "").lower() == "tls"
-EMAIL_USE_SSL = os.getenv("SYSTEM_EMAIL_ENCRYPTION", "").lower() == "ssl"
-
-SYSTEM_EMAIL_FROM_EMAIL = os.getenv("SYSTEM_EMAIL_FROM_EMAIL")
-SYSTEM_EMAIL_FROM_NAME = os.getenv("SYSTEM_EMAIL_FROM_NAME", "")
-
+# EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+# EMAIL_HOST = "smtp.sendgrid.net"
+# EMAIL_PORT = 587
+# EMAIL_USE_TLS = True
+# EMAIL_HOST_USER = "apikey"
+# EMAIL_HOST_PASSWORD = os.environ.get("SECRET_KEY")
+# DEFAULT_FROM_EMAIL = "ruchi@nvglobaltech.com"
